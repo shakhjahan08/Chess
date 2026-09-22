@@ -1,19 +1,11 @@
-```html
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Royal Chess Arena</title>
 
-  <!-- Chess.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-
-  <!-- PeerJS -->
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 
   <style>
@@ -26,23 +18,16 @@
       --line: rgba(255,255,255,0.12);
       --text: #edf4ff;
       --muted: #9aa8ba;
-
       --gold: #e9b865;
       --gold2: #bf7d2d;
-
       --blue: #59b7ff;
       --blue2: #2f75ff;
-
       --green: #42d57a;
       --red: #ff6d7c;
-
       --light: #f0d9b5;
       --dark: #b58a60;
-
       --frame: #1a2531;
       --glow: rgba(89,183,255,0.26);
-
-      --soft-shadow: rgba(0,0,0,0.4);
     }
 
     * {
@@ -57,13 +42,8 @@
     body {
       margin: 0;
       min-height: 100%;
-      font-family:
-        Inter,
-        Arial,
-        Helvetica,
-        sans-serif;
+      font-family: Inter, Arial, Helvetica, sans-serif;
       color: var(--text);
-
       background:
         radial-gradient(
           circle at 18% -10%,
@@ -95,31 +75,19 @@
       min-height: 100vh;
     }
 
-    /* =========================
-       NAVIGATION
-    ========================= */
+    /* NAV */
 
     .nav {
       position: sticky;
       top: 0;
       z-index: 50;
-
       height: 72px;
-
       display: flex;
       align-items: center;
       gap: 22px;
-
-      padding:
-        0
-        clamp(12px, 4vw, 52px);
-
-      background:
-        rgba(11, 17, 24, 0.82);
-
-      border-bottom:
-        1px solid var(--line);
-
+      padding: 0 clamp(12px, 4vw, 52px);
+      background: rgba(11, 17, 24, 0.82);
+      border-bottom: 1px solid var(--line);
       backdrop-filter: blur(14px);
     }
 
@@ -127,7 +95,6 @@
       display: flex;
       align-items: center;
       gap: 12px;
-
       font-weight: 900;
       letter-spacing: -0.04em;
       font-size: 1.2rem;
@@ -136,169 +103,95 @@
     .brand-mark {
       width: 38px;
       height: 38px;
-
       display: grid;
       place-items: center;
-
       border-radius: 12px;
-
-      background:
-        linear-gradient(
-          135deg,
-          var(--gold),
-          var(--gold2)
-        );
-
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
       color: #121821;
-
-      box-shadow:
-        0 0 24px
-        rgba(233,184,101,0.4);
-
+      box-shadow: 0 0 24px rgba(233,184,101,0.4);
       font-size: 1.5rem;
     }
 
     .nav-links {
       margin-left: auto;
-
       display: flex;
       align-items: center;
       gap: 6px;
-
       flex-wrap: wrap;
     }
 
     .nav-links a {
       color: var(--muted);
-
       font-weight: 700;
-
       padding: 10px 12px;
-
       border-radius: 10px;
-
-      transition:
-        0.2s ease;
+      transition: 0.2s ease;
     }
 
     .nav-links a:hover,
     .nav-links a.active {
       color: var(--text);
-
-      background:
-        rgba(255,255,255,0.06);
-
-      box-shadow:
-        0 0 18px
-        rgba(89,183,255,0.12);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 0 18px rgba(89,183,255,0.12);
     }
 
     .nav-links .cta {
       color: #111823;
-
-      background:
-        linear-gradient(
-          135deg,
-          var(--gold),
-          var(--gold2)
-        );
-
-      box-shadow:
-        0 0 20px
-        rgba(233,184,101,0.32);
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      box-shadow: 0 0 20px rgba(233,184,101,0.32);
     }
 
     .menu-btn {
       display: none;
-
-      border:
-        1px solid var(--line);
-
-      background:
-        rgba(255,255,255,0.04);
-
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
       color: var(--text);
-
       border-radius: 10px;
-
       padding: 8px 10px;
-
       font-size: 1.2rem;
-
       cursor: pointer;
     }
 
-    /* =========================
-       HERO
-    ========================= */
+    /* HERO */
 
     .hero {
       position: relative;
-
       display: grid;
-
-      grid-template-columns:
-        1.1fr
-        0.9fr;
-
+      grid-template-columns: 1.1fr 0.9fr;
       gap: 40px;
-
       align-items: center;
-
-      padding:
-        clamp(26px, 6vw, 82px)
+      padding: clamp(26px, 6vw, 82px)
         clamp(16px, 6vw, 98px)
         42px;
-
       overflow: hidden;
     }
 
     .hero::before {
       content: "";
-
       position: absolute;
-
       right: 6%;
       top: -230px;
-
       width: 420px;
       height: 420px;
-
       border-radius: 50%;
-
-      background:
-        rgba(47,117,255,0.18);
-
+      background: rgba(47,117,255,0.18);
       filter: blur(55px);
-
       pointer-events: none;
     }
 
     .eyebrow {
       color: var(--gold);
-
       font-size: 0.74rem;
-
       text-transform: uppercase;
-
       letter-spacing: 0.18em;
-
       font-weight: 900;
     }
 
     .hero h1 {
-      margin:
-        14px
-        0
-        18px;
-
+      margin: 14px 0 18px;
       max-width: 700px;
-
-      font-size:
-        clamp(2.8rem, 7vw, 6rem);
-
+      font-size: clamp(2.8rem, 7vw, 6rem);
       line-height: 0.94;
-
       letter-spacing: -0.07em;
     }
 
@@ -311,56 +204,35 @@
           var(--blue) 55%,
           var(--gold) 100%
         );
-
       -webkit-background-clip: text;
       background-clip: text;
-
       color: transparent;
     }
 
     .hero p {
       margin: 0;
-
       max-width: 620px;
-
       color: var(--muted);
-
       font-size: 1.08rem;
-
       line-height: 1.7;
     }
 
     .hero-actions {
       display: flex;
-
       gap: 12px;
-
       flex-wrap: wrap;
-
       margin-top: 28px;
     }
 
     .btn {
-      border:
-        1px solid var(--line);
-
-      background:
-        rgba(255,255,255,0.04);
-
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
       color: var(--text);
-
       border-radius: 12px;
-
-      padding:
-        12px
-        18px;
-
+      padding: 12px 18px;
       min-height: 46px;
-
       cursor: pointer;
-
       font-weight: 800;
-
       transition:
         transform 0.2s ease,
         box-shadow 0.2s ease,
@@ -368,121 +240,64 @@
     }
 
     .btn:hover {
-      transform:
-        translateY(-2px);
-
-      filter:
-        brightness(1.08);
-
-      box-shadow:
-        0 12px 30px
-        rgba(0,0,0,0.25);
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
     }
 
     .btn.primary {
-      background:
-        linear-gradient(
-          135deg,
-          var(--gold),
-          var(--gold2)
-        );
-
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
       color: #101822;
-
       border: 0;
-
-      box-shadow:
-        0 0 28px
-        rgba(233,184,101,0.28);
+      box-shadow: 0 0 28px rgba(233,184,101,0.28);
     }
 
     .btn.blue {
-      background:
-        linear-gradient(
-          135deg,
-          var(--blue),
-          var(--blue2)
-        );
-
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
       border: 0;
-
-      box-shadow:
-        0 0 26px
-        rgba(47,117,255,0.25);
+      box-shadow: 0 0 26px rgba(47,117,255,0.25);
     }
 
-    /* =========================
-       MINI BOARD
-    ========================= */
+    /* MINI BOARD */
 
     .hero-board {
-      width:
-        min(440px, 80vw);
-
+      width: min(440px, 80vw);
       aspect-ratio: 1;
-
-      margin:
-        0 auto;
-
+      margin: 0 auto;
       padding: 12px;
-
       border-radius: 24px;
-
       background:
         linear-gradient(
           135deg,
           rgba(255,255,255,0.12),
           rgba(255,255,255,0.03)
         );
-
-      border:
-        1px solid
-        rgba(255,255,255,0.16);
-
+      border: 1px solid rgba(255,255,255,0.16);
       box-shadow:
-        0 20px 60px
-        rgba(0,0,0,0.2),
-        0 0 36px
-        var(--glow);
-
-      transform:
-        rotate(2deg);
-
-      transition:
-        transform 0.35s ease;
+        0 20px 60px rgba(0,0,0,0.2),
+        0 0 36px var(--glow);
+      transform: rotate(2deg);
+      transition: transform 0.35s ease;
     }
 
     .hero-board:hover {
-      transform:
-        rotate(0)
-        scale(1.02);
+      transform: rotate(0) scale(1.02);
     }
 
     .mini-board {
       width: 100%;
       height: 100%;
-
       display: grid;
-
-      grid-template-columns:
-        repeat(8, 1fr);
-
-      border:
-        7px solid
-        var(--frame);
-
+      grid-template-columns: repeat(8, 1fr);
+      border: 7px solid var(--frame);
       border-radius: 16px;
-
       overflow: hidden;
     }
 
     .mini-square {
       display: grid;
       place-items: center;
-
-      font-size:
-        clamp(1.2rem, 2vw, 2.4rem);
-
+      font-size: clamp(1.2rem, 2vw, 2.4rem);
       aspect-ratio: 1;
     }
 
@@ -494,48 +309,27 @@
       background: var(--dark);
     }
 
-    /* =========================
-       STATS
-    ========================= */
+    /* STATS */
 
     .stats {
       display: grid;
-
-      grid-template-columns:
-        repeat(3, 1fr);
-
+      grid-template-columns: repeat(3, 1fr);
       gap: 14px;
-
-      padding:
-        0
-        clamp(16px, 6vw, 98px)
-        42px;
+      padding: 0 clamp(16px, 6vw, 98px) 42px;
     }
 
     .stat {
-      border:
-        1px solid var(--line);
-
-      background:
-        rgba(255,255,255,0.04);
-
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
       border-radius: 16px;
-
-      padding:
-        18px
-        18px
-        16px;
+      padding: 18px 18px 16px;
     }
 
     .stat strong {
       display: block;
-
       color: var(--gold);
-
       font-size: 1.6rem;
-
       margin-bottom: 8px;
-
       letter-spacing: -0.05em;
     }
 
@@ -543,125 +337,69 @@
       color: var(--muted);
     }
 
-    /* =========================
-       GAME SECTION
-    ========================= */
+    /* GAME */
 
     .game-section {
-      padding:
-        28px
-        clamp(12px, 4vw, 52px)
-        52px;
-
-      background:
-        linear-gradient(
-          180deg,
-          #0e1825,
-          #0a1018 24%
-        );
+      padding: 28px clamp(12px, 4vw, 52px) 52px;
+      background: linear-gradient(180deg, #0e1825, #0a1018 24%);
     }
 
     .section-head {
       display: flex;
-
       justify-content: space-between;
-
       align-items: end;
-
       gap: 12px;
-
       flex-wrap: wrap;
-
       margin-bottom: 16px;
     }
 
     .section-head h2 {
       margin: 0;
-
       letter-spacing: -0.04em;
-
-      font-size:
-        clamp(1.8rem, 2.8vw, 2.5rem);
+      font-size: clamp(1.8rem, 2.8vw, 2.5rem);
     }
 
     .section-head p {
-      margin:
-        6px
-        0
-        0;
-
+      margin: 6px 0 0;
       color: var(--muted);
     }
 
     .top-pill {
       display: inline-flex;
-
       align-items: center;
-
       justify-content: center;
-
       border-radius: 999px;
-
-      border:
-        1px solid var(--line);
-
-      background:
-        rgba(255,255,255,0.04);
-
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
       color: var(--text);
-
-      padding:
-        10px
-        16px;
-
+      padding: 10px 16px;
       font-weight: 800;
     }
 
-    /* =========================
-       TOOLBAR
-    ========================= */
-
     .tool-row {
       display: flex;
-
       justify-content: space-between;
-
       gap: 10px;
-
       flex-wrap: wrap;
-
       margin-bottom: 18px;
     }
 
     .mode-set,
     .action-set {
       display: flex;
-
       flex-wrap: wrap;
-
       gap: 8px;
     }
 
     .mode-btn,
     .action-btn {
-      border:
-        1px solid var(--line);
-
-      background:
-        rgba(255,255,255,0.04);
-
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.04);
       color: var(--text);
-
       border-radius: 10px;
-
-      padding:
-        10px
-        12px;
-
+      padding: 10px 12px;
       font-weight: 800;
-
       cursor: pointer;
-
       transition:
         transform 0.2s ease,
         background 0.2s ease;
@@ -669,176 +407,106 @@
 
     .mode-btn:hover,
     .action-btn:hover {
-      transform:
-        translateY(-2px);
-
-      background:
-        rgba(255,255,255,0.08);
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.08);
     }
 
     .mode-btn.active {
-      background:
-        linear-gradient(
-          135deg,
-          var(--gold),
-          var(--gold2)
-        );
-
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
       color: #111922;
-
-      border-color:
-        transparent;
+      border-color: transparent;
     }
 
     .action-btn.primary {
-      background:
-        linear-gradient(
-          135deg,
-          var(--blue),
-          var(--blue2)
-        );
-
-      border-color:
-        transparent;
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
+      border-color: transparent;
     }
 
     .action-btn.red {
-      background:
-        linear-gradient(
-          135deg,
-          #ff727a,
-          #d94e5d
-        );
-
-      border-color:
-        transparent;
+      background: linear-gradient(135deg, #ff727a, #d94e5d);
+      border-color: transparent;
     }
 
-    /* =========================
-       LOBBY
-    ========================= */
+    /* LOBBY */
 
     .lobby {
       display: grid;
-
-      grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 14px;
-
       margin-bottom: 20px;
     }
 
     .lobby-card {
       padding: 18px;
-
       border-radius: 16px;
-
-      border:
-        1px solid var(--line);
-
+      border: 1px solid var(--line);
       background:
         linear-gradient(
           180deg,
           rgba(255,255,255,0.03),
           rgba(255,255,255,0.02)
         );
-
       transition:
         transform 0.2s ease,
         border-color 0.2s ease,
         box-shadow 0.2s ease;
-
       min-height: 130px;
-
       display: flex;
-
       flex-direction: column;
-
       justify-content: center;
-
       cursor: pointer;
     }
 
     .lobby-card:hover {
-      transform:
-        translateY(-2px);
-
-      border-color:
-        rgba(89,183,255,0.4);
-
-      box-shadow:
-        0 16px 35px
-        rgba(0,0,0,0.2);
+      transform: translateY(-2px);
+      border-color: rgba(89,183,255,0.4);
+      box-shadow: 0 16px 35px rgba(0,0,0,0.2);
     }
 
     .lobby-card.active {
-      border-color:
-        rgba(233,184,101,0.7);
-
+      border-color: rgba(233,184,101,0.7);
       box-shadow:
-        0 0 0 1px
-        rgba(233,184,101,0.2),
-        0 16px 35px
-        rgba(0,0,0,0.18);
+        0 0 0 1px rgba(233,184,101,0.2),
+        0 16px 35px rgba(0,0,0,0.18);
     }
 
     .lobby-card .small {
       color: var(--gold);
-
       font-size: 0.74rem;
-
       text-transform: uppercase;
-
       letter-spacing: 0.14em;
-
       font-weight: 900;
-
       margin-bottom: 8px;
     }
 
     .lobby-card h3 {
-      margin:
-        0
-        0
-        6px;
-
+      margin: 0 0 6px;
       font-size: 1.4rem;
-
       letter-spacing: -0.04em;
     }
 
     .lobby-card p {
       margin: 0;
-
       color: var(--muted);
-
       line-height: 1.5;
     }
 
-    /* =========================
-       BOARD LAYOUT
-    ========================= */
+    /* BOARD LAYOUT */
 
     .board-layout {
       display: grid;
-
       grid-template-columns:
         minmax(260px, 330px)
         minmax(300px, 1fr)
         minmax(220px, 260px);
-
       gap: 18px;
-
       align-items: start;
     }
 
     .side,
     .right {
       display: flex;
-
       flex-direction: column;
-
       gap: 14px;
     }
 
@@ -849,411 +517,239 @@
           rgba(255,255,255,0.03),
           rgba(255,255,255,0.015)
         );
-
-      border:
-        1px solid var(--line);
-
+      border: 1px solid var(--line);
       border-radius: 16px;
-
       padding: 12px;
-
-      box-shadow:
-        inset 0 1px 0
-        rgba(255,255,255,0.03);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
     }
 
-    /* =========================
-       PLAYERS
-    ========================= */
+    /* PLAYERS */
 
     .player {
       display: grid;
-
-      grid-template-columns:
-        auto
-        1fr
-        auto;
-
+      grid-template-columns: auto 1fr auto;
       align-items: center;
-
       gap: 10px;
-
       min-height: 86px;
-
-      background:
-        rgba(255,255,255,0.02);
-
+      background: rgba(255,255,255,0.02);
       border-radius: 14px;
-
-      border:
-        1px solid
-        rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.05);
     }
 
     .player.active {
-      border-color:
-        rgba(233,184,101,0.75);
-
+      border-color: rgba(233,184,101,0.75);
       box-shadow:
-        inset 0 0 0 1px
-        rgba(233,184,101,0.25),
-        0 0 18px
-        rgba(233,184,101,0.08);
+        inset 0 0 0 1px rgba(233,184,101,0.25),
+        0 0 18px rgba(233,184,101,0.08);
     }
 
     .piece-badge {
       width: 42px;
       height: 42px;
-
       border-radius: 12px;
-
       display: grid;
       place-items: center;
-
-      background:
-        rgba(255,255,255,0.04);
-
-      border:
-        1px solid
-        rgba(255,255,255,0.08);
-
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
       font-size: 1.7rem;
     }
 
     .label {
       font-size: 0.68rem;
-
       letter-spacing: 0.14em;
-
       text-transform: uppercase;
-
       color: var(--muted);
-
       font-weight: 800;
     }
 
     .name {
       margin-top: 4px;
-
       font-weight: 800;
-
       font-size: 1.06rem;
     }
 
     .clock {
       font-size: 1.4rem;
-
       font-weight: 900;
-
       color: var(--gold);
-
-      font-variant-numeric:
-        tabular-nums;
-
+      font-variant-numeric: tabular-nums;
       text-align: right;
-
       min-width: 90px;
     }
 
-    /* =========================
-       CARDS / INPUTS
-    ========================= */
-
     .section-title {
       font-size: 0.74rem;
-
       letter-spacing: 0.13em;
-
       text-transform: uppercase;
-
       color: var(--muted);
-
       font-weight: 900;
-
       margin-bottom: 9px;
     }
 
+    /* INPUTS */
+
     .input-row {
       display: flex;
-
       gap: 7px;
-
       margin-top: 8px;
-
       flex-wrap: wrap;
     }
 
     .input-row input {
-      flex:
-        1 1 120px;
-
+      flex: 1 1 120px;
       width: 100%;
-
-      background:
-        rgba(255,255,255,0.04);
-
-      border:
-        1px solid var(--line);
-
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--line);
       border-radius: 10px;
-
-      padding:
-        10px
-        12px;
-
+      padding: 10px 12px;
       color: var(--text);
-
       outline: none;
+      min-width: 0;
     }
 
     .input-row input:focus {
-      border-color:
-        rgba(89,183,255,0.7);
-
-      box-shadow:
-        0 0 0 3px
-        rgba(89,183,255,0.12);
+      border-color: rgba(89,183,255,0.7);
+      box-shadow: 0 0 0 3px rgba(89,183,255,0.12);
     }
 
     .small-btn {
-      border:
-        1px solid var(--line);
-
-      background:
-        rgba(255,255,255,0.05);
-
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.05);
       color: var(--text);
-
       border-radius: 10px;
-
-      padding:
-        10px
-        12px;
-
+      padding: 10px 12px;
       font-weight: 800;
-
       cursor: pointer;
     }
 
-    /* =========================
-       CAPTURES
-    ========================= */
+    /* CAPTURES */
 
     .capture-grid {
       display: grid;
-
-      grid-template-columns:
-        1fr 1fr;
-
+      grid-template-columns: 1fr 1fr;
       gap: 8px;
     }
 
     .mini-box {
       min-height: 72px;
-
-      border:
-        1px solid
-        rgba(255,255,255,0.05);
-
-      background:
-        rgba(255,255,255,0.03);
-
+      border: 1px solid rgba(255,255,255,0.05);
+      background: rgba(255,255,255,0.03);
       border-radius: 10px;
-
       padding: 9px;
     }
 
     .pieces {
       font-size: 1.4rem;
-
       letter-spacing: 0.06em;
-
       margin-top: 8px;
-
       min-height: 24px;
-
       line-height: 1.4;
     }
 
-    /* =========================
-       MOVE LIST
-    ========================= */
+    /* MOVES */
 
     .moves {
       max-height: 220px;
-
       overflow: auto;
     }
 
     .move {
       display: grid;
-
-      grid-template-columns:
-        42px
-        1fr
-        1fr;
-
+      grid-template-columns: 42px 1fr 1fr;
       align-items: center;
-
       gap: 8px;
-
       padding: 5px 0;
-
-      border-bottom:
-        1px solid
-        rgba(255,255,255,0.05);
-
+      border-bottom: 1px solid rgba(255,255,255,0.05);
       font-size: 0.94rem;
     }
 
     .move em {
       font-style: normal;
-
       color: var(--muted);
     }
 
-    /* =========================
-       PROFILE
-    ========================= */
+    /* PROFILE */
 
     .right .profile {
       padding: 16px;
-
       background:
         linear-gradient(
           180deg,
           rgba(255,255,255,0.04),
           rgba(255,255,255,0.02)
         );
-
-      border:
-        1px solid var(--line);
-
+      border: 1px solid var(--line);
       border-radius: 16px;
     }
 
     .profile-header {
       display: flex;
-
       align-items: center;
-
       gap: 12px;
     }
 
     .avatar {
       width: 48px;
       height: 48px;
-
       display: grid;
       place-items: center;
-
       border-radius: 14px;
-
-      background:
-        linear-gradient(
-          135deg,
-          #4fb6ff,
-          #3f6dff
-        );
-
+      background: linear-gradient(135deg, #4fb6ff, #3f6dff);
       font-weight: 900;
-
-      box-shadow:
-        0 0 22px
-        rgba(89,183,255,0.25);
+      box-shadow: 0 0 22px rgba(89,183,255,0.25);
     }
 
     .profile h3 {
       margin: 0;
-
       font-size: 1.3rem;
-
       letter-spacing: -0.04em;
     }
 
     .profile .rating {
       margin-top: 14px;
-
       display: grid;
-
-      grid-template-columns:
-        repeat(3, 1fr);
-
+      grid-template-columns: repeat(3, 1fr);
       gap: 10px;
     }
 
     .profile .rating .box {
-      background:
-        rgba(255,255,255,0.04);
-
-      border:
-        1px solid
-        rgba(255,255,255,0.04);
-
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.04);
       border-radius: 12px;
-
-      padding:
-        9px
-        8px;
-
+      padding: 9px 8px;
       text-align: center;
     }
 
     .profile .rating .box strong {
       display: block;
-
       color: var(--gold);
-
       font-size: 1.2rem;
-
       margin-bottom: 2px;
     }
 
-    /* =========================
-       LEADERBOARD
-    ========================= */
+    /* LEADERBOARD */
 
     .leaderboard ul {
       list-style: none;
-
       margin: 0;
-
       padding: 0;
-
       display: grid;
-
       gap: 10px;
     }
 
     .leaderboard li {
       display: grid;
-
-      grid-template-columns:
-        24px
-        1fr
-        auto;
-
+      grid-template-columns: 24px 1fr auto;
       gap: 10px;
-
       align-items: center;
-
-      background:
-        rgba(255,255,255,0.03);
-
-      border:
-        1px solid
-        rgba(255,255,255,0.04);
-
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.04);
       border-radius: 10px;
-
-      padding:
-        8px
-        10px;
+      padding: 8px 10px;
     }
 
     .leaderboard .rank {
       color: var(--gold);
-
       font-weight: 900;
     }
 
@@ -1263,99 +759,59 @@
 
     .leaderboard .score {
       color: var(--muted);
-
       font-weight: 700;
     }
 
-    /* =========================
-       BOARD
-    ========================= */
+    /* CHESS BOARD */
 
     .board-shell {
       position: relative;
-
       background:
         linear-gradient(
           180deg,
           rgba(28,38,49,0.95),
           rgba(14,20,29,0.95)
         );
-
-      border:
-        1px solid var(--line);
-
+      border: 1px solid var(--line);
       border-radius: 22px;
-
       padding: 16px;
-
       box-shadow:
-        0 24px 60px
-        rgba(0,0,0,0.22),
-        0 0 36px
-        rgba(89,183,255,0.08);
+        0 24px 60px rgba(0,0,0,0.22),
+        0 0 36px rgba(89,183,255,0.08);
     }
 
     .board {
-      width:
-        min(100%, 660px);
-
+      width: min(100%, 660px);
       aspect-ratio: 1;
-
       display: grid;
-
-      grid-template-columns:
-        repeat(8, minmax(0, 1fr));
-
-      grid-template-rows:
-        repeat(8, minmax(0, 1fr));
-
+      grid-template-columns: repeat(8, minmax(0, 1fr));
+      grid-template-rows: repeat(8, minmax(0, 1fr));
       overflow: hidden;
-
-      border:
-        8px solid var(--frame);
-
+      border: 8px solid var(--frame);
       border-radius: 16px;
-
-      box-shadow:
-        inset 0 0 0 2px
-        rgba(255,255,255,0.05);
-
-      margin:
-        0 auto;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.05);
+      margin: 0 auto;
     }
 
     .square {
       position: relative;
-
       border: 0;
-
       padding: 0;
-
       display: grid;
-
       place-items: center;
-
-      font-size:
-        clamp(2.2rem, 5vw, 3.6rem);
-
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
       line-height: 1;
-
       cursor: pointer;
-
       transition:
         transform 0.1s ease,
         filter 0.12s ease,
         box-shadow 0.12s ease;
-
       user-select: none;
     }
 
     .square:hover {
-      transform:
-        scale(1.02);
-
-      filter:
-        brightness(1.04);
+      transform: scale(1.02);
+      filter: brightness(1.04);
     }
 
     .square.light {
@@ -1367,200 +823,101 @@
     }
 
     .square.selected {
-      box-shadow:
-        inset 0 0 0 5px
-        rgba(89,183,255,0.72);
+      box-shadow: inset 0 0 0 5px rgba(89,183,255,0.72);
     }
 
     .square.last {
-      box-shadow:
-        inset 0 0 0 4px
-        rgba(255,216,107,0.72);
+      box-shadow: inset 0 0 0 4px rgba(255,216,107,0.72);
     }
 
     .square.legal::after {
       content: "";
-
       position: absolute;
-
       width: 18%;
       height: 18%;
-
       border-radius: 50%;
-
-      background:
-        rgba(66,213,122,0.8);
-
-      box-shadow:
-        0 0 0 5px
-        rgba(66,213,122,0.12);
+      background: rgba(66,213,122,0.8);
+      box-shadow: 0 0 0 5px rgba(66,213,122,0.12);
     }
 
     .coord-label {
       position: absolute;
-
       font-size: 0.7rem;
-
       font-weight: 800;
-
-      color:
-        rgba(17,24,34,0.7);
-
+      color: rgba(17,24,34,0.7);
       left: 6px;
-
       bottom: 6px;
-
       pointer-events: none;
     }
 
     .result {
       position: absolute;
-
       left: 50%;
-
       bottom: 26px;
-
-      transform:
-        translateX(-50%);
-
+      transform: translateX(-50%);
       white-space: nowrap;
-
-      padding:
-        10px
-        16px;
-
+      padding: 10px 16px;
       border-radius: 999px;
-
-      background:
-        rgba(9,15,22,0.9);
-
-      border:
-        1px solid
-        rgba(233,184,101,0.36);
-
+      background: rgba(9,15,22,0.9);
+      border: 1px solid rgba(233,184,101,0.36);
       font-weight: 800;
-
       letter-spacing: 0.04em;
-
-      box-shadow:
-        0 14px 26px
-        rgba(0,0,0,0.2);
+      box-shadow: 0 14px 26px rgba(0,0,0,0.2);
+      z-index: 5;
     }
 
-    /* =========================
-       PROMOTION
-    ========================= */
+    /* PROMOTION */
 
     .promo-overlay {
       position: fixed;
-
       inset: 0;
-
       z-index: 100;
-
       display: grid;
-
       place-items: center;
-
-      background:
-        rgba(0,0,0,0.7);
-
+      background: rgba(0,0,0,0.7);
       padding: 20px;
     }
 
     .promo-box {
-      width:
-        min(420px, 100%);
-
-      background:
-        linear-gradient(
-          180deg,
-          var(--panel2),
-          var(--panel)
-        );
-
-      border:
-        1px solid var(--line);
-
+      width: min(420px, 100%);
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      border: 1px solid var(--line);
       border-radius: 18px;
-
       padding: 18px;
     }
 
     .promo-box h3 {
-      margin:
-        0
-        0
-        16px;
-
+      margin: 0 0 16px;
       text-align: center;
-
       letter-spacing: -0.04em;
     }
 
     .promo-grid {
       display: grid;
-
-      grid-template-columns:
-        repeat(4, minmax(0, 1fr));
-
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 10px;
     }
 
     .promo-btn {
-      border:
-        1px solid var(--line);
-
+      border: 1px solid var(--line);
       border-radius: 12px;
-
-      background:
-        rgba(255,255,255,0.04);
-
+      background: rgba(255,255,255,0.04);
       color: var(--text);
-
       font-size: 2rem;
-
       min-height: 68px;
-
       cursor: pointer;
-
-      transition:
-        0.2s ease;
     }
 
     .promo-btn:hover {
-      background:
-        rgba(255,255,255,0.1);
-
-      transform:
-        translateY(-2px);
+      background: rgba(255,255,255,0.1);
+      transform: translateY(-2px);
     }
 
     .hidden {
       display: none !important;
     }
 
-    /* =========================
-       FOOTER
-    ========================= */
-
-    .footer {
-      padding:
-        20px
-        16px
-        40px;
-
-      text-align: center;
-
-      color: var(--muted);
-
-      border-top:
-        1px solid var(--line);
-    }
-
-    /* =========================
-       RESPONSIVE
-    ========================= */
+    /* RESPONSIVE */
 
     @media (max-width: 1100px) {
       .board-layout {
@@ -1571,29 +928,19 @@
 
       .right {
         grid-column: 1 / -1;
-
         display: grid;
-
-        grid-template-columns:
-          repeat(3, 1fr);
-      }
-
-      .right .profile,
-      .right .card {
-        min-width: 0;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
     @media (max-width: 980px) {
       .hero {
         grid-template-columns: 1fr;
-
         text-align: center;
       }
 
       .hero p {
-        margin:
-          0 auto;
+        margin: 0 auto;
       }
 
       .hero-actions {
@@ -1606,7 +953,6 @@
 
       .right {
         order: 2;
-
         display: flex;
       }
 
@@ -1626,36 +972,24 @@
 
       .menu-btn {
         display: block;
-
         margin-left: auto;
       }
 
       .nav-links.open {
         display: flex;
-
         position: absolute;
-
         left: 12px;
         right: 12px;
-
         top: 72px;
-
         flex-direction: column;
-
-        background:
-          rgba(17,27,36,0.98);
-
-        border:
-          1px solid var(--line);
-
+        background: rgba(17,27,36,0.98);
+        border: 1px solid var(--line);
         border-radius: 12px;
-
         padding: 10px;
       }
 
       .nav-links.open a {
         text-align: center;
-
         width: 100%;
       }
 
@@ -1686,158 +1020,73 @@
 
       .mode-btn,
       .action-btn {
-        flex:
-          1 1 40%;
+        flex: 1 1 40%;
       }
 
-      .square {
-        font-size:
-          clamp(1.8rem, 9vw, 3rem);
-      }
-
-      .clock {
-        min-width: 70px;
-
-        font-size: 1.15rem;
-      }
-
-      .player {
-        grid-template-columns:
-          auto
-          1fr
-          auto;
+      .right {
+        display: flex;
       }
     }
   </style>
 </head>
 
 <body>
-
   <main class="app">
 
-    <!-- =========================
-         NAV
-    ========================== -->
-
+    <!-- NAV -->
     <nav class="nav">
-
       <div class="brand">
         <div class="brand-mark">♞</div>
         <span>Royal Chess</span>
       </div>
 
-      <button
-        class="menu-btn"
-        id="menuBtn"
-        type="button"
-        aria-label="Menu"
-      >
+      <button class="menu-btn" id="menuBtn" aria-label="Menu">
         ☰
       </button>
 
-      <div
-        class="nav-links"
-        id="navLinks"
-      >
-        <a
-          href="#home"
-          class="active"
-        >
-          Home
-        </a>
-
-        <a href="#play">
-          Play
-        </a>
-
-        <a href="#leaderboard">
-          Leaderboard
-        </a>
-
-        <a href="#profile">
-          Profile
-        </a>
-
-        <a
-          class="cta"
-          href="#play"
-        >
-          Start now
-        </a>
+      <div class="nav-links" id="navLinks">
+        <a href="#home" class="active">Home</a>
+        <a href="#play">Play</a>
+        <a href="#leaderboard">Leaderboard</a>
+        <a href="#profile">Profile</a>
+        <a class="cta" href="#play">Start now</a>
       </div>
-
     </nav>
 
-    <!-- =========================
-         HERO
-    ========================== -->
-
-    <section
-      id="home"
-      class="hero"
-    >
-
+    <!-- HERO -->
+    <section id="home" class="hero">
       <div>
-
-        <div class="eyebrow">
-          The next move is yours
-        </div>
+        <div class="eyebrow">The next move is yours</div>
 
         <h1>
           Chess,
-          <span class="grad">
-            beautifully played.
-          </span>
+          <span class="grad">beautifully played.</span>
         </h1>
 
         <p>
-          Take on a friend, test your tactics
-          against the bot, or play a quick local
-          match. Royal Chess Arena is built for
-          speed, style, and smooth play on every
-          device.
+          Take on a friend, test your tactics against the bot,
+          or play a quick local match. Royal Chess Arena is built
+          for speed, style, and smooth play on every device.
         </p>
 
         <div class="hero-actions">
-
-          <button
-            class="btn primary"
-            id="heroPlay"
-            type="button"
-          >
+          <button class="btn primary" id="heroPlay">
             Play now
           </button>
 
-          <button
-            class="btn blue"
-            id="heroBot"
-            type="button"
-          >
+          <button class="btn blue" id="heroBot">
             Vs Bot
           </button>
-
         </div>
-
       </div>
 
-      <div
-        class="hero-board"
-        aria-label="Chess preview"
-      >
-        <div
-          id="miniBoard"
-          class="mini-board"
-        ></div>
+      <div class="hero-board" aria-label="Chess preview">
+        <div id="miniBoard" class="mini-board"></div>
       </div>
-
     </section>
 
-    <!-- =========================
-         STATS
-    ========================== -->
-
+    <!-- STATS -->
     <section class="stats">
-
       <div class="stat">
         <strong>3</strong>
         <span>play modes</span>
@@ -1852,127 +1101,71 @@
         <strong>100%</strong>
         <span>mobile-friendly</span>
       </div>
-
     </section>
 
-    <!-- =========================
-         GAME
-    ========================== -->
-
-    <section
-      id="play"
-      class="game-section"
-    >
+    <!-- GAME -->
+    <section id="play" class="game-section">
 
       <div class="section-head">
-
         <div>
-          <div class="eyebrow">
-            Game lobby
-          </div>
-
-          <h2>
-            Pick your matchup
-          </h2>
-
-          <p>
-            Choose a format and start playing immediately.
-          </p>
+          <div class="eyebrow">Game lobby</div>
+          <h2>Pick your matchup</h2>
+          <p>Choose a format and start playing immediately.</p>
         </div>
 
-        <div
-          id="status"
-          class="top-pill"
-        >
+        <div id="status" class="top-pill">
           White to move
         </div>
-
       </div>
 
       <!-- LOBBY -->
-
       <div class="lobby">
 
-        <div
-          class="lobby-card active"
-          data-mode="local"
-        >
-          <div class="small">
-            Quick start
-          </div>
-
-          <h3>
-            Local Match
-          </h3>
-
-          <p>
-            Play on one device with two players.
-          </p>
+        <div class="lobby-card active" data-mode="local">
+          <div class="small">Quick start</div>
+          <h3>Local Match</h3>
+          <p>Play on one device with two players.</p>
         </div>
 
-        <div
-          class="lobby-card"
-          data-mode="bot"
-        >
-          <div class="small">
-            AI challenge
-          </div>
-
-          <h3>
-            Vs Bot
-          </h3>
-
-          <p>
-            Test your tactics against a computer.
-          </p>
+        <div class="lobby-card" data-mode="bot">
+          <div class="small">AI challenge</div>
+          <h3>Vs Bot</h3>
+          <p>Test your tactics against a computer.</p>
         </div>
 
-        <div
-          class="lobby-card"
-          data-mode="online"
-        >
-          <div class="small">
-            Remote battle
-          </div>
-
-          <h3>
-            Online Friend
-          </h3>
-
-          <p>
-            Connect with a friend using Peer ID.
-          </p>
+        <div class="lobby-card" data-mode="online">
+          <div class="small">Remote battle</div>
+          <h3>Online Friend</h3>
+          <p>Connect with a friend using Peer ID.</p>
         </div>
 
       </div>
 
-      <!-- TOOLBAR -->
-
+      <!-- CONTROLS -->
       <div class="tool-row">
 
         <div class="mode-set">
 
+          <!-- IMPORTANT:
+               data-mode buttons only.
+               Difficulty buttons below do NOT use data-mode.
+          -->
+
           <button
             class="mode-btn active"
-            data-mode="local"
-            type="button"
-          >
+            data-mode="local">
             Local
           </button>
 
           <button
             class="mode-btn"
-            data-mode="bot"
-            type="button"
-          >
+            data-mode="bot">
             Vs Bot
           </button>
 
           <button
             class="mode-btn"
-            data-mode="online"
-            type="button"
-          >
+            data-mode="online">
             Online
           </button>
 
@@ -1980,27 +1173,15 @@
 
         <div class="action-set">
 
-          <button
-            id="newGame"
-            class="action-btn primary"
-            type="button"
-          >
+          <button id="newGame" class="action-btn primary">
             New game
           </button>
 
-          <button
-            id="flipBoard"
-            class="action-btn"
-            type="button"
-          >
+          <button id="flipBoard" class="action-btn">
             Flip board
           </button>
 
-          <button
-            id="resetClock"
-            class="action-btn red"
-            type="button"
-          >
+          <button id="resetClock" class="action-btn red">
             Reset clock
           </button>
 
@@ -2009,75 +1190,44 @@
       </div>
 
       <!-- BOARD LAYOUT -->
-
       <div class="board-layout">
 
         <!-- LEFT -->
-
         <aside class="side">
 
           <!-- WHITE -->
+          <div id="whiteCard" class="card player active">
 
-          <div
-            id="whiteCard"
-            class="card player active"
-          >
-
-            <div class="piece-badge">
-              ♔
-            </div>
+            <div class="piece-badge">♔</div>
 
             <div>
-              <div class="label">
-                White
-              </div>
-
-              <div class="name">
-                Player 1
-              </div>
+              <div class="label">White</div>
+              <div class="name">Player 1</div>
             </div>
 
-            <div
-              id="whiteClock"
-              class="clock"
-            >
+            <div id="whiteClock" class="clock">
               10:00
             </div>
 
           </div>
 
           <!-- BLACK -->
+          <div id="blackCard" class="card player">
 
-          <div
-            id="blackCard"
-            class="card player"
-          >
-
-            <div class="piece-badge">
-              ♚
-            </div>
+            <div class="piece-badge">♚</div>
 
             <div>
-              <div class="label">
-                Black
-              </div>
-
-              <div class="name">
-                Player 2
-              </div>
+              <div class="label">Black</div>
+              <div class="name">Player 2</div>
             </div>
 
-            <div
-              id="blackClock"
-              class="clock"
-            >
+            <div id="blackClock" class="clock">
               10:00
             </div>
 
           </div>
 
           <!-- ONLINE -->
-
           <div class="card">
 
             <div class="section-title">
@@ -2085,45 +1235,31 @@
             </div>
 
             <div class="input-row">
-
               <input
                 id="myId"
                 readonly
                 placeholder="Your Peer ID"
               />
 
-              <button
-                id="copyId"
-                class="small-btn"
-                type="button"
-              >
+              <button id="copyId" class="small-btn">
                 Copy
               </button>
-
             </div>
 
             <div class="input-row">
-
               <input
                 id="friendId"
                 placeholder="Opponent ID"
-                autocomplete="off"
               />
 
-              <button
-                id="joinGame"
-                class="small-btn"
-                type="button"
-              >
+              <button id="joinGame" class="small-btn">
                 Connect
               </button>
-
             </div>
 
           </div>
 
           <!-- CAPTURES -->
-
           <div class="card">
 
             <div class="section-title">
@@ -2133,29 +1269,13 @@
             <div class="capture-grid">
 
               <div class="mini-box">
-
-                <div class="label">
-                  White
-                </div>
-
-                <div
-                  id="whiteCaptured"
-                  class="pieces"
-                ></div>
-
+                <div class="label">White</div>
+                <div id="whiteCaptured" class="pieces"></div>
               </div>
 
               <div class="mini-box">
-
-                <div class="label">
-                  Black
-                </div>
-
-                <div
-                  id="blackCaptured"
-                  class="pieces"
-                ></div>
-
+                <div class="label">Black</div>
+                <div id="blackCaptured" class="pieces"></div>
               </div>
 
             </div>
@@ -2163,65 +1283,40 @@
           </div>
 
           <!-- NOTATION -->
-
           <div class="card">
 
             <div class="section-title">
               Notation
             </div>
 
-            <div
-              id="moveList"
-              class="moves"
-            ></div>
+            <div id="moveList" class="moves"></div>
 
           </div>
 
         </aside>
 
         <!-- CENTER BOARD -->
-
         <div class="board-shell">
 
-          <div
-            id="board"
-            class="board"
-          ></div>
+          <div id="board" class="board"></div>
 
-          <div
-            id="result"
-            class="result hidden"
-          ></div>
+          <div id="result" class="result hidden"></div>
 
         </div>
 
         <!-- RIGHT -->
-
         <aside class="right">
 
           <!-- PROFILE -->
-
-          <div
-            id="profile"
-            class="profile"
-          >
+          <div id="profile" class="profile">
 
             <div class="profile-header">
 
-              <div class="avatar">
-                S
-              </div>
+              <div class="avatar">S</div>
 
               <div>
-
-                <div class="label">
-                  Player
-                </div>
-
-                <h3>
-                  Shakhjahan
-                </h3>
-
+                <div class="label">Player</div>
+                <h3>Shakhjahan</h3>
               </div>
 
             </div>
@@ -2248,11 +1343,7 @@
           </div>
 
           <!-- LEADERBOARD -->
-
-          <div
-            id="leaderboard"
-            class="card leaderboard"
-          >
+          <div id="leaderboard" class="card leaderboard">
 
             <div class="section-title">
               Leaderboard
@@ -2289,7 +1380,6 @@
           </div>
 
           <!-- DIFFICULTY -->
-
           <div class="card">
 
             <div class="section-title">
@@ -2298,30 +1388,23 @@
 
             <div
               class="mode-set"
-              style="margin-top:8px;"
-            >
+              style="margin-top:8px;">
 
               <button
                 class="difficulty-btn mode-btn"
-                data-difficulty="easy"
-                type="button"
-              >
+                data-difficulty="easy">
                 Easy
               </button>
 
               <button
                 class="difficulty-btn mode-btn active"
-                data-difficulty="medium"
-                type="button"
-              >
+                data-difficulty="medium">
                 Medium
               </button>
 
               <button
                 class="difficulty-btn mode-btn"
-                data-difficulty="hard"
-                type="button"
-              >
+                data-difficulty="hard">
                 Hard
               </button>
 
@@ -2330,7 +1413,6 @@
           </div>
 
           <!-- BOARD TOOLS -->
-
           <div class="card">
 
             <div class="section-title">
@@ -2339,30 +1421,23 @@
 
             <div
               class="action-set"
-              style="margin-top:8px;"
-            >
+              style="margin-top:8px;">
 
               <button
                 id="toolbarNew"
-                class="action-btn primary"
-                type="button"
-              >
+                class="action-btn primary">
                 New
               </button>
 
               <button
                 id="toolbarFlip"
-                class="action-btn"
-                type="button"
-              >
+                class="action-btn">
                 Flip
               </button>
 
               <button
                 id="toolbarReset"
-                class="action-btn red"
-                type="button"
-              >
+                class="action-btn red">
                 Reset
               </button>
 
@@ -2377,8 +1452,15 @@
     </section>
 
     <!-- FOOTER -->
-
-    <footer class="footer">
+    <footer
+      class="footer"
+      style="
+        padding:20px 16px 40px;
+        text-align:center;
+        color:var(--muted);
+        border-top:1px solid var(--line);
+      "
+    >
       Built for thoughtful players ·
       <strong style="color:var(--gold);">
         Royal Chess Arena
@@ -2387,54 +1469,19 @@
 
   </main>
 
-  <!-- =========================
-       PROMOTION
-  ========================== -->
-
-  <div
-    id="promotion"
-    class="promo-overlay hidden"
-  >
+  <!-- PROMOTION -->
+  <div id="promotion" class="promo-overlay hidden">
 
     <div class="promo-box">
 
-      <h3>
-        Choose promotion
-      </h3>
+      <h3>Choose promotion</h3>
 
       <div class="promo-grid">
 
-        <button
-          class="promo-btn"
-          data-p="q"
-          type="button"
-        >
-          ♕
-        </button>
-
-        <button
-          class="promo-btn"
-          data-p="r"
-          type="button"
-        >
-          ♖
-        </button>
-
-        <button
-          class="promo-btn"
-          data-p="b"
-          type="button"
-        >
-          ♗
-        </button>
-
-        <button
-          class="promo-btn"
-          data-p="n"
-          type="button"
-        >
-          ♘
-        </button>
+        <button class="promo-btn" data-p="q">♕</button>
+        <button class="promo-btn" data-p="r">♖</button>
+        <button class="promo-btn" data-p="b">♗</button>
+        <button class="promo-btn" data-p="n">♘</button>
 
       </div>
 
@@ -2442,30 +1489,32 @@
 
   </div>
 
-  <!-- =========================
-       JAVASCRIPT
-  ========================== -->
-
   <script>
-    const files = 'abcdefgh';
+    /*
+     * ============================================================
+     * ROYAL CHESS ARENA
+     * Fixed version
+     * ============================================================
+     */
+
+    const files = "abcdefgh";
 
     const symbols = {
       w: {
-        k: '♔',
-        q: '♕',
-        r: '♖',
-        b: '♗',
-        n: '♘',
-        p: '♙'
+        k: "♔",
+        q: "♕",
+        r: "♖",
+        b: "♗",
+        n: "♘",
+        p: "♙"
       },
-
       b: {
-        k: '♚',
-        q: '♛',
-        r: '♜',
-        b: '♝',
-        n: '♞',
-        p: '♟'
+        k: "♚",
+        q: "♛",
+        r: "♜",
+        b: "♝",
+        n: "♞",
+        p: "♟"
       }
     };
 
@@ -2478,12 +1527,51 @@
       k: 20000
     };
 
+    /*
+     * IMPORTANT FIX:
+     *
+     * The original code had:
+     *
+     * const $ = id => document.getElementById(id);
+     *
+     * but then used:
+     *
+     * $('#whiteCard')
+     *
+     * That searches for an element whose ID is literally
+     * "#whiteCard", which does not exist.
+     *
+     * This version supports both:
+     *
+     * $("whiteCard")
+     * $("#whiteCard")
+     *
+     * and CSS selectors.
+     */
+
+    function $(selector) {
+      if (typeof selector !== "string") {
+        return selector;
+      }
+
+      if (
+        selector.startsWith("#") ||
+        selector.startsWith(".") ||
+        selector.includes(" ") ||
+        selector.includes("[")
+      ) {
+        return document.querySelector(selector);
+      }
+
+      return document.getElementById(selector);
+    }
+
     const appState = {
       game: new Chess(),
 
-      mode: 'local',
+      mode: "local",
 
-      difficulty: 'medium',
+      difficulty: "medium",
 
       selected: null,
 
@@ -2505,9 +1593,13 @@
 
       blackClock: 600,
 
-      active: 'w',
+      active: "w",
+
+      totalMin: 10,
 
       timer: null,
+
+      botTimer: null,
 
       captured: {
         w: [],
@@ -2515,85 +1607,139 @@
       }
     };
 
-    const $ = id =>
-      document.getElementById(id);
+    const boardEl = $("board");
 
-    const boardEl =
-      $('board');
-
-    /* =========================
-       UI
-    ========================== */
+    /* ============================================================
+       STATUS
+       ============================================================ */
 
     function setStatus(message) {
-      $('status').textContent =
-        message;
+      const status = $("status");
+
+      if (status) {
+        status.textContent = message;
+      }
     }
 
-    function formatTime(seconds) {
-      seconds =
-        Math.max(
-          0,
-          Math.ceil(seconds)
-        );
+    /* ============================================================
+       CLOCK
+       ============================================================ */
 
-      const minutes =
-        Math.floor(seconds / 60);
+    function formatTime(sec) {
+      sec = Math.max(0, Math.ceil(sec));
 
-      const secs =
-        String(seconds % 60)
-          .padStart(2, '0');
-
-      return `${minutes}:${secs}`;
+      return (
+        Math.floor(sec / 60) +
+        ":" +
+        String(sec % 60).padStart(2, "0")
+      );
     }
 
     function updateClocks() {
-      $('whiteClock').textContent =
-        formatTime(
-          appState.whiteClock
-        );
+      $("whiteClock").textContent =
+        formatTime(appState.whiteClock);
 
-      $('blackClock').textContent =
-        formatTime(
-          appState.blackClock
-        );
+      $("blackClock").textContent =
+        formatTime(appState.blackClock);
 
-      $('whiteCard')
-        .classList
-        .toggle(
-          'active',
-          appState.active === 'w' &&
-          !appState.over
-        );
+      $("whiteCard").classList.toggle(
+        "active",
+        appState.active === "w" && !appState.over
+      );
 
-      $('blackCard')
-        .classList
-        .toggle(
-          'active',
-          appState.active === 'b' &&
-          !appState.over
-        );
+      $("blackCard").classList.toggle(
+        "active",
+        appState.active === "b" && !appState.over
+      );
     }
+
+    function clearTimer() {
+      if (appState.timer) {
+        clearInterval(appState.timer);
+        appState.timer = null;
+      }
+    }
+
+    function clearBotTimer() {
+      if (appState.botTimer) {
+        clearTimeout(appState.botTimer);
+        appState.botTimer = null;
+      }
+    }
+
+    function startTimer() {
+      clearTimer();
+
+      appState.timer = setInterval(() => {
+        if (appState.over) {
+          return;
+        }
+
+        if (appState.active === "w") {
+          appState.whiteClock--;
+
+          if (appState.whiteClock <= 0) {
+            appState.whiteClock = 0;
+
+            finishGame("Black wins on time");
+
+            return;
+          }
+        } else {
+          appState.blackClock--;
+
+          if (appState.blackClock <= 0) {
+            appState.blackClock = 0;
+
+            finishGame("White wins on time");
+
+            return;
+          }
+        }
+
+        updateClocks();
+      }, 1000);
+    }
+
+    /* ============================================================
+       GAME END
+       ============================================================ */
+
+    function finishGame(message) {
+      appState.over = true;
+
+      clearTimer();
+      clearBotTimer();
+
+      const result = $("result");
+
+      result.textContent = message;
+      result.classList.remove("hidden");
+
+      setStatus(message);
+
+      updateClocks();
+    }
+
+    /* ============================================================
+       CAPTURES
+       ============================================================ */
 
     function updateCaptured() {
-      $('whiteCaptured')
-        .textContent =
+      $("whiteCaptured").textContent =
         appState.captured.w
-          .map(
-            piece =>
-              symbols.b[piece] || ''
-          )
-          .join(' ');
+          .map(piece => symbols.b[piece] || "")
+          .join(" ");
 
-      $('blackCaptured')
-        .textContent =
+      $("blackCaptured").textContent =
         appState.captured.b
-          .map(
-            piece =>
-              symbols.w[piece] || ''
-          )
-          .join(' ');
+          .map(piece => symbols.w[piece] || "")
+          .join(" ");
     }
+
+    /* ============================================================
+       MOVE LIST
+       ============================================================ */
 
     function renderMoves() {
       const history =
@@ -2601,325 +1747,155 @@
           verbose: true
         });
 
-      let rows = '';
+      let rows = "";
 
-      for (
-        let i = 0;
-        i < history.length;
-        i += 2
-      ) {
+      for (let i = 0; i < history.length; i += 2) {
         rows += `
           <div class="move">
-            <em>
-              ${Math.floor(i / 2) + 1}.
-            </em>
-
-            <span>
-              ${history[i]?.san || ''}
-            </span>
-
-            <span>
-              ${history[i + 1]?.san || ''}
-            </span>
+            <em>${Math.floor(i / 2) + 1}.</em>
+            <span>${history[i]?.san || ""}</span>
+            <span>${history[i + 1]?.san || ""}</span>
           </div>
         `;
       }
 
-      $('moveList').innerHTML =
-        rows;
+      $("moveList").innerHTML = rows;
     }
 
-    /* =========================
-       CLOCK
-    ========================== */
-
-    function clearTimer() {
-      if (appState.timer) {
-        clearInterval(
-          appState.timer
-        );
-
-        appState.timer = null;
-      }
-    }
-
-    function startTimer() {
-      clearTimer();
-
-      appState.timer =
-        setInterval(() => {
-
-          if (appState.over) {
-            return;
-          }
-
-          if (
-            appState.active === 'w'
-          ) {
-            appState.whiteClock--;
-
-            if (
-              appState.whiteClock <= 0
-            ) {
-              appState.whiteClock = 0;
-
-              updateClocks();
-
-              finishGame(
-                'Black wins on time'
-              );
-
-              return;
-            }
-
-          } else {
-
-            appState.blackClock--;
-
-            if (
-              appState.blackClock <= 0
-            ) {
-              appState.blackClock = 0;
-
-              updateClocks();
-
-              finishGame(
-                'White wins on time'
-              );
-
-              return;
-            }
-          }
-
-          updateClocks();
-
-        }, 1000);
-    }
-
-    function finishGame(message) {
-      if (appState.over) {
-        return;
-      }
-
-      appState.over = true;
-
-      clearTimer();
-
-      $('result').textContent =
-        message;
-
-      $('result')
-        .classList
-        .remove('hidden');
-
-      setStatus(message);
-
-      updateClocks();
-    }
-
-    /* =========================
-       BOARD
-    ========================== */
+    /* ============================================================
+       CHESS BOARD
+       ============================================================ */
 
     function renderBoard() {
-      boardEl.innerHTML = '';
+      boardEl.innerHTML = "";
 
-      const board =
-        appState.game.board();
+      const board = appState.game.board();
 
-      const targets =
-        appState.selected
-          ? appState.game
-              .moves({
-                square:
-                  appState.selected,
-                verbose: true
-              })
-              .map(
-                move => move.to
-              )
-          : [];
+      const targets = appState.selected
+        ? appState.game
+            .moves({
+              square: appState.selected,
+              verbose: true
+            })
+            .map(move => move.to)
+        : [];
 
-      for (
-        let displayRow = 0;
-        displayRow < 8;
-        displayRow++
-      ) {
+      for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
 
-        for (
-          let displayCol = 0;
-          displayCol < 8;
-          displayCol++
-        ) {
+          const rr = appState.flipped
+            ? 7 - r
+            : r;
 
-          const row =
-            appState.flipped
-              ? 7 - displayRow
-              : displayRow;
-
-          const col =
-            appState.flipped
-              ? 7 - displayCol
-              : displayCol;
+          const cc = appState.flipped
+            ? 7 - c
+            : c;
 
           const square =
-            files[col] +
-            (8 - row);
+            files[cc] + (8 - rr);
 
-          const button =
-            document.createElement(
-              'button'
-            );
+          const btn =
+            document.createElement("button");
 
-          button.type = 'button';
+          btn.type = "button";
 
-          button.className =
-            'square ' +
-            (
-              (
-                displayRow +
-                displayCol
-              ) % 2
-                ? 'dark'
-                : 'light'
-            );
+          btn.className =
+            "square " +
+            (((r + c) % 2)
+              ? "dark"
+              : "light");
 
-          if (
-            appState.selected ===
-            square
-          ) {
-            button.classList.add(
-              'selected'
-            );
+          if (appState.selected === square) {
+            btn.classList.add("selected");
           }
 
           if (
             appState.last &&
             (
-              appState.last.from ===
-                square ||
-              appState.last.to ===
-                square
+              appState.last.from === square ||
+              appState.last.to === square
             )
           ) {
-            button.classList.add(
-              'last'
-            );
+            btn.classList.add("last");
           }
 
-          if (
-            targets.includes(square)
-          ) {
-            button.classList.add(
-              'legal'
-            );
+          if (targets.includes(square)) {
+            btn.classList.add("legal");
           }
 
-          const piece =
-            board[row][col];
+          const piece = board[rr][cc];
 
           if (piece) {
-            button.textContent =
-              symbols[
-                piece.color
-              ][
-                piece.type
-              ];
+            btn.textContent =
+              symbols[piece.color][piece.type];
           }
 
-          const showFile =
-            displayRow === 7;
-
-          const showRank =
-            displayCol === 0;
+          /*
+           * Coordinates
+           */
 
           if (
-            showFile ||
-            showRank
+            c === 0 ||
+            (
+              r === 7 &&
+              !appState.flipped
+            ) ||
+            (
+              r === 0 &&
+              appState.flipped
+            )
           ) {
             const label =
-              document.createElement(
-                'span'
-              );
+              document.createElement("span");
 
-            label.className =
-              'coord-label';
+            label.className = "coord-label";
 
-            if (
-              showFile &&
-              showRank
-            ) {
-              label.textContent =
-                `${files[col]}${8 - row}`;
-
-            } else if (showFile) {
-
-              label.textContent =
-                files[col];
-
-            } else {
-
-              label.textContent =
-                8 - row;
+            if (c === 0) {
+              label.textContent = files[cc];
             }
 
-            button.appendChild(
-              label
-            );
+            btn.appendChild(label);
           }
 
-          button.addEventListener(
-            'click',
-            () =>
-              handleSquareClick(
-                square
-              )
+          btn.addEventListener(
+            "click",
+            () => handleSquareClick(square)
           );
 
-          boardEl.appendChild(
-            button
-          );
+          boardEl.appendChild(btn);
         }
       }
     }
 
-    /* =========================
-       RESET
-    ========================== */
+    /* ============================================================
+       RESET GAME
+       ============================================================ */
 
     function resetGame() {
-      appState.game =
-        new Chess();
+      clearBotTimer();
 
-      appState.selected =
-        null;
+      appState.game = new Chess();
 
-      appState.last =
-        null;
+      appState.selected = null;
 
-      appState.pending =
-        null;
+      appState.last = null;
 
-      appState.over =
-        false;
+      appState.pending = null;
 
-      appState.whiteClock =
-        600;
+      appState.over = false;
 
-      appState.blackClock =
-        600;
+      appState.whiteClock = 600;
 
-      appState.active =
-        'w';
+      appState.blackClock = 600;
+
+      appState.active = "w";
 
       appState.captured = {
         w: [],
         b: []
       };
 
-      $('result')
-        .classList
-        .add('hidden');
+      $("result").classList.add("hidden");
 
       updateCaptured();
 
@@ -2929,66 +1905,39 @@
 
       updateClocks();
 
-      if (
-        appState.mode === 'bot'
-      ) {
-
-        setStatus(
-          'Bot mode: you are White'
-        );
-
-      } else if (
-        appState.mode === 'online'
-      ) {
-
-        if (
-          appState.role === 'w'
-        ) {
-
+      if (appState.mode === "bot") {
+        setStatus("Bot mode: you are White");
+      } else if (appState.mode === "online") {
+        if (appState.role === "w") {
           setStatus(
-            'You are White - make the first move'
+            "You are White - make the first move"
           );
-
-        } else if (
-          appState.role === 'b'
-        ) {
-
+        } else if (appState.role === "b") {
           setStatus(
-            'Connected. Waiting for White'
+            "Connected. Waiting for White"
           );
-
         } else {
-
-          setStatus(
-            'Connect to a player'
-          );
+          setStatus("Connect to an opponent");
         }
-
       } else {
-
-        setStatus(
-          'White to move'
-        );
+        setStatus("White to move");
       }
 
       startTimer();
     }
 
-    /* =========================
-       GAME END
-    ========================== */
+    /* ============================================================
+       CHECK GAME STATE
+       ============================================================ */
 
     function maybeFinish() {
 
-      if (
-        appState.game
-          .in_checkmate()
-      ) {
+      if (appState.game.in_checkmate()) {
 
         const winner =
-          appState.game.turn() === 'w'
-            ? 'Black'
-            : 'White';
+          appState.game.turn() === "w"
+            ? "Black"
+            : "White";
 
         finishGame(
           `${winner} wins by checkmate`
@@ -2997,148 +1946,106 @@
         return true;
       }
 
-      if (
-        appState.game
-          .in_stalemate()
-      ) {
-
-        finishGame(
-          'Draw by stalemate'
-        );
-
+      if (appState.game.in_stalemate()) {
+        finishGame("Draw by stalemate");
         return true;
       }
 
-      if (
-        appState.game
-          .insufficient_material()
-      ) {
-
+      if (appState.game.insufficient_material()) {
         finishGame(
-          'Draw by insufficient material'
+          "Draw by insufficient material"
         );
-
         return true;
       }
 
-      if (
-        appState.game
-          .in_threefold_repetition()
-      ) {
-
+      if (appState.game.in_threefold_repetition()) {
         finishGame(
-          'Draw by repetition'
+          "Draw by repetition"
         );
-
         return true;
       }
 
-      if (
-        appState.game.in_draw()
-      ) {
-
-        finishGame(
-          'Draw'
-        );
-
-        return true;
-      }
-
-      if (
-        appState.game.in_check()
-      ) {
+      if (appState.game.in_check()) {
 
         setStatus(
-          `${
-            appState.game.turn() === 'w'
-              ? 'White'
-              : 'Black'
-          } is in check`
+          `${appState.game.turn() === "w"
+            ? "White"
+            : "Black"} is in check`
         );
       }
 
       return false;
     }
 
-    /* =========================
+    /* ============================================================
        SOUND
-    ========================== */
+       ============================================================ */
 
     function playTone() {
       try {
-
-        const AudioContext =
+        const AC =
           window.AudioContext ||
           window.webkitAudioContext;
 
-        if (!AudioContext) {
+        if (!AC) {
           return;
         }
 
-        const ctx =
-          new AudioContext();
+        const ctx = new AC();
 
-        const oscillator =
+        const osc =
           ctx.createOscillator();
 
         const gain =
           ctx.createGain();
 
-        oscillator.type =
-          'triangle';
+        osc.type = "triangle";
 
-        oscillator.frequency.value =
-          520;
+        osc.frequency.value = 520;
 
-        gain.gain.value =
-          0.03;
+        gain.gain.value = 0.03;
 
-        oscillator.connect(gain);
+        osc.connect(gain);
 
-        gain.connect(
-          ctx.destination
-        );
+        gain.connect(ctx.destination);
 
-        oscillator.start();
+        osc.start();
 
-        oscillator.stop(
+        osc.stop(
           ctx.currentTime + 0.08
         );
-
-      } catch (error) {
+      } catch (e) {
         // Audio is optional.
       }
     }
 
-    /* =========================
-       MOVE
-    ========================== */
+    /* ============================================================
+       APPLY MOVE
+       ============================================================ */
 
     function applyMove(
       from,
       to,
-      promotion = 'q'
+      promotion = "q"
     ) {
 
-      const legalMoves =
+      const moves =
         appState.game.moves({
           square: from,
           verbose: true
         });
 
-      const legalMove =
-        legalMoves.find(
-          move =>
-            move.to === to &&
+      const move =
+        moves.find(
+          m =>
+            m.to === to &&
             (
-              move.promotion
-                ? move.promotion ===
-                  promotion
-                : true
-            )
+              m.promotion ||
+              "q"
+            ) === promotion
         );
 
-      if (!legalMove) {
+      if (!move) {
         return false;
       }
 
@@ -3159,34 +2066,37 @@
       };
 
       if (result.captured) {
+        const side = result.color;
 
-        appState.captured[
-          result.color
-        ].push(
+        appState.captured[side].push(
           result.captured
         );
       }
 
       playTone();
 
-      appState.active =
-        appState.game.turn();
-
       updateCaptured();
 
       renderMoves();
 
-      renderBoard();
+      appState.active =
+        appState.game.turn();
 
       updateClocks();
+
+      renderBoard();
 
       return true;
     }
 
+    /* ============================================================
+       COMPLETE MOVE
+       ============================================================ */
+
     function completeMove(
       from,
       to,
-      promotion = 'q'
+      promotion = "q"
     ) {
 
       if (appState.over) {
@@ -3204,101 +2114,103 @@
         return;
       }
 
-      /* SEND ONLINE MOVE */
+      /*
+       * ONLINE:
+       * Send move to opponent.
+       */
 
       if (
-        appState.mode === 'online' &&
+        appState.mode === "online" &&
         appState.conn &&
         appState.conn.open
       ) {
 
-        appState.conn.send({
-          type: 'move',
-          from,
-          to,
-          promotion
-        });
+        try {
+          appState.conn.send({
+            type: "move",
+            from,
+            to,
+            promotion
+          });
+        } catch (error) {
+          console.error(
+            "Could not send move:",
+            error
+          );
+        }
       }
 
-      if (
-        maybeFinish()
-      ) {
+      if (maybeFinish()) {
         return;
       }
 
-      /* BOT */
+      /*
+       * BOT
+       */
 
       if (
-        appState.mode === 'bot' &&
-        appState.game.turn() === 'b'
+        appState.mode === "bot" &&
+        appState.game.turn() === "b"
       ) {
+
+        setStatus("Bot is thinking...");
+
+        clearBotTimer();
+
+        appState.botTimer =
+          setTimeout(() => {
+
+            if (appState.over) {
+              return;
+            }
+
+            const options =
+              appState.game.moves({
+                verbose: true
+              });
+
+            if (!options.length) {
+              return;
+            }
+
+            const move =
+              chooseBotMove(options);
+
+            applyMove(
+              move.from,
+              move.to,
+              move.promotion || "q"
+            );
+
+            if (!maybeFinish()) {
+              setStatus("White to move");
+            }
+
+            renderBoard();
+
+          }, 450);
+
+      } else {
 
         setStatus(
-          'Bot is thinking...'
+          appState.game.turn() === "w"
+            ? "White to move"
+            : "Black to move"
         );
-
-        setTimeout(() => {
-
-          if (appState.over) {
-            return;
-          }
-
-          const options =
-            appState.game.moves({
-              verbose: true
-            });
-
-          if (!options.length) {
-            maybeFinish();
-            return;
-          }
-
-          const move =
-            chooseBotMove(
-              options
-            );
-
-          applyMove(
-            move.from,
-            move.to,
-            move.promotion || 'q'
-          );
-
-          if (!maybeFinish()) {
-
-            setStatus(
-              'White to move'
-            );
-          }
-
-          renderBoard();
-
-        }, 450);
-
-        return;
       }
-
-      setStatus(
-        appState.game.turn() === 'w'
-          ? 'White to move'
-          : 'Black to move'
-      );
     }
 
-    /* =========================
+    /* ============================================================
        BOT
-    ========================== */
+       ============================================================ */
 
-    function chooseBotMove(
-      options
-    ) {
+    function chooseBotMove(options) {
 
-      /* EASY */
+      /*
+       * EASY
+       */
 
-      if (
-        appState.difficulty ===
-        'easy'
-      ) {
+      if (appState.difficulty === "easy") {
 
         return options[
           Math.floor(
@@ -3308,12 +2220,11 @@
         ];
       }
 
-      /* MEDIUM */
+      /*
+       * MEDIUM
+       */
 
-      if (
-        appState.difficulty ===
-        'medium'
-      ) {
+      if (appState.difficulty === "medium") {
 
         const scored =
           options.map(move => {
@@ -3321,23 +2232,16 @@
             let score = 0;
 
             if (move.captured) {
-
               score +=
-                values[
-                  move.captured
-                ] || 0;
+                values[move.captured] || 0;
             }
 
-            if (
-              move.san.includes('+')
-            ) {
-              score += 30;
+            if (move.san.includes("+")) {
+              score += 20;
             }
 
-            if (
-              move.san.includes('#')
-            ) {
-              score += 10000;
+            if (move.san.includes("#")) {
+              score += 50;
             }
 
             return {
@@ -3351,34 +2255,24 @@
             b.score - a.score
         );
 
-        const pool =
-          scored.slice(
-            0,
-            Math.min(
-              3,
-              scored.length
-            )
-          );
+        const index =
+          Math.random() < 0.25
+            ? 0
+            : Math.min(
+                2,
+                scored.length - 1
+              );
 
-        return pool[
-          Math.floor(
-            Math.random() *
-            pool.length
-          )
-        ].move;
+        return scored[index].move;
       }
 
-      /* HARD */
+      /*
+       * HARD
+       */
 
-      let bestMove =
-        options[0];
+      const scored = [];
 
-      let bestScore =
-        Infinity;
-
-      for (
-        const move of options
-      ) {
+      for (const move of options) {
 
         const clone =
           new Chess(
@@ -3389,7 +2283,7 @@
           from: move.from,
           to: move.to,
           promotion:
-            move.promotion || 'q'
+            move.promotion || "q"
         });
 
         const score =
@@ -3397,246 +2291,204 @@
             clone,
             2,
             -Infinity,
-            Infinity
+            Infinity,
+            false
           );
 
-        /*
-          Black is minimizing the
-          evaluation because the
-          evaluation is from White's
-          perspective.
-        */
-        if (
-          score < bestScore
-        ) {
-
-          bestScore =
-            score;
-
-          bestMove =
-            move;
-        }
+        scored.push({
+          move,
+          score
+        });
       }
 
-      return bestMove;
+      scored.sort(
+        (a, b) =>
+          b.score - a.score
+      );
+
+      return scored[0].move;
     }
 
     function minimax(
-      position,
+      pos,
       depth,
       alpha,
-      beta
+      beta,
+      maximizing
     ) {
 
       if (
         depth === 0 ||
-        position.game_over()
+        pos.game_over()
       ) {
-
-        return evaluateBoard(
-          position
-        );
+        return evaluateBoard(pos);
       }
 
       const moves =
-        position.moves({
+        pos.moves({
           verbose: true
         });
 
-      /* WHITE MAXIMIZES */
+      if (maximizing) {
 
-      if (
-        position.turn() === 'w'
-      ) {
+        let maxEval = -Infinity;
 
-        let best =
-          -Infinity;
-
-        for (
-          const move of moves
-        ) {
+        for (const move of moves) {
 
           const clone =
-            new Chess(
-              position.fen()
-            );
+            new Chess(pos.fen());
 
           clone.move({
             from: move.from,
             to: move.to,
             promotion:
-              move.promotion || 'q'
+              move.promotion || "q"
           });
 
-          const score =
+          const evalScore =
             minimax(
               clone,
               depth - 1,
               alpha,
-              beta
+              beta,
+              false
             );
 
-          best =
+          maxEval =
             Math.max(
-              best,
-              score
+              maxEval,
+              evalScore
             );
 
           alpha =
             Math.max(
               alpha,
-              score
+              evalScore
             );
 
-          if (
-            beta <= alpha
-          ) {
+          if (beta <= alpha) {
             break;
           }
         }
 
-        return best;
-      }
+        return maxEval;
 
-      /* BLACK MINIMIZES */
+      } else {
 
-      let best =
-        Infinity;
+        let minEval = Infinity;
 
-      for (
-        const move of moves
-      ) {
+        for (const move of moves) {
 
-        const clone =
-          new Chess(
-            position.fen()
-          );
+          const clone =
+            new Chess(pos.fen());
 
-        clone.move({
-          from: move.from,
-          to: move.to,
-          promotion:
-            move.promotion || 'q'
-        });
+          clone.move({
+            from: move.from,
+            to: move.to,
+            promotion:
+              move.promotion || "q"
+          });
 
-        const score =
-          minimax(
-            clone,
-            depth - 1,
-            alpha,
-            beta
-          );
+          const evalScore =
+            minimax(
+              clone,
+              depth - 1,
+              alpha,
+              beta,
+              true
+            );
 
-        best =
-          Math.min(
-            best,
-            score
-          );
+          minEval =
+            Math.min(
+              minEval,
+              evalScore
+            );
 
-        beta =
-          Math.min(
-            beta,
-            score
-          );
+          beta =
+            Math.min(
+              beta,
+              evalScore
+            );
 
-        if (
-          beta <= alpha
-        ) {
-          break;
+          if (beta <= alpha) {
+            break;
+          }
         }
-      }
 
-      return best;
+        return minEval;
+      }
     }
 
-    function evaluateBoard(
-      position
-    ) {
+    function evaluateBoard(pos) {
 
       let score = 0;
 
-      const board =
-        position.board();
+      const board = pos.board();
 
-      for (
-        let row = 0;
-        row < 8;
-        row++
-      ) {
+      for (let r = 0; r < 8; r++) {
 
-        for (
-          let col = 0;
-          col < 8;
-          col++
-        ) {
+        for (let c = 0; c < 8; c++) {
 
           const piece =
-            board[row][col];
+            board[r][c];
 
           if (!piece) {
             continue;
           }
 
           const value =
-            values[
-              piece.type
-            ] || 0;
+            values[piece.type] || 0;
 
           score +=
-            piece.color === 'w'
-              ? value
-              : -value;
+            (
+              piece.color === "w"
+                ? 1
+                : -1
+            ) * value;
         }
-      }
-
-      if (
-        position.in_checkmate()
-      ) {
-
-        return position.turn() === 'w'
-          ? -999999
-          : 999999;
       }
 
       return score;
     }
 
-    /* =========================
-       CLICK BOARD
-    ========================== */
+    /* ============================================================
+       BOARD CLICK
+       ============================================================ */
 
-    function handleSquareClick(
-      square
-    ) {
+    function handleSquareClick(square) {
 
       if (appState.over) {
         return;
       }
 
-      /* BOT ONLY ALLOWS WHITE */
+      /*
+       * BOT:
+       * Human controls White only.
+       */
 
       if (
-        appState.mode === 'bot' &&
-        appState.game.turn() !== 'w'
+        appState.mode === "bot" &&
+        appState.game.turn() !== "w"
       ) {
         return;
       }
 
-      /* ONLINE TURN */
+      /*
+       * ONLINE:
+       * Only move when it is our turn.
+       */
 
-      if (
-        appState.mode === 'online'
-      ) {
+      if (appState.mode === "online") {
 
         const isMyTurn =
           appState.role &&
           appState.game.turn() ===
-            appState.role;
+          appState.role;
 
         if (!isMyTurn) {
 
           setStatus(
-            'Waiting for opponent move'
+            "Waiting for opponent move"
           );
 
           return;
@@ -3644,64 +2496,55 @@
       }
 
       const piece =
-        appState.game.get(
-          square
-        );
+        appState.game.get(square);
 
-      const legalMoves =
+      const legal =
         appState.selected
           ? appState.game.moves({
-              square:
-                appState.selected,
+              square: appState.selected,
               verbose: true
             })
           : [];
 
-      /* SECOND CLICK */
+      /*
+       * We already selected a piece.
+       */
 
       if (appState.selected) {
 
         const match =
-          legalMoves.find(
+          legal.find(
             move =>
               move.to === square
           );
 
         if (match) {
 
-          /* PROMOTION */
+          /*
+           * Promotion
+           */
 
-          if (
-            match.promotion
-          ) {
+          if (match.promotion) {
 
             appState.pending = {
-              from:
-                appState.selected,
-
-              to:
-                square
+              from: appState.selected,
+              to: square
             };
 
-            $('promotion')
-              .classList
-              .remove(
-                'hidden'
+            $("promotion")
+              .classList.remove(
+                "hidden"
               );
 
             return;
           }
 
-          const from =
-            appState.selected;
-
           completeMove(
-            from,
+            appState.selected,
             square
           );
 
-          appState.selected =
-            null;
+          appState.selected = null;
 
           renderBoard();
 
@@ -3709,7 +2552,9 @@
         }
       }
 
-      /* SELECT PIECE */
+      /*
+       * Select a piece.
+       */
 
       if (
         piece &&
@@ -3717,227 +2562,238 @@
           appState.game.turn()
       ) {
 
-        appState.selected =
-          square;
+        appState.selected = square;
 
         renderBoard();
 
+      } else {
+
+        appState.selected = null;
+
+        renderBoard();
+      }
+    }
+
+    /* ============================================================
+       PROMOTION
+       ============================================================ */
+
+    function showPromotionChoice(choice) {
+
+      if (!appState.pending) {
         return;
       }
 
-      appState.selected =
-        null;
+      completeMove(
+        appState.pending.from,
+        appState.pending.to,
+        choice
+      );
+
+      appState.pending = null;
+
+      $("promotion")
+        .classList.add("hidden");
+
+      appState.selected = null;
 
       renderBoard();
     }
 
-    /* =========================
-       PROMOTION
-    ========================== */
+    /* ============================================================
+       MODE
+       ============================================================ */
 
-    function showPromotionChoice(
-      choice
-    ) {
+    function setMode(mode) {
+
+      /*
+       * Safety check.
+       *
+       * This prevents difficulty buttons or accidental
+       * calls from setting mode to undefined.
+       */
 
       if (
-        !appState.pending
+        !["local", "bot", "online"]
+          .includes(mode)
       ) {
         return;
       }
 
-      const {
-        from,
-        to
-      } = appState.pending;
+      appState.mode = mode;
 
-      completeMove(
-        from,
-        to,
-        choice
-      );
-
-      appState.pending =
-        null;
-
-      appState.selected =
-        null;
-
-      $('promotion')
-        .classList
-        .add(
-          'hidden'
-        );
-
-      renderBoard();
-    }
-
-    /* =========================
-       MODES
-    ========================== */
-
-    function updateModeUI(
-      mode
-    ) {
+      /*
+       * IMPORTANT FIX:
+       *
+       * Only actual game mode buttons have
+       * data-mode.
+       */
 
       document
         .querySelectorAll(
-          '.mode-btn'
+          '.mode-btn[data-mode]'
         )
-        .forEach(button => {
+        .forEach(btn => {
 
-          if (
-            button.dataset.mode
-          ) {
+          btn.classList.toggle(
+            "active",
+            btn.dataset.mode === mode
+          );
 
-            button.classList.toggle(
-              'active',
-              button.dataset.mode ===
-                mode
-            );
-          }
         });
 
       document
         .querySelectorAll(
-          '.lobby-card'
+          ".lobby-card"
         )
         .forEach(card => {
 
           card.classList.toggle(
-            'active',
-            card.dataset.mode ===
-              mode
+            "active",
+            card.dataset.mode === mode
           );
+
         });
-    }
 
-    function setMode(
-      mode
-    ) {
-
-      appState.mode =
-        mode;
-
-      updateModeUI(
-        mode
-      );
-
-      if (
-        mode !== 'online'
-      ) {
+      if (mode !== "online") {
 
         if (
           appState.conn &&
           appState.conn.open
         ) {
-
-          appState.conn.close();
+          try {
+            appState.conn.close();
+          } catch (e) {}
         }
 
-        appState.conn =
-          null;
+        appState.conn = null;
 
-        appState.role =
-          null;
+        appState.role = null;
       }
 
       resetGame();
-
-      if (
-        mode === 'online'
-      ) {
-
-        initPeer();
-
-        setStatus(
-          'Share your Peer ID or connect to a friend'
-        );
-      }
     }
 
-    /* =========================
-       PEERJS
-    ========================== */
+    /* ============================================================
+       PEER / ONLINE
+       ============================================================ */
 
     function initPeer() {
 
-      if (
-        appState.peer
-      ) {
+      if (appState.peer) {
         return;
       }
 
-      appState.peer =
-        new Peer();
+      try {
+
+        appState.peer =
+          new Peer();
+
+      } catch (error) {
+
+        console.error(
+          "PeerJS initialization failed:",
+          error
+        );
+
+        setStatus(
+          "Online mode unavailable"
+        );
+
+        return;
+      }
 
       appState.peer.on(
-        'open',
+        "open",
         id => {
 
-          $('myId').value =
-            id;
+          $("myId").value = id;
 
           if (
             appState.mode ===
-            'online'
+            "online"
           ) {
-
             setStatus(
-              'Your Peer ID is ready'
+              "Your Peer ID is ready"
             );
           }
         }
       );
 
+      /*
+       * Someone connects to us.
+       * We become Black.
+       */
+
       appState.peer.on(
-        'connection',
+        "connection",
         conn => {
 
-          appState.conn =
-            conn;
+          appState.conn = conn;
 
-          appState.role =
-            'b';
+          appState.role = "b";
 
-          appState.mode =
-            'online';
+          appState.mode = "online";
 
-          updateModeUI(
-            'online'
-          );
+          document
+            .querySelectorAll(
+              '.mode-btn[data-mode]'
+            )
+            .forEach(btn => {
+
+              btn.classList.toggle(
+                "active",
+                btn.dataset.mode ===
+                  "online"
+              );
+
+            });
+
+          document
+            .querySelectorAll(
+              ".lobby-card"
+            )
+            .forEach(card => {
+
+              card.classList.toggle(
+                "active",
+                card.dataset.mode ===
+                  "online"
+              );
+
+            });
 
           conn.on(
-            'open',
+            "open",
             () => {
 
               resetGame();
 
               setStatus(
-                'Connected! You are Black. Waiting for White.'
+                "Connected! You are Black. Waiting for White."
               );
             }
           );
 
           conn.on(
-            'data',
+            "data",
             data => {
 
               if (
                 !data ||
-                data.type !==
-                  'move'
+                data.type !== "move"
               ) {
                 return;
               }
 
               /*
-                Incoming move should be
-                White's move.
-              */
+               * Ignore moves if it isn't
+               * opponent's turn.
+               */
 
               if (
-                appState.game.turn() !==
-                'w'
+                appState.game.turn() ===
+                appState.role
               ) {
                 return;
               }
@@ -3946,57 +2802,77 @@
                 applyMove(
                   data.from,
                   data.to,
-                  data.promotion ||
-                    'q'
+                  data.promotion || "q"
                 );
 
-              if (!ok) {
+              if (ok) {
+
+                if (maybeFinish()) {
+                  return;
+                }
 
                 setStatus(
-                  'Invalid move received'
+                  appState.game.turn() ===
+                    appState.role
+                    ? "Your turn"
+                    : "Opponent turn"
                 );
 
-                return;
+                renderBoard();
               }
-
-              if (
-                maybeFinish()
-              ) {
-                return;
-              }
-
-              setStatus(
-                'Your turn'
-              );
             }
           );
 
           conn.on(
-            'close',
+            "close",
             () => {
 
-              if (
-                !appState.over
-              ) {
-
+              if (!appState.over) {
                 setStatus(
-                  'Connection closed'
+                  "Connection closed"
                 );
               }
+            }
+          );
+
+          conn.on(
+            "error",
+            error => {
+
+              console.error(
+                "Peer connection error:",
+                error
+              );
+
+              setStatus(
+                "Connection error"
+              );
             }
           );
         }
       );
 
       appState.peer.on(
-        'error',
+        "error",
         error => {
 
+          console.error(
+            "PeerJS error:",
+            error
+          );
+
           setStatus(
-            `Peer issue: ${
-              error.type ||
-              'unknown error'
-            }`
+            `Peer issue: ${error.type || "unknown error"}`
+          );
+        }
+      );
+
+      appState.peer.on(
+        "disconnected",
+        () => {
+
+          setStatus(
+            "Peer server disconnected"
           );
         }
       );
@@ -4007,94 +2883,93 @@
       initPeer();
 
       const id =
-        $('friendId')
-          .value
-          .trim();
+        $("friendId").value.trim();
 
-      const ownId =
-        $('myId')
-          .value
-          .trim();
+      const myId =
+        $("myId").value.trim();
 
       if (!id) {
 
         setStatus(
-          'Enter your opponent Peer ID'
+          "Enter an opponent Peer ID"
         );
 
         return;
       }
 
-      if (
-        id === ownId
-      ) {
+      if (id === myId) {
 
         setStatus(
-          'You cannot connect to yourself'
+          "You cannot connect to yourself"
         );
 
         return;
       }
 
-      appState.mode =
-        'online';
+      if (!appState.peer) {
 
-      appState.role =
-        'w';
+        setStatus(
+          "PeerJS is not ready yet"
+        );
 
-      updateModeUI(
-        'online'
-      );
+        return;
+      }
+
+      /*
+       * Close old connection.
+       */
 
       if (
         appState.conn &&
         appState.conn.open
       ) {
-
-        appState.conn.close();
+        try {
+          appState.conn.close();
+        } catch (e) {}
       }
+
+      appState.mode = "online";
+
+      appState.role = "w";
 
       appState.conn =
         appState.peer.connect(
-          id
+          id,
+          {
+            reliable: true
+          }
         );
 
       setStatus(
-        'Connecting...'
+        "Connecting..."
       );
 
       appState.conn.on(
-        'open',
+        "open",
         () => {
 
           resetGame();
 
           setStatus(
-            'Connected! You are White. Your turn.'
+            "Connected! You are White"
           );
         }
       );
 
       appState.conn.on(
-        'data',
+        "data",
         data => {
 
           if (
             !data ||
-            data.type !==
-              'move'
+            data.type !== "move"
           ) {
             return;
           }
 
-          /*
-            Incoming move should be
-            Black's move.
-          */
-
           if (
-            appState.game.turn() !==
-            'b'
+            appState.game.turn() ===
+            appState.role
           ) {
             return;
           }
@@ -4103,232 +2978,243 @@
             applyMove(
               data.from,
               data.to,
-              data.promotion ||
-                'q'
+              data.promotion || "q"
             );
 
-          if (!ok) {
+          if (ok) {
+
+            if (maybeFinish()) {
+              return;
+            }
 
             setStatus(
-              'Invalid move received'
+              appState.game.turn() ===
+                appState.role
+                ? "Your turn"
+                : "Opponent turn"
             );
 
-            return;
+            renderBoard();
           }
-
-          if (
-            maybeFinish()
-          ) {
-            return;
-          }
-
-          setStatus(
-            'Your turn'
-          );
         }
       );
 
       appState.conn.on(
-        'close',
+        "close",
         () => {
 
-          if (
-            !appState.over
-          ) {
-
+          if (!appState.over) {
             setStatus(
-              'Connection closed'
+              "Connection closed"
             );
           }
         }
       );
 
       appState.conn.on(
-        'error',
+        "error",
         error => {
 
+          console.error(
+            "Connection error:",
+            error
+          );
+
           setStatus(
-            `Connection error: ${
-              error.type ||
-              'unknown'
-            }`
+            "Could not connect to opponent"
           );
         }
       );
     }
 
-    /* =========================
+    /* ============================================================
        MINI BOARD
-    ========================== */
+       ============================================================ */
 
     function seedMiniBoard() {
 
       const pieces = [
-        '♜','♞','♝','♛','♚','♝','♞','♜',
-        '♟','♟','♟','♟','♟','♟','♟','♟',
-        '','','','','','','','',
-        '','','','','','','','',
-        '','','','','','','','',
-        '','','','','','','','',
-        '♙','♙','♙','♙','♙','♙','♙','♙',
-        '♖','♘','♗','♕','♔','♗','♘','♖'
+        "♜","♞","♝","♛","♚","♝","♞","♜",
+        "♟","♟","♟","♟","♟","♟","♟","♟",
+        "","","","","","","","",
+        "","","","","","","","",
+        "","","","","","","","",
+        "","","","","","","","",
+        "♙","♙","♙","♙","♙","♙","♙","♙",
+        "♖","♘","♗","♕","♔","♗","♘","♖"
       ];
 
       const miniBoard =
-        $('miniBoard');
+        $("miniBoard");
 
-      miniBoard.innerHTML =
-        '';
+      miniBoard.innerHTML = "";
 
       pieces.forEach(
         (piece, index) => {
 
           const div =
-            document.createElement(
-              'div'
-            );
-
-          const row =
-            Math.floor(
-              index / 8
-            );
-
-          const col =
-            index % 8;
+            document.createElement("div");
 
           div.className =
-            'mini-square ' +
+            "mini-square " +
             (
-              (
-                row + col
-              ) % 2
-                ? 'dark'
-                : 'light'
+              (index +
+                Math.floor(index / 8)) %
+              2 === 0
+                ? "light"
+                : "dark"
             );
 
           div.textContent =
-            piece;
+            piece || "";
 
-          miniBoard.appendChild(
-            div
-          );
+          miniBoard.appendChild(div);
         }
       );
     }
 
-    /* =========================
-       EVENTS
-    ========================== */
+    /* ============================================================
+       EVENT LISTENERS
+       ============================================================ */
+
+    /*
+     * Lobby cards
+     */
 
     document
       .querySelectorAll(
-        '.lobby-card'
+        ".lobby-card"
       )
       .forEach(card => {
 
         card.addEventListener(
-          'click',
-          () =>
+          "click",
+          () => {
             setMode(
               card.dataset.mode
-            )
-        );
-      });
-
-    document
-      .querySelectorAll(
-        '.mode-btn'
-      )
-      .forEach(button => {
-
-        button.addEventListener(
-          'click',
-          () => {
-
-            if (
-              button.dataset.mode
-            ) {
-
-              setMode(
-                button.dataset.mode
-              );
-            }
+            );
           }
         );
+
       });
+
+    /*
+     * FIX:
+     *
+     * Previously this was:
+     *
+     * document.querySelectorAll('.mode-btn')
+     *
+     * That included difficulty buttons.
+     *
+     * Now we specifically select buttons
+     * with data-mode.
+     */
 
     document
       .querySelectorAll(
-        '.difficulty-btn'
+        '.mode-btn[data-mode]'
       )
-      .forEach(button => {
+      .forEach(btn => {
 
-        button.addEventListener(
-          'click',
+        btn.addEventListener(
+          "click",
+          () => {
+
+            setMode(
+              btn.dataset.mode
+            );
+
+          }
+        );
+
+      });
+
+    /*
+     * Difficulty
+     */
+
+    document
+      .querySelectorAll(
+        ".difficulty-btn"
+      )
+      .forEach(btn => {
+
+        btn.addEventListener(
+          "click",
           () => {
 
             appState.difficulty =
-              button.dataset.difficulty;
+              btn.dataset.difficulty;
 
             document
               .querySelectorAll(
-                '.difficulty-btn'
+                ".difficulty-btn"
               )
-              .forEach(
-                other => {
+              .forEach(b => {
 
-                  other.classList.toggle(
-                    'active',
-                    other.dataset.difficulty ===
-                      appState.difficulty
-                  );
-                }
-              );
+                b.classList.toggle(
+                  "active",
+                  b.dataset.difficulty ===
+                    appState.difficulty
+                );
+
+              });
+
           }
         );
+
       });
 
-    $('heroPlay')
+    /*
+     * Hero
+     */
+
+    $("heroPlay")
       .addEventListener(
-        'click',
+        "click",
         () => {
 
-          $('play')
-            .scrollIntoView({
-              behavior:
-                'smooth'
-            });
+          $("play").scrollIntoView({
+            behavior: "smooth"
+          });
+
         }
       );
 
-    $('heroBot')
+    $("heroBot")
       .addEventListener(
-        'click',
+        "click",
         () => {
 
-          setMode(
-            'bot'
-          );
+          setMode("bot");
 
-          $('play')
-            .scrollIntoView({
-              behavior:
-                'smooth'
-            });
+          $("play").scrollIntoView({
+            behavior: "smooth"
+          });
+
         }
       );
 
-    $('newGame')
+    /*
+     * New game
+     */
+
+    $("newGame")
       .addEventListener(
-        'click',
+        "click",
         resetGame
       );
 
-    $('toolbarNew')
+    $("toolbarNew")
       .addEventListener(
-        'click',
+        "click",
         resetGame
       );
+
+    /*
+     * Flip board
+     */
 
     function flipBoard() {
 
@@ -4338,55 +3224,65 @@
       renderBoard();
     }
 
-    $('flipBoard')
+    $("flipBoard")
       .addEventListener(
-        'click',
+        "click",
         flipBoard
       );
 
-    $('toolbarFlip')
+    $("toolbarFlip")
       .addEventListener(
-        'click',
+        "click",
         flipBoard
       );
+
+    /*
+     * Reset clock
+     */
 
     function resetClock() {
 
-      appState.whiteClock =
-        600;
+      appState.whiteClock = 600;
 
-      appState.blackClock =
-        600;
+      appState.blackClock = 600;
 
       updateClocks();
 
-      startTimer();
+      clearTimer();
+
+      if (!appState.over) {
+        startTimer();
+      }
     }
 
-    $('resetClock')
+    $("resetClock")
       .addEventListener(
-        'click',
+        "click",
         resetClock
       );
 
-    $('toolbarReset')
+    $("toolbarReset")
       .addEventListener(
-        'click',
+        "click",
         resetClock
       );
 
-    $('copyId')
+    /*
+     * Copy Peer ID
+     */
+
+    $("copyId")
       .addEventListener(
-        'click',
+        "click",
         async () => {
 
           const id =
-            $('myId').value;
+            $("myId").value;
 
           if (!id) {
 
             setStatus(
-              'Peer ID is not ready yet'
+              "Peer ID is not ready yet"
             );
 
             return;
@@ -4394,60 +3290,100 @@
 
           try {
 
-            await navigator
-              .clipboard
+            await navigator.clipboard
               .writeText(id);
 
             setStatus(
-              'Peer ID copied'
+              "Peer ID copied"
             );
 
           } catch (error) {
 
             setStatus(
-              'Copy failed. Please copy the ID manually.'
+              "Copy failed. Please copy the ID manually."
             );
           }
         }
       );
 
-    $('joinGame')
+    /*
+     * Connect
+     */
+
+    $("joinGame")
       .addEventListener(
-        'click',
+        "click",
         connectPeer
       );
 
+    /*
+     * Promotion
+     */
+
     document
       .querySelectorAll(
-        '.promo-btn'
+        ".promo-btn"
       )
-      .forEach(button => {
+      .forEach(btn => {
 
-        button.addEventListener(
-          'click',
-          () =>
+        btn.addEventListener(
+          "click",
+          () => {
+
             showPromotionChoice(
-              button.dataset.p
-            )
+              btn.dataset.p
+            );
+
+          }
         );
+
       });
 
-    $('menuBtn')
+    /*
+     * Mobile menu
+     */
+
+    $("menuBtn")
       .addEventListener(
-        'click',
+        "click",
         () => {
 
-          $('navLinks')
-            .classList
-            .toggle(
-              'open'
+          $("navLinks")
+            .classList.toggle(
+              "open"
             );
+
         }
       );
 
-    /* =========================
+    /*
+     * Close mobile menu when
+     * clicking a navigation link.
+     */
+
+    document
+      .querySelectorAll(
+        "#navLinks a"
+      )
+      .forEach(link => {
+
+        link.addEventListener(
+          "click",
+          () => {
+
+            $("navLinks")
+              .classList.remove(
+                "open"
+              );
+
+          }
+        );
+
+      });
+
+    /* ============================================================
        INITIALIZE
-    ========================== */
+       ============================================================ */
 
     seedMiniBoard();
 
@@ -4462,12 +3398,12 @@
     updateClocks();
 
     setStatus(
-      'White to move'
+      "White to move"
     );
 
     startTimer();
+
   </script>
 
 </body>
 </html>
-```
