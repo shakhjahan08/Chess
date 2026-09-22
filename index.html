@@ -1,21 +1,908 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Royal Chess Online</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
-<style>
-:root{--bg:#111827;--panel:#1f2937dd;--gold:#f5c76b;--light:#f0d9b5;--dark:#b58863;--green:#147846;--text:#f9fafb;--muted:#aeb7c6}*{box-sizing:border-box}body{margin:0;min-height:100vh;padding:24px;color:var(--text);font:15px system-ui;background:radial-gradient(circle at top left,#f5c76b26,transparent 35%),radial-gradient(circle at bottom right,#5667f22e,transparent 35%),var(--bg);display:flex;justify-content:center}.app{width:min(1180px,100%)}.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:22px}.brand{display:flex;gap:13px;align-items:center}.logo{display:grid;place-items:center;width:56px;height:56px;border-radius:17px;background:linear-gradient(135deg,#ffe6a3,var(--gold));font-size:32px;color:#241608}.brand h1{margin:0;font-size:clamp(1.7rem,4vw,2.4rem)}.brand p{margin:3px 0;color:var(--muted)}.status{padding:11px 16px;border-radius:99px;background:var(--panel);color:var(--gold);font-weight:700}.layout{display:grid;grid-template-columns:minmax(280px,760px) 320px;gap:22px}.board-shell{padding:13px;border-radius:23px;background:#ffffff14;box-shadow:0 25px 70px #0007}.board{width:min(80vw,720px);aspect-ratio:1;display:grid;grid-template-columns:repeat(8,1fr);overflow:hidden;border-radius:13px}.square{position:relative;display:grid;place-items:center;cursor:pointer}.light{background:var(--light)}.dark{background:var(--dark)}.square:hover{filter:brightness(1.1)}.selected{box-shadow:inset 0 0 0 5px #f6c945}.last{box-shadow:inset 0 0 0 999px #f6c94533}.legal:after{content:"";width:23%;height:23%;border-radius:50%;background:#147846b3;position:absolute}.capture:after{content:"";position:absolute;inset:9%;border:6px solid #147846b3;border-radius:50%}.piece{position:relative;z-index:2;font-size:clamp(2rem,8vw,5.6rem);line-height:1;filter:drop-shadow(0 4px 2px #0006)}.white{color:#fffaf0;text-shadow:0 2px #8f7351,0 4px 8px #0007}.black{color:#16120e;text-shadow:0 2px #856b4d,0 4px 8px #0008}.coord{position:absolute;left:6px;bottom:4px;font-size:11px;font-weight:800;opacity:.7;z-index:3}.light .coord{color:#8f6d45}.dark .coord{color:#f3d6a4}.panel{padding:19px;border:1px solid #ffffff1a;border-radius:21px;background:var(--panel);backdrop-filter:blur(14px)}h2{font-size:1.05rem;margin:0 0 13px}.online{padding:13px;border-radius:14px;background:#0003;margin-bottom:18px}.online strong{color:var(--gold)}.id{display:flex;gap:7px;margin:9px 0}.id input{min-width:0;flex:1}.row{display:flex;gap:8px}input,button{border:0;border-radius:10px;padding:11px;color:var(--text);background:#ffffff18;font:inherit}input{width:100%;outline:1px solid #ffffff1c}button{cursor:pointer;font-weight:700}button:hover{filter:brightness(1.2)}button.primary{background:linear-gradient(135deg,#ffe6a3,var(--gold));color:#281a07}.hint{margin:9px 0 0;color:var(--muted);font-size:12px;line-height:1.4}.players{display:flex;gap:8px;margin:12px 0}.player{flex:1;padding:10px;border-radius:12px;background:#ffffff12;font-size:12px}.player b{display:block;color:var(--gold);font-size:14px}.moves{height:210px;overflow:auto;padding:8px;border-radius:12px;background:#0003;margin:10px 0 14px}.move{display:grid;grid-template-columns:30px 1fr 1fr;padding:7px;border-bottom:1px solid #ffffff0d}.num{color:var(--gold)}.controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}@media(max-width:900px){.top{align-items:flex-start;flex-direction:column}.status{width:100%;text-align:center}.layout{grid-template-columns:1fr}.board{width:100%}}
-</style></head>
-<body><main class="app"><header class="top"><div class="brand"><div class="logo">♞</div><div><h1>Royal Chess</h1><p>Play online instantly — no login required</p></div></div><div class="status" id="status">Create or join a game</div></header><section class="layout"><div class="board-shell"><div class="board" id="board"></div></div><aside class="panel"><div class="online"><h2>Online Game</h2><div>Your temporary player ID:</div><div class="id"><input id="myId" readonly><button id="copy">Copy</button></div><div class="row"><input id="friendId" placeholder="Paste opponent ID"><button class="primary" id="join">Join</button></div><p class="hint">Share your ID with a friend. When they enter it, the game starts automatically. IDs expire when this tab closes.</p></div><div class="players"><div class="player"><b>♔ You</b><span id="role">Waiting</span></div><div class="player"><b>♚ Opponent</b><span id="opponent">Not connected</span></div></div><h2>Move History</h2><div class="moves" id="moves">No moves yet.</div><div class="controls"><button class="primary" id="new">New Game</button><button id="undo">Undo</button><button id="flip">Flip Board</button><button id="leave">Leave Game</button></div></aside></section></main>
-<script>
-const files='abcdefgh',symbols={w:{k:'♔',q:'♕',r:'♖',b:'♗',n:'♘',p:'♙'},b:{k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'}};let game=new Chess(),selected=null,flipped=false,peer,conn,role=null;
-const $=id=>document.getElementById(id),boardEl=$('board');
-function setStatus(x){$('status').textContent=x}function send(x){if(conn&&conn.open)conn.send(x)}
-function render(){boardEl.innerHTML='';let b=game.board(),last=game.history({verbose:true}).slice(-1)[0];for(let r=0;r<8;r++)for(let c=0;c<8;c++){let ar=flipped?7-r:r,ac=flipped?7-c:c,s=files[ac]+(8-ar),p=b[ar][ac],e=document.createElement('div');e.className='square '+((ar+ac)%2?'dark':'light');if(selected===s)e.classList.add('selected');if(last&&(last.from===s||last.to===s))e.classList.add('last');if(selected){let m=game.moves({square:selected,verbose:true}).find(x=>x.to===s);if(m)e.classList.add(m.captured?'capture':'legal')}if(p){let x=document.createElement('span');x.className='piece '+(p.color==='w'?'white':'black');x.textContent=symbols[p.color][p.type];e.appendChild(x)}let co=document.createElement('span');co.className='coord';co.textContent=s;e.appendChild(co);e.onclick=()=>click(s);boardEl.appendChild(e)}}
-function click(s){if(!role||game.game_over()||game.turn()!==role)return;let p=game.get(s);if(selected){let m=game.moves({square:selected,verbose:true}).find(x=>x.to===s);if(m){const move=game.move({from:selected,to:s,promotion:'q'});selected=null;send({type:'move',move:move.san,fen:game.fen()});update();return}selected=null}if(p&&p.color===role)selected=s;render()}
-function update(){render();let h=game.history(),out='';for(let i=0;i<h.length;i+=2)out+=`<div class="move"><span class="num">${i/2+1}.</span><span>${h[i]||''}</span><span>${h[i+1]||''}</span></div>`;$('moves').innerHTML=out||'No moves yet.';if(game.game_over())setStatus(game.in_checkmate()?'Checkmate!': 'Game drawn');else setStatus(game.turn()===role?'Your turn':'Opponent’s turn')}
-function connect(c,isHost){conn=c;role=isHost?'w':'b';$('role').textContent=role==='w'?'White':'Black';conn.on('open',()=>{conn.send({type:'hello',role});$('opponent').textContent='Connected';setStatus(role==='w'?'Your turn':'Opponent’s turn');if(isHost)send({type:'state',fen:game.fen()});update()});conn.on('data',data=>{if(data.type==='hello'){$('opponent').textContent='Connected';if(role==='w')send({type:'state',fen:game.fen()})}if(data.type==='state'){game=new Chess(data.fen);update()}if(data.type==='move'){game.move(data.move,{sloppy:true});update()}});conn.on('close',()=>{$('opponent').textContent='Disconnected';setStatus('Opponent disconnected')})}
-peer=new Peer();peer.on('open',id=>{$('myId').value=id});peer.on('connection',c=>{if(!conn)connect(c,false)});peer.on('error',e=>setStatus('Connection error — try again'));
-$('join').onclick=()=>{let id=$('friendId').value.trim();if(!id||id===$('myId').value)return setStatus('Enter a valid opponent ID');connect(peer.connect(id),true)};$('copy').onclick=()=>navigator.clipboard?.writeText($('myId').value);$('new').onclick=()=>{if(role==='w'){game.reset();send({type:'state',fen:game.fen()});update()}};$('undo').onclick=()=>setStatus('Undo is disabled in online games to keep both boards synchronized');$('flip').onclick=()=>{flipped=!flipped;render()};$('leave').onclick=()=>{if(conn)conn.close();conn=null;role=null;game.reset();$('opponent').textContent='Not connected';$('role').textContent='Waiting';setStatus('Create or join a game');update()};update();
-</script></body></html>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Royal Chess Arena</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: rgba(15, 23, 42, 0.82);
+      --panel-strong: #111827;
+      --card: #1f2937;
+      --light-square: #f0d9b5;
+      --dark-square: #b58863;
+      --board-frame: #1c2435;
+      --gold: #f7c873;
+      --gold-2: #d9a441;
+      --green: #22c55e;
+      --red: #ef4444;
+      --text: #f8fafc;
+      --muted: #c7d2fe;
+      --shadow: rgba(0, 0, 0, 0.3);
+      --legal: rgba(34, 197, 94, 0.45);
+      --selected: rgba(59, 130, 246, 0.6);
+      --last-move: rgba(250, 204, 21, 0.5);
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top, #172554 0%, #0f172a 35%, #050b16 100%);
+      color: var(--text);
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .app {
+      width: min(1200px, 100%);
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 20px 60px var(--shadow);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-size: 2rem;
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      color: #111827;
+      box-shadow: 0 10px 30px rgba(247, 200, 115, 0.35);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.6rem, 2vw, 2.4rem);
+      line-height: 1;
+    }
+
+    .subtitle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .status-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 700;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 18px 0 10px;
+    }
+
+    .mode-switch {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .mode-btn, .action-btn {
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+      font-weight: 700;
+    }
+
+    .mode-btn:hover, .action-btn:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.06);
+    }
+
+    .mode-btn.active {
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      color: #111827;
+      border-color: transparent;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .action-btn.primary {
+      background: linear-gradient(135deg, #0ea5e9, #2563eb);
+      border-color: transparent;
+      color: white;
+    }
+
+    .action-btn.danger {
+      background: linear-gradient(135deg, #ef4444, #b91c1c);
+      border-color: transparent;
+      color: white;
+    }
+
+    .play-area {
+      display: grid;
+      grid-template-columns: minmax(260px, 320px) minmax(320px, 1fr);
+      gap: 22px;
+      padding-top: 20px;
+    }
+
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card {
+      background: rgba(17, 24, 39, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.16);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 16px 32px rgba(0,0,0,0.18);
+    }
+
+    .player-card {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      min-height: 88px;
+    }
+
+    .piece-badge {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 12px;
+      font-size: 1.7rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(148,163,184,0.2);
+    }
+
+    .player-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .player-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      opacity: 0.9;
+    }
+
+    .player-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .clock {
+      font-weight: 800;
+      font-size: 1.5rem;
+      color: var(--gold);
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      min-width: 90px;
+    }
+
+    .player-card.active {
+      border-color: rgba(247, 200, 115, 0.75);
+      box-shadow: inset 0 0 0 1px rgba(247, 200, 115, 0.25);
+    }
+
+    .mini-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .connect-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(148,163,184,0.25);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 1rem;
+    }
+
+    input[readonly] { opacity: 0.9; }
+
+    .capture-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .capture-box .mini-box {
+      min-height: 66px;
+      padding: 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(148,163,184,0.12);
+    }
+
+    .pieces-row {
+      margin-top: 8px;
+      font-size: 1.55rem;
+      letter-spacing: 0.08em;
+      min-height: 28px;
+    }
+
+    .move-list {
+      max-height: 220px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .moves-grid {
+      display: grid;
+      grid-template-columns: 48px 1fr 1fr;
+      gap: 8px;
+      align-items: center;
+      padding: 4px 0;
+      font-size: 0.98rem;
+      border-bottom: 1px solid rgba(148,163,184,0.08);
+    }
+
+    .moves-grid .num { color: var(--muted); }
+    .moves-grid .move-cell { font-weight: 700; }
+
+    .board-panel {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .board-shell {
+      background: rgba(17, 24, 39, 0.9);
+      border: 1px solid rgba(148,163,184,0.16);
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: 0 16px 32px rgba(0,0,0,0.22);
+      position: relative;
+    }
+
+    .board {
+      width: min(72vmin, 620px);
+      aspect-ratio: 1 / 1;
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      border-radius: 18px;
+      overflow: hidden;
+      border: 8px solid var(--board-frame);
+      box-shadow: inset 0 0 0 4px rgba(255,255,255,0.05);
+    }
+
+    .square {
+      position: relative;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(2.1rem, 4vw, 3.3rem);
+      line-height: 1;
+      user-select: none;
+      cursor: pointer;
+      transition: filter 0.12s ease, transform 0.12s ease;
+    }
+
+    .square:hover {
+      filter: brightness(1.04);
+    }
+
+    .square.light { background: var(--light-square); }
+    .square.dark { background: var(--dark-square); }
+    .square.selected { box-shadow: inset 0 0 0 5px var(--selected); }
+    .square.legal::after {
+      content: "";
+      position: absolute;
+      width: 18%;
+      height: 18%;
+      border-radius: 50%;
+      background: rgba(34, 197, 94, 0.7);
+      box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.18);
+    }
+    .square.last-move { box-shadow: inset 0 0 0 4px var(--last-move); }
+
+    .square .label {
+      position: absolute;
+      left: 7px;
+      bottom: 7px;
+      font-size: 0.7rem;
+      color: rgba(17, 24, 39, 0.7);
+      font-weight: 700;
+    }
+
+    .result-banner {
+      position: absolute;
+      inset: auto auto 28px 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(247, 200, 115, 0.35);
+      color: var(--text);
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.24);
+    }
+
+    .hidden { display: none; }
+
+    @media (max-width: 900px) {
+      .play-area {
+        grid-template-columns: 1fr;
+      }
+
+      .board {
+        width: min(88vw, 520px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">♞</div>
+        <div>
+          <h1>Royal Chess Arena</h1>
+          <p class="subtitle">Play local, vs bot, or online against a friend</p>
+        </div>
+      </div>
+      <div id="status" class="status-pill">White to move</div>
+    </header>
+
+    <section class="toolbar">
+      <div class="mode-switch">
+        <button class="mode-btn active" data-mode="local">Local</button>
+        <button class="mode-btn" data-mode="bot">Vs Bot</button>
+        <button class="mode-btn" data-mode="online">Online</button>
+      </div>
+      <div class="controls">
+        <button id="newGame" class="action-btn primary">New Game</button>
+        <button id="flipBoard" class="action-btn">Flip Board</button>
+        <button id="resetClock" class="action-btn danger">Reset Clock</button>
+      </div>
+    </section>
+
+    <section class="play-area">
+      <aside class="side-panel">
+        <div class="card player-card active" id="whiteCard">
+          <div class="piece-badge">♔</div>
+          <div class="player-meta">
+            <div class="player-label">White</div>
+            <div class="player-name">Player 1</div>
+          </div>
+          <div id="whiteClock" class="clock">10:00</div>
+        </div>
+
+        <div class="card player-card" id="blackCard">
+          <div class="piece-badge">♚</div>
+          <div class="player-meta">
+            <div class="player-label">Black</div>
+            <div class="player-name">Player 2</div>
+          </div>
+          <div id="blackClock" class="clock">10:00</div>
+        </div>
+
+        <div class="card connect-box">
+          <div class="mini-label">Online Match</div>
+          <div class="input-row">
+            <input id="myId" type="text" readonly placeholder="Your Peer ID" />
+            <button id="copyId" class="action-btn">Copy</button>
+          </div>
+          <div class="input-row">
+            <input id="friendId" type="text" placeholder="Opponent ID" />
+            <button id="joinGame" class="action-btn primary">Connect</button>
+          </div>
+        </div>
+
+        <div class="card capture-box">
+          <div class="mini-box">
+            <div class="mini-label">White Captures</div>
+            <div id="whiteCaptured" class="pieces-row"></div>
+          </div>
+          <div class="mini-box">
+            <div class="mini-label">Black Captures</div>
+            <div id="blackCaptured" class="pieces-row"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="mini-label">Move List</div>
+          <div id="moveList" class="move-list"></div>
+        </div>
+      </aside>
+
+      <div class="board-panel">
+        <div class="board-shell">
+          <div id="board" class="board"></div>
+          <div id="resultBanner" class="result-banner hidden"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const files = 'abcdefgh';
+
+    const pieces = {
+      w: { k: '♔', q: '♕', r: '♖', b: '♗', n: '♘', p: '♙' },
+      b: { k: '♚', q: '♛', r: '♜', b: '♝', n: '♞', p: '♟' }
+    };
+
+    const pieceValues = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 };
+    let game = new Chess();
+    let selectedSquare = null;
+    let flipped = false;
+    let mode = 'local';
+    let peer = null;
+    let conn = null;
+    let onlineRole = null;
+    let timerInterval = null;
+    let gameOver = false;
+    let stepCount = 0;
+    let lastMove = null;
+    let whiteClock = 600;
+    let blackClock = 600;
+    let activeClock = 'w';
+    const capturedPieces = { w: [], b: [] };
+
+    const $ = (id) => document.getElementById(id);
+    const boardEl = $('board');
+
+    function setStatus(message) {
+      $('status').textContent = message;
+    }
+
+    function formatTime(totalSeconds) {
+      const safeSeconds = Math.max(0, Math.ceil(totalSeconds));
+      const minutes = Math.floor(safeSeconds / 60);
+      const seconds = safeSeconds % 60;
+      return `${minutes}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    function updateClocks() {
+      $('whiteClock').textContent = formatTime(whiteClock);
+      $('blackClock').textContent = formatTime(blackClock);
+      $('whiteCard').classList.toggle('active', activeClock === 'w' && !gameOver);
+      $('blackCard').classList.toggle('active', activeClock === 'b' && !gameOver);
+    }
+
+    function updateCaptured() {
+      $('whiteCaptured').textContent = capturedPieces.w.map((p) => pieces.b[p] || '').join(' ');
+      $('blackCaptured').textContent = capturedPieces.b.map((p) => pieces.w[p] || '').join(' ');
+    }
+
+    function renderMoves() {
+      const history = game.history({ verbose: true });
+      const rows = [];
+      for (let i = 0; i < history.length; i += 2) {
+        const whiteMove = history[i];
+        const blackMove = history[i + 1];
+        rows.push(`
+          <div class="moves-grid">
+            <div class="num">${Math.floor(i / 2) + 1}.</div>
+            <div class="move-cell">${whiteMove ? whiteMove.san : ''}</div>
+            <div class="move-cell">${blackMove ? blackMove.san : ''}</div>
+          </div>
+        `);
+      }
+      $('moveList').innerHTML = rows.join('');
+    }
+
+    function clearClockTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    function startClock() {
+      clearClockTimer();
+      timerInterval = setInterval(() => {
+        if (gameOver) return;
+        if (activeClock === 'w') {
+          whiteClock = Math.max(0, whiteClock - 1);
+          if (whiteClock <= 0) {
+            finishGame('Black wins on time');
+          }
+        } else {
+          blackClock = Math.max(0, blackClock - 1);
+          if (blackClock <= 0) {
+            finishGame('White wins on time');
+          }
+        }
+        updateClocks();
+      }, 1000);
+    }
+
+    function finishGame(message) {
+      gameOver = true;
+      clearClockTimer();
+      $('resultBanner').textContent = message;
+      $('resultBanner').classList.remove('hidden');
+      setStatus(message);
+      updateClocks();
+    }
+
+    function resetBoardForNewGame() {
+      game = new Chess();
+      selectedSquare = null;
+      lastMove = null;
+      gameOver = false;
+      capturedPieces.w = [];
+      capturedPieces.b = [];
+      whiteClock = 600;
+      blackClock = 600;
+      activeClock = 'w';
+      $('resultBanner').classList.add('hidden');
+      updateClocks();
+      updateCaptured();
+      renderMoves();
+      renderBoard();
+      startClock();
+      if (mode === 'bot') {
+        setStatus('Bot mode: you are White');
+      } else if (mode === 'online') {
+        setStatus(onlineRole === 'w' ? 'You are White - make the first move' : 'Connected. Black to move first');
+      } else {
+        setStatus('White to move');
+      }
+    }
+
+    function makeMove(from, to, promotion = 'q') {
+      const moves = game.moves({ square: from, verbose: true });
+      const move = moves.find((m) => m.to === to && (m.promotion || 'q') === promotion);
+      if (!move) return false;
+
+      const result = game.move({ from, to, promotion });
+      if (!result) return false;
+
+      lastMove = { from, to };
+      const captured = result.captured;
+      if (captured) {
+        const capturerColor = result.color;
+        if (capturerColor === 'w') {
+          capturedPieces.w.push(captured);
+        } else {
+          capturedPieces.b.push(captured);
+        }
+      }
+      updateCaptured();
+      renderMoves();
+      activeClock = game.turn();
+      updateClocks();
+      renderBoard();
+      return true;
+    }
+
+    function triggerOnlineSync(from, to) {
+      if (conn && conn.open) {
+        conn.send({ type: 'move', from, to, promotion: 'q' });
+      }
+    }
+
+    function detectCheckOrMate() {
+      if (game.in_checkmate()) {
+        const winner = game.turn() === 'w' ? 'Black' : 'White';
+        finishGame(`${winner} wins by checkmate`);
+        return true;
+      }
+      if (game.in_stalemate()) {
+        finishGame('Draw by stalemate');
+        return true;
+      }
+      if (game.insufficient_material()) {
+        finishGame('Draw by insufficient material');
+        return true;
+      }
+      if (game.in_threefold_repetition()) {
+        finishGame('Draw by repetition');
+        return true;
+      }
+      if (game.in_check()) {
+        setStatus(`${game.turn() === 'w' ? 'White' : 'Black'} is in check`);
+      }
+      return false;
+    }
+
+    function handleSquareClick(square) {
+      if (gameOver) return;
+
+      if (mode === 'bot') {
+        if (game.turn() !== 'w') return;
+      }
+
+      if (mode === 'online') {
+        const myTurn = onlineRole && game.turn() === onlineRole;
+        if (!myTurn) {
+          setStatus('Waiting for opponent move');
+          return;
+        }
+      }
+
+      const piece = game.get(square);
+      const legalMoves = selectedSquare ? game.moves({ square: selectedSquare, verbose: true }) : [];
+
+      if (selectedSquare) {
+        const validMove = legalMoves.find((m) => m.to === square);
+        if (validMove) {
+          const moved = makeMove(selectedSquare, square);
+          if (moved) {
+            selectedSquare = null;
+            if (mode === 'online') {
+              triggerOnlineSync(validMove.from, validMove.to);
+            }
+            if (!detectCheckOrMate()) {
+              if (mode === 'bot' && game.turn() === 'b') {
+                setStatus('Bot is thinking...');
+                setTimeout(() => {
+                  if (gameOver) return;
+                  const options = game.moves({ verbose: true });
+                  if (!options.length) return;
+                  const bestMove = options.reduce((best, move) => {
+                    const value = pieceValues[move.captured || 'p'] || 0;
+                    return value > (pieceValues[best.captured || 'p'] || 0) ? move : best;
+                  }, options[0]);
+                  makeMove(bestMove.from, bestMove.to);
+                  detectCheckOrMate();
+                  setStatus('White to move');
+                  renderBoard();
+                }, 500);
+              } else {
+                setStatus(game.turn() === 'w' ? 'White to move' : 'Black to move');
+              }
+            }
+          }
+          selectedSquare = null;
+          renderBoard();
+          return;
+        }
+      }
+
+      if (piece && piece.color === game.turn()) {
+        selectedSquare = square;
+        renderBoard();
+      } else {
+        selectedSquare = null;
+        renderBoard();
+      }
+    }
+
+    function renderBoard() {
+      boardEl.innerHTML = '';
+      const board = game.board();
+      const moves = selectedSquare ? game.moves({ square: selectedSquare, verbose: true }) : [];
+      const legalTargetSquares = moves.map((m) => m.to);
+
+      for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+          const originalRow = flipped ? 7 - row : row;
+          const originalCol = flipped ? 7 - col : col;
+          const squareName = `${files[originalCol]}${8 - originalRow}`;
+          const square = document.createElement('button');
+          const isLight = (row + col) % 2 === 0;
+          square.className = `square ${isLight ? 'light' : 'dark'}`;
+
+          if (selectedSquare === squareName) square.classList.add('selected');
+          if (lastMove && (lastMove.from === squareName || lastMove.to === squareName)) square.classList.add('last-move');
+          if (legalTargetSquares.includes(squareName)) square.classList.add('legal');
+
+          const piece = board[originalRow][originalCol];
+          if (piece) {
+            square.textContent = pieces[piece.color][piece.type];
+          }
+
+          if ((originalRow === 0 || originalRow === 7) && originalCol === 0) {
+            square.setAttribute('data-file', files[originalCol]);
+          }
+
+          square.addEventListener('click', () => handleSquareClick(squareName));
+          boardEl.appendChild(square);
+        }
+      }
+    }
+
+    function setMode(nextMode) {
+      mode = nextMode;
+      document.querySelectorAll('.mode-btn').forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.mode === nextMode);
+      });
+
+      if (nextMode === 'bot') {
+        setStatus('Bot mode: you are White');
+      } else if (nextMode === 'online') {
+        setStatus('Online mode: connect with a friend ID');
+      } else {
+        setStatus('White to move');
+      }
+
+      if (nextMode !== 'online') {
+        if (conn && conn.open) {
+          conn.close();
+        }
+        conn = null;
+        onlineRole = null;
+      }
+
+      resetBoardForNewGame();
+    }
+
+    function connectPeerToOpponent(id) {
+      if (!peer || !peer.open) {
+        initPeer();
+      }
+
+      if (!id || id.trim() === '') {
+        setStatus('Enter a valid opponent ID');
+        return;
+      }
+      if (id === $('myId').value) {
+        setStatus('You cannot connect to yourself');
+        return;
+      }
+
+      const c = peer.connect(id);
+      c.on('open', () => {
+        conn = c;
+        onlineRole = 'w';
+        setStatus('Connected! You are White');
+        setMode('online');
+      });
+
+      c.on('data', (data) => {
+        if (data.type === 'move') {
+          const success = makeMove(data.from, data.to);
+          if (success) {
+            detectCheckOrMate();
+            setStatus(game.turn() === onlineRole ? 'Your turn' : 'Opponent turn');
+            renderBoard();
+          }
+        }
+      });
+
+      c.on('close', () => {
+        setStatus('Connection closed');
+      });
+    }
+
+    function initPeer() {
+      if (peer) return;
+      peer = new Peer();
+      peer.on('open', (id) => {
+        $('myId').value = id;
+      });
+
+      peer.on('connection', (c) => {
+        conn = c;
+        onlineRole = 'b';
+        setStatus('Connected! You are Black');
+        c.on('open', () => {
+          setMode('online');
+        });
+        c.on('data', (data) => {
+          if (data.type === 'move') {
+            const success = makeMove(data.from, data.to);
+            if (success) {
+              detectCheckOrMate();
+              setStatus(game.turn() === onlineRole ? 'Your turn' : 'Opponent turn');
+              renderBoard();
+            }
+          }
+        });
+      });
+
+      peer.on('error', (err) => {
+        setStatus(`Peer connection issue: ${err.type}`);
+      });
+    }
+
+    $('newGame').addEventListener('click', resetBoardForNewGame);
+    $('flipBoard').addEventListener('click', () => {
+      flipped = !flipped;
+      renderBoard();
+    });
+    $('resetClock').addEventListener('click', () => {
+      whiteClock = 600;
+      blackClock = 600;
+      activeClock = 'w';
+      updateClocks();
+      if (!gameOver) {
+        clearClockTimer();
+        startClock();
+      }
+    });
+
+    document.querySelectorAll('.mode-btn').forEach((button) => {
+      button.addEventListener('click', () => setMode(button.dataset.mode));
+    });
+
+    $('copyId').addEventListener('click', async () => {
+      const id = $('myId').value;
+      if (!id) return;
+      try {
+        await navigator.clipboard.writeText(id);
+        setStatus('Peer ID copied to clipboard');
+      } catch (err) {
+        setStatus('Copy failed. Please copy the ID manually.');
+      }
+    });
+
+    $('joinGame').addEventListener('click', () => {
+      initPeer();
+      connectPeerToOpponent($('friendId').value.trim());
+    });
+
+    initPeer();
+    updateClocks();
+    updateCaptured();
+    renderBoard();
+    renderMoves();
+    startClock();
+  </script>
+</body>
+</html>
