@@ -4,53 +4,1635 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Royal Chess Online</title>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+
   <style>
-    :root{--bg:#07131f;--panel:#122438;--panel2:#193149;--line:#304961;--text:#eef7ff;--muted:#9db2c7;--gold:#f1c66b;--blue:#62baff;--light:#ead6b0;--dark:#718e6b;--frame:#1b3046;}
-    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% -10%,#24527c,#0b2033 38%,var(--bg) 76%);color:var(--text);font-family:system-ui,Arial,sans-serif}.app{max-width:1180px;margin:auto;padding:0 16px 40px}.nav{height:70px;display:flex;align-items:center;border-bottom:1px solid var(--line);gap:12px}.brand{display:flex;align-items:center;gap:10px;font-weight:900}.logo{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--gold),#b87531);color:#13202b;font-size:1.5rem}.nav-actions{margin-left:auto;display:flex;gap:8px}.btn{border:1px solid var(--line);background:#ffffff0b;color:var(--text);border-radius:10px;padding:10px 14px;font-weight:800;cursor:pointer;transition:.2s}.btn:hover{transform:translateY(-2px);background:#ffffff18}.btn.primary{border:0;background:linear-gradient(135deg,var(--gold),#b87531);color:#121c25}.btn.blue{border:0;background:linear-gradient(135deg,var(--blue),#3d62ed)}.hero{display:flex;justify-content:space-between;align-items:end;gap:20px;padding:38px 0 26px}.eyebrow,.label{color:var(--gold);font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;font-weight:900}.hero h1{font-size:clamp(2.5rem,7vw,5rem);line-height:.92;letter-spacing:-.07em;margin:12px 0}.hero p{max-width:600px;color:var(--muted);line-height:1.65;margin:0}.identity,.card,.board-shell{border:1px solid var(--line);border-radius:18px;background:#ffffff08}.identity{min-width:240px;padding:14px}.identity small{display:block;color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.1em}.identity strong{display:block;color:var(--gold);margin-top:5px}.layout{display:grid;grid-template-columns:minmax(300px,700px) minmax(240px,1fr);gap:18px;align-items:start}.board-shell{padding:16px;background:#091522;box-shadow:0 22px 60px #0006}.board{width:100%;aspect-ratio:1;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);overflow:hidden;border:clamp(4px,1vw,8px) solid var(--frame);border-radius:15px}.square{position:relative;border:0;padding:0;display:grid;place-items:center;cursor:pointer;font-size:clamp(1.8rem,6vw,4rem)}.square.light{background:var(--light)}.square.dark{background:var(--dark)}.square:hover{filter:brightness(1.08)}.square.selected{box-shadow:inset 0 0 0 5px var(--blue)}.square.legal:after{content:"";width:19%;height:19%;border-radius:50%;background:#58d78cdd}.square.last{box-shadow:inset 0 0 0 5px #f1c66bcc}.piece{line-height:1;filter:drop-shadow(0 4px 3px #0008);user-select:none}.coords{position:absolute;left:5px;bottom:4px;font-size:.58rem;font-weight:800;color:#111b24aa;pointer-events:none}.status{margin-top:12px;padding:12px;border-radius:12px;background:#ffffff08;border:1px solid #ffffff0c;text-align:center;color:var(--muted);font-weight:800}.status.check{color:#ffd15d}.status.mate{color:#ff7187}.card{padding:16px;display:flex;flex-direction:column;gap:13px}.card h2{margin:0;font-size:.8rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}.player{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid #ffffff12;border-radius:12px;background:#ffffff07}.avatar{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#55c3ff,#466df4);font-weight:900}.player-info{min-width:0}.player-info strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.turn{margin-left:auto;color:var(--gold);font-size:.75rem;font-weight:800}.room-box{padding:12px;border:1px solid #ffffff12;border-radius:12px;background:#ffffff06}.room-box strong{display:block;color:var(--gold);font-size:1.25rem;letter-spacing:.12em;word-break:break-all}.input-row{display:flex;gap:8px;margin-top:9px}.input-row input,.modal input,.modal select{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#ffffff09;color:var(--text);outline:0}.input-row input:focus,.modal input:focus,.modal select:focus{border-color:var(--blue)}.moves{max-height:190px;overflow:auto}.move{display:grid;grid-template-columns:35px 1fr 1fr;padding:7px 2px;border-bottom:1px solid #ffffff0d}.move em{color:var(--muted);font-style:normal}.modal-bg{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:16px;background:#000b}.modal-bg[hidden]{display:none}.modal{width:min(480px,100%);max-height:92vh;overflow:auto;padding:20px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,var(--panel2),var(--panel))}.modal header{display:flex;justify-content:space-between;align-items:center}.modal h2{margin:0 0 15px}.modal label{display:block;margin:13px 0 6px;color:var(--muted);font-size:.75rem;font-weight:800;text-transform:uppercase}.modal footer{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.theme-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.theme{padding:9px;border:1px solid var(--line);border-radius:10px;background:#ffffff08;color:var(--text);text-align:left;cursor:pointer}.theme.active{border-color:var(--gold);box-shadow:inset 0 0 0 2px #f1c66b44}.preview{height:24px;border-radius:6px;margin-bottom:6px;background:linear-gradient(90deg,var(--a) 50%,var(--b) 50%)}.tip{padding:10px;border-radius:10px;background:#ffffff07;color:var(--muted);font-size:.84rem;line-height:1.5}@media(max-width:850px){.hero{display:block}.identity{margin-top:18px}.layout{grid-template-columns:1fr}.board-shell{order:1}.card{order:2}}@media(max-width:600px){.app{padding:0 9px 28px}.brand span{display:none}.nav-actions .btn{padding:9px 10px;font-size:.78rem}.hero{padding:27px 2px 20px}.theme-grid{grid-template-columns:1fr}.input-row{flex-direction:column}}
+    :root{
+      --bg:#07131f;
+      --panel:#122438;
+      --panel2:#193149;
+      --line:#304961;
+      --text:#eef7ff;
+      --muted:#9db2c7;
+      --gold:#f1c66b;
+      --blue:#62baff;
+
+      /* Active chessboard theme */
+      --light:#ead6b0;
+      --dark:#718e6b;
+
+      --frame:#1b3046;
+    }
+
+    *{box-sizing:border-box}
+
+    html{scroll-behavior:smooth}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      background:
+        radial-gradient(circle at 15% -10%,#24527c,#0b2033 38%,var(--bg) 76%);
+      color:var(--text);
+      font-family:system-ui,Arial,sans-serif;
+    }
+
+    button,input{font:inherit}
+
+    .app{
+      max-width:1180px;
+      margin:auto;
+      padding:0 16px 40px
+    }
+
+    .nav{
+      height:70px;
+      display:flex;
+      align-items:center;
+      border-bottom:1px solid var(--line);
+      gap:12px
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:900
+    }
+
+    .logo{
+      width:40px;
+      height:40px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg,var(--gold),#b87531);
+      color:#13202b;
+      font-size:1.5rem
+    }
+
+    .nav-actions{
+      margin-left:auto;
+      display:flex;
+      gap:8px
+    }
+
+    .btn{
+      border:1px solid var(--line);
+      background:#ffffff0b;
+      color:var(--text);
+      border-radius:10px;
+      padding:10px 14px;
+      font-weight:800;
+      cursor:pointer;
+      transition:.2s
+    }
+
+    .btn:hover{
+      transform:translateY(-2px);
+      background:#ffffff18
+    }
+
+    .btn.primary{
+      border:0;
+      background:linear-gradient(135deg,var(--gold),#b87531);
+      color:#121c25
+    }
+
+    .btn.blue{
+      border:0;
+      background:linear-gradient(135deg,var(--blue),#3d62ed)
+    }
+
+    .btn.danger{
+      border-color:#7a3042;
+      color:#ff91a5
+    }
+
+    .hero{
+      display:flex;
+      justify-content:space-between;
+      align-items:end;
+      gap:20px;
+      padding:38px 0 26px
+    }
+
+    .eyebrow,.label{
+      color:var(--gold);
+      font-size:.72rem;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      font-weight:900
+    }
+
+    .hero h1{
+      font-size:clamp(2.5rem,7vw,5rem);
+      line-height:.92;
+      letter-spacing:-.07em;
+      margin:12px 0
+    }
+
+    .hero p{
+      max-width:600px;
+      color:var(--muted);
+      line-height:1.65;
+      margin:0
+    }
+
+    .identity,.card,.board-shell{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:#ffffff08
+    }
+
+    .identity{
+      min-width:240px;
+      padding:14px
+    }
+
+    .identity small{
+      display:block;
+      color:var(--muted);
+      font-size:.7rem;
+      text-transform:uppercase;
+      letter-spacing:.1em
+    }
+
+    .identity strong{
+      display:block;
+      color:var(--gold);
+      margin-top:5px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      max-width:210px
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns:minmax(300px,700px) minmax(240px,1fr);
+      gap:18px;
+      align-items:start
+    }
+
+    .board-shell{
+      padding:16px;
+      background:#091522;
+      box-shadow:0 22px 60px #0006
+    }
+
+    .board{
+      width:100%;
+      aspect-ratio:1;
+      display:grid;
+      grid-template-columns:repeat(8,1fr);
+      grid-template-rows:repeat(8,1fr);
+      overflow:hidden;
+      border:clamp(4px,1vw,8px) solid var(--frame);
+      border-radius:15px
+    }
+
+    .square{
+      position:relative;
+      border:0;
+      padding:0;
+      display:grid;
+      place-items:center;
+      cursor:pointer;
+      font-size:clamp(1.8rem,6vw,4rem)
+    }
+
+    .square.light{background:var(--light)}
+    .square.dark{background:var(--dark)}
+
+    .square:hover{filter:brightness(1.08)}
+
+    .square.selected{
+      box-shadow:inset 0 0 0 5px var(--blue)
+    }
+
+    .square.legal:after{
+      content:"";
+      width:19%;
+      height:19%;
+      border-radius:50%;
+      background:#58d78cdd
+    }
+
+    .square.last{
+      box-shadow:inset 0 0 0 5px #f1c66bcc
+    }
+
+    .piece{
+      line-height:1;
+      filter:drop-shadow(0 4px 3px #0008);
+      user-select:none
+    }
+
+    .coords{
+      position:absolute;
+      left:5px;
+      bottom:4px;
+      font-size:.58rem;
+      font-weight:800;
+      color:#111b24aa;
+      pointer-events:none
+    }
+
+    .status{
+      margin-top:12px;
+      padding:12px;
+      border-radius:12px;
+      background:#ffffff08;
+      border:1px solid #ffffff0c;
+      text-align:center;
+      color:var(--muted);
+      font-weight:800;
+      display:flex;
+      justify-content:center;
+      gap:8px;
+      flex-wrap:wrap
+    }
+
+    .status.check{color:#ffd15d}
+    .status.mate{color:#ff7187}
+
+    .card{
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:13px
+    }
+
+    .card h2{
+      margin:0;
+      font-size:.8rem;
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      color:var(--muted)
+    }
+
+    .player{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:11px;
+      border:1px solid #ffffff12;
+      border-radius:12px;
+      background:#ffffff07
+    }
+
+    .avatar{
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg,#55c3ff,#466df4);
+      font-weight:900;
+      flex-shrink:0
+    }
+
+    .player-info{min-width:0}
+
+    .player-info strong{
+      display:block;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap
+    }
+
+    .turn{
+      margin-left:auto;
+      color:var(--gold);
+      font-size:.75rem;
+      font-weight:800
+    }
+
+    .room-box{
+      padding:12px;
+      border:1px solid #ffffff12;
+      border-radius:12px;
+      background:#ffffff06
+    }
+
+    .room-box strong{
+      display:block;
+      color:var(--gold);
+      font-size:1.25rem;
+      letter-spacing:.12em;
+      word-break:break-all
+    }
+
+    .input-row{
+      display:flex;
+      gap:8px;
+      margin-top:9px
+    }
+
+    .input-row input,
+    .modal input,
+    .modal select{
+      width:100%;
+      padding:11px 12px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      background:#ffffff09;
+      color:var(--text);
+      outline:0
+    }
+
+    .input-row input:focus,
+    .modal input:focus,
+    .modal select:focus{
+      border-color:var(--blue)
+    }
+
+    .moves{
+      max-height:190px;
+      overflow:auto
+    }
+
+    .move{
+      display:grid;
+      grid-template-columns:35px 1fr 1fr;
+      padding:7px 2px;
+      border-bottom:1px solid #ffffff0d
+    }
+
+    .move em{
+      color:var(--muted);
+      font-style:normal
+    }
+
+    .modal-bg{
+      position:fixed;
+      inset:0;
+      z-index:20;
+      display:grid;
+      place-items:center;
+      padding:16px;
+      background:#000b
+    }
+
+    .modal-bg[hidden]{display:none}
+
+    .modal{
+      width:min(480px,100%);
+      max-height:92vh;
+      overflow:auto;
+      padding:20px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:linear-gradient(180deg,var(--panel2),var(--panel))
+    }
+
+    .modal header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center
+    }
+
+    .modal h2{margin:0 0 15px}
+
+    .modal label{
+      display:block;
+      margin:13px 0 6px;
+      color:var(--muted);
+      font-size:.75rem;
+      font-weight:800;
+      text-transform:uppercase
+    }
+
+    .modal footer{
+      display:flex;
+      justify-content:flex-end;
+      gap:8px;
+      margin-top:18px
+    }
+
+    .theme-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:8px
+    }
+
+    .theme{
+      padding:9px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      background:#ffffff08;
+      color:var(--text);
+      text-align:left;
+      cursor:pointer;
+      transition:.2s
+    }
+
+    .theme:hover{
+      background:#ffffff12;
+      transform:translateY(-1px)
+    }
+
+    .theme.active{
+      border-color:var(--gold);
+      box-shadow:inset 0 0 0 2px #f1c66b44
+    }
+
+    .preview{
+      height:24px;
+      border-radius:6px;
+      margin-bottom:6px;
+      background:linear-gradient(
+        90deg,
+        var(--a) 50%,
+        var(--b) 50%
+      )
+    }
+
+    .tip{
+      padding:10px;
+      border-radius:10px;
+      background:#ffffff07;
+      color:var(--muted);
+      font-size:.84rem;
+      line-height:1.5
+    }
+
+    .connection-dot{
+      display:inline-block;
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:#ff617b;
+      margin-right:6px
+    }
+
+    .connection-dot.online{
+      background:#58d78c;
+      box-shadow:0 0 8px #58d78c
+    }
+
+    @media(max-width:850px){
+      .hero{
+        display:block
+      }
+
+      .identity{
+        margin-top:18px
+      }
+
+      .layout{
+        grid-template-columns:1fr
+      }
+
+      .board-shell{order:1}
+      .card{order:2}
+    }
+
+    @media(max-width:600px){
+      .app{
+        padding:0 9px 28px
+      }
+
+      .brand span{display:none}
+
+      .nav-actions .btn{
+        padding:9px 10px;
+        font-size:.78rem
+      }
+
+      .hero{
+        padding:27px 2px 20px
+      }
+
+      .theme-grid{
+        grid-template-columns:1fr
+      }
+
+      .input-row{
+        flex-direction:column
+      }
+    }
   </style>
 </head>
+
 <body>
   <div class="app">
-    <nav class="nav"><div class="brand"><div class="logo">♞</div><span>Royal Chess Online</span></div><div class="nav-actions"><button class="btn" id="settingsBtn">⚙ Settings</button><button class="btn primary" id="roomBtn">🌐 Room</button></div></nav>
-    <header class="hero"><div><div class="eyebrow">Private online chess</div><h1>Play chess<br><span style="color:var(--blue)">with anyone.</span></h1><p>Create a private room, share the 14-digit Room ID, and play in real time from two browsers.</p></div><div class="identity"><small>Room ID</small><strong id="headerRoom">Not connected</strong><small style="margin-top:10px">Playing as</small><strong id="playerName">Player</strong></div></header>
+
+    <nav class="nav">
+      <div class="brand">
+        <div class="logo">♞</div>
+        <span>Royal Chess Online</span>
+      </div>
+
+      <div class="nav-actions">
+        <button class="btn" id="settingsBtn">⚙ Settings</button>
+        <button class="btn primary" id="roomBtn">🌐 Room</button>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div>
+        <div class="eyebrow">Private online chess</div>
+
+        <h1>
+          Play chess<br>
+          <span style="color:var(--blue)">with anyone.</span>
+        </h1>
+
+        <p>
+          Create a private room, share the 14-digit Room ID,
+          and play in real time from two browsers.
+        </p>
+      </div>
+
+      <div class="identity">
+        <small>Room ID</small>
+        <strong id="headerRoom">Not connected</strong>
+
+        <small style="margin-top:10px">Playing as</small>
+        <strong id="playerName">Player</strong>
+      </div>
+    </header>
+
     <main class="layout">
-      <section class="board-shell"><div class="board" id="board" role="grid" aria-label="Online chess board"></div><div class="status" id="status">Create or join a room to start</div></section>
-      <aside class="card"><h2>Online room</h2><div class="room-box"><span class="label">Current room</span><strong id="roomDisplay">Not connected</strong></div><div class="input-row"><input id="roomInput" inputmode="numeric" maxlength="14" placeholder="14-digit Room ID"><button class="btn blue" id="createBtn">Create</button></div><button class="btn" id="joinBtn">Join room</button><div class="tip" id="roomStatus">Create a room and share its ID with another player.</div><h2>Players</h2><div class="player"><div class="avatar" id="myAvatar">P</div><div class="player-info"><span class="label">White</span><strong id="myName">Player</strong></div><span class="turn" id="whiteTurn"></span></div><div class="player"><div class="avatar" style="background:#26384b">♟</div><div class="player-info"><span class="label">Black</span><strong id="opponentName">Waiting...</strong></div><span class="turn" id="blackTurn"></span></div><div class="input-row"><button class="btn" id="undoBtn">Undo</button><button class="btn" id="flipBtn">Flip board</button></div><h2>Move history</h2><div class="moves" id="moves"></div></aside>
+
+      <section class="board-shell">
+        <div
+          class="board"
+          id="board"
+          role="grid"
+          aria-label="Online chess board"
+        ></div>
+
+        <div class="status" id="status">
+          <span class="label">Game</span>
+          <span class="value">Create or join a room to start</span>
+        </div>
+      </section>
+
+      <aside class="card">
+
+        <h2>Online room</h2>
+
+        <div class="room-box">
+          <span class="label">Current room</span>
+          <strong id="roomDisplay">Not connected</strong>
+        </div>
+
+        <div class="input-row">
+          <input
+            id="roomInput"
+            inputmode="numeric"
+            maxlength="14"
+            placeholder="14-digit Room ID"
+          >
+          <button class="btn blue" id="createBtn">
+            Create
+          </button>
+        </div>
+
+        <button class="btn" id="joinBtn">
+          Join room
+        </button>
+
+        <button class="btn danger" id="leaveBtn">
+          Leave room
+        </button>
+
+        <div class="tip" id="roomStatus">
+          <span class="connection-dot"></span>
+          Create a room and share its ID with another player.
+        </div>
+
+        <h2>Players</h2>
+
+        <div class="player">
+          <div class="avatar" id="myAvatar">P</div>
+
+          <div class="player-info">
+            <span class="label" id="myColorLabel">White</span>
+            <strong id="myName">Player</strong>
+          </div>
+
+          <span class="turn" id="whiteTurn"></span>
+        </div>
+
+        <div class="player">
+          <div class="avatar" id="opponentAvatar" style="background:#26384b">
+            ♟
+          </div>
+
+          <div class="player-info">
+            <span class="label" id="opponentColorLabel">Black</span>
+            <strong id="opponentName">Waiting...</strong>
+          </div>
+
+          <span class="turn" id="blackTurn"></span>
+        </div>
+
+        <div class="input-row">
+          <button class="btn" id="undoBtn">Undo</button>
+          <button class="btn" id="flipBtn">Flip board</button>
+        </div>
+
+        <h2>Move history</h2>
+
+        <div class="moves" id="moves"></div>
+
+      </aside>
     </main>
   </div>
 
-  <div class="modal-bg" id="settingsMenu" hidden><div class="modal"><header><h2>Settings</h2><button class="btn" data-close="settingsMenu">✕</button></header><label>Player name</label><input id="nameInput" maxlength="24" placeholder="Enter your name"><label>Board style</label><div class="theme-grid" id="themeGrid"></div><footer><button class="btn" data-close="settingsMenu">Cancel</button><button class="btn primary" id="saveSettings">Save changes</button></footer></div></div>
+  <!-- SETTINGS -->
+
+  <div class="modal-bg" id="settingsMenu" hidden>
+    <div class="modal">
+
+      <header>
+        <h2>Settings</h2>
+        <button class="btn" data-close="settingsMenu">✕</button>
+      </header>
+
+      <label>Player name</label>
+
+      <input
+        id="nameInput"
+        maxlength="24"
+        placeholder="Enter your name"
+      >
+
+      <label>Board style</label>
+
+      <div class="theme-grid" id="themeGrid"></div>
+
+      <div class="tip" style="margin-top:12px">
+        Your name and board style are saved on this device.
+      </div>
+
+      <footer>
+        <button class="btn" data-close="settingsMenu">
+          Cancel
+        </button>
+
+        <button class="btn primary" id="saveSettings">
+          Save changes
+        </button>
+      </footer>
+
+    </div>
+  </div>
 
   <script>
     (() => {
       'use strict';
-      const $ = (id) => document.getElementById(id);
-      const files = 'abcdefgh';
-      const symbols = { w:{p:'♙',r:'♖',n:'♘',b:'♗',q:'♕',k:'♔'}, b:{p:'♟',r:'♜',n:'♞',b:'♝',q:'♛',k:'♚'} };
-      const themes = [
-        ['royal','#ead6b0','#718e6b'],['classic','#f0d9b5','#b58863'],['ocean','#d7eef2','#39738a'],['forest','#e8e0b8','#557b45'],['neon','#d8f8ff','#3656a3'],['sunset','#ffe0b2','#a85243'],['lavender','#eee4fa','#7964a8'],['monochrome','#eeeeee','#555555'],['rose','#f7d2d9','#a35c70'],['slate','#cbd5e1','#475569']
-      ];
-      const randomRoom = () => Array.from({length:14}, () => Math.floor(Math.random()*10)).join('');
-      const state = { name: localStorage.chessName || 'Player', theme: localStorage.chessTheme || 'royal', chess: new Chess(), selected:null, flipped:false, peer:null, connection:null, host:false, room:null, color:null };
 
-      function bind(id, fn){ const el=$(id); if(el) el.addEventListener('click',fn); }
-      function show(id){ const el=$(id); if(el) el.hidden=false; }
-      function hide(id){ const el=$(id); if(el) el.hidden=true; }
-      function setStatus(text, cls=''){ $('status').className='status '+cls; $('status').innerHTML='<span class="label">Game</span><span class="value">'+text+'</span>'; }
-      function applyTheme(){ const t=themes.find(x=>x[0]===state.theme)||themes[0]; document.documentElement.style.setProperty('--light',t[1]);document.documentElement.style.setProperty('--dark',t[2]);document.querySelectorAll('.theme').forEach(b=>b.classList.toggle('active',b.dataset.theme===state.theme)); }
-      function profile(){ $('playerName').textContent=state.name;$('myName').textContent=state.name;$('myAvatar').textContent=(state.name[0]||'P').toUpperCase();$('nameInput').value=state.name;applyTheme(); }
-      function roomLabel(){ return state.room || 'Not connected'; }
-      function updateRoomUI(){ $('roomDisplay').textContent=roomLabel();$('headerRoom').textContent=roomLabel();$('whiteTurn').textContent=state.color==='w'?'You':'';$('blackTurn').textContent=state.color==='b'?'You':''; }
-      function updateStatus(){ if(state.chess.in_checkmate()){setStatus('Checkmate — game over','mate');return}if(state.chess.in_check()){setStatus('Check — '+(state.chess.turn()==='w'?'White':'Black')+' is threatened','check');return}if(state.chess.in_draw()){setStatus('Draw');return}if(!state.connection){setStatus('Create or join a room to start');return}setStatus((state.chess.turn()==='w'?'White':'Black')+' to move'); }
-      function render(){ const board=$('board');board.innerHTML='';const rows=state.flipped?[7,6,5,4,3,2,1,0]:[0,1,2,3,4,5,6,7];const cols=state.flipped?[7,6,5,4,3,2,1,0]:[0,1,2,3,4,5,6,7];const data=state.chess.board();rows.forEach(r=>cols.forEach(c=>{const sq=files[c]+(8-r),el=document.createElement('button'),p=data[r][c];el.type='button';el.className='square '+(((r+c)%2)?'dark':'light');if(state.selected===sq)el.classList.add('selected');if(state.lastMove&&(state.lastMove.from===sq||state.lastMove.to===sq))el.classList.add('last');if(state.selected&&state.chess.moves({square:state.selected,verbose:true}).some(m=>m.to===sq))el.classList.add('legal');if(p){const span=document.createElement('span');span.className='piece';span.textContent=symbols[p.color][p.type];el.appendChild(span)}const coord=document.createElement('span');coord.className='coords';coord.textContent=sq;el.appendChild(coord);el.onclick=()=>clickSquare(sq);board.appendChild(el)}));const h=state.chess.history();$('moves').innerHTML=h.length?h.map((m,i)=>i%2===0?'<div class="move"><em>'+((i/2|0)+1)+'.</em><span>'+m+'</span><span>'+(h[i+1]||'')+'</span></div>':'').join(''):'<div class="move"><em>1.</em><span>—</span><span>—</span></div>';updateStatus();updateRoomUI(); }
-      function clickSquare(sq){ if(!state.connection||!state.color||state.chess.turn()!==state.color)return;const p=state.chess.get(sq);if(state.selected){const move=state.chess.moves({square:state.selected,verbose:true}).find(m=>m.to===sq);if(move){const played=state.chess.move({from:state.selected,to:sq,promotion:'q'});state.lastMove={from:state.selected,to:sq};state.selected=null;sendMove(played);render();return}state.selected=p&&p.color===state.color?sq:null}else if(p&&p.color===state.color)state.selected=sq;render(); }
-      function sendMove(move){if(state.connection&&state.connection.open)state.connection.send({type:'move',from:move.from,to:move.to,promotion:move.promotion||'q'});}
-      function receive(conn){state.connection=conn;conn.on('data',data=>{if(data.type==='hello'){state.opponentName=data.name;$('opponentName').textContent=data.name||'Opponent';return}if(data.type==='move'){const move=state.chess.move(data);if(move){state.lastMove={from:data.from,to:data.to};render()}}});conn.on('close',()=>{$('roomStatus').textContent='Opponent disconnected';state.connection=null;render()});conn.on('open',()=>conn.send({type:'hello',name:state.name}));}
-      function startRoom(id,host){ if(typeof Peer==='undefined'){$('roomStatus').textContent='PeerJS could not load. Check your connection.';return}state.room=id;state.host=host;state.color=host?'w':'b';state.chess.reset();state.selected=null;state.lastMove=null;state.peer=host?new Peer('chess-'+id):new Peer();state.peer.on('open',()=>{if(!host){const c=state.peer.connect('chess-'+id);receive(c);c.on('open',()=>{$('roomStatus').textContent='Connected to room '+id;render()})}else{$('roomStatus').textContent='Room created. Share ID '+id+' with your opponent.';render()}});if(host)state.peer.on('connection',c=>{receive(c);$('roomStatus').textContent='Opponent connected';render()});state.peer.on('error',e=>$('roomStatus').textContent='Room error: '+e.type); }
-      function buildThemes(){themes.forEach(([key,a,b])=>{const el=document.createElement('button');el.type='button';el.className='theme';el.dataset.theme=key;el.innerHTML='<div class="preview" style="--a:'+a+';--b:'+b+'"></div><b>'+key[0].toUpperCase()+key.slice(1)+'</b>';el.onclick=()=>{state.theme=key;localStorage.chessTheme=key;applyTheme()};$('themeGrid').appendChild(el)})}
-      bind('settingsBtn',()=>{profile();show('settingsMenu')});bind('saveSettings',()=>{state.name=$('nameInput').value.trim()||'Player';localStorage.chessName=state.name;profile();if(state.connection&&state.connection.open)state.connection.send({type:'hello',name:state.name});hide('settingsMenu')});bind('roomBtn',()=>{const id=$('roomInput').value.trim().replace(/\D/g,'')||randomRoom();$('roomInput').value=id;startRoom(id,true)});bind('createBtn',()=>{const id=randomRoom();$('roomInput').value=id;startRoom(id,true)});bind('joinBtn',()=>{const id=$('roomInput').value.trim().replace(/\D/g,'');if(id.length!==14){$('roomStatus').textContent='Enter a valid 14-digit Room ID.';return}startRoom(id,false)});bind('undoBtn',()=>{if(state.color==='w'&&state.chess.history().length){state.chess.undo();state.lastMove=null;render()}});bind('flipBtn',()=>{state.flipped=!state.flipped;render()});document.querySelectorAll('[data-close]').forEach(el=>el.onclick=()=>hide(el.dataset.close));buildThemes();profile();render();
+      const $ = id => document.getElementById(id);
+
+      const files = 'abcdefgh';
+
+      const symbols = {
+        w:{
+          p:'♙',
+          r:'♖',
+          n:'♘',
+          b:'♗',
+          q:'♕',
+          k:'♔'
+        },
+        b:{
+          p:'♟',
+          r:'♜',
+          n:'♞',
+          b:'♝',
+          q:'♛',
+          k:'♚'
+        }
+      };
+
+      /*
+       * Exactly 5 board styles.
+       */
+      const themes = [
+        ['royal','#ead6b0','#718e6b'],
+        ['classic','#f0d9b5','#b58863'],
+        ['ocean','#d7eef2','#39738a'],
+        ['forest','#e8e0b8','#557b45'],
+        ['neon','#d8f8ff','#3656a3']
+      ];
+
+      const randomRoom = () =>
+        Array.from(
+          {length:14},
+          () => Math.floor(Math.random() * 10)
+        ).join('');
+
+      const state = {
+        name: localStorage.getItem('chessName') || 'Player',
+
+        theme:
+          localStorage.getItem('chessTheme') || 'royal',
+
+        chess:new Chess(),
+
+        selected:null,
+        lastMove:null,
+        flipped:false,
+
+        peer:null,
+        connection:null,
+
+        host:false,
+        room:null,
+        color:null,
+
+        opponentName:'Waiting...'
+      };
+
+      function bind(id, fn){
+        const el = $(id);
+        if(el) el.addEventListener('click', fn);
+      }
+
+      function show(id){
+        const el = $(id);
+        if(el) el.hidden = false;
+      }
+
+      function hide(id){
+        const el = $(id);
+        if(el) el.hidden = true;
+      }
+
+      function setRoomStatus(text, online=false){
+        $('roomStatus').innerHTML =
+          '<span class="connection-dot ' +
+          (online ? 'online' : '') +
+          '"></span>' +
+          text;
+      }
+
+      function setStatus(text, cls=''){
+        $('status').className = 'status ' + cls;
+
+        $('status').innerHTML =
+          '<span class="label">Game</span>' +
+          '<span class="value">' +
+          text +
+          '</span>';
+      }
+
+      function applyTheme(){
+        const t =
+          themes.find(x => x[0] === state.theme) ||
+          themes[0];
+
+        document.documentElement.style.setProperty(
+          '--light',
+          t[1]
+        );
+
+        document.documentElement.style.setProperty(
+          '--dark',
+          t[2]
+        );
+
+        document.querySelectorAll('.theme').forEach(button => {
+          button.classList.toggle(
+            'active',
+            button.dataset.theme === state.theme
+          );
+        });
+      }
+
+      function profile(){
+        $('playerName').textContent = state.name;
+        $('myName').textContent = state.name;
+        $('myAvatar').textContent =
+          (state.name[0] || 'P').toUpperCase();
+
+        $('nameInput').value = state.name;
+
+        applyTheme();
+
+        updatePlayerLabels();
+      }
+
+      function updatePlayerLabels(){
+        if(state.color === 'b'){
+          $('myColorLabel').textContent = 'Black';
+          $('opponentColorLabel').textContent = 'White';
+        }else{
+          $('myColorLabel').textContent = 'White';
+          $('opponentColorLabel').textContent = 'Black';
+        }
+      }
+
+      function roomLabel(){
+        return state.room || 'Not connected';
+      }
+
+      function updateRoomUI(){
+        $('roomDisplay').textContent = roomLabel();
+        $('headerRoom').textContent = roomLabel();
+
+        $('whiteTurn').textContent =
+          state.color === 'w' ? 'YOU' : '';
+
+        $('blackTurn').textContent =
+          state.color === 'b' ? 'YOU' : '';
+
+        updatePlayerLabels();
+      }
+
+      function updateStatus(){
+
+        if(state.chess.is_checkmate()){
+          setStatus(
+            'Checkmate — ' +
+            (state.chess.turn() === 'w'
+              ? 'Black'
+              : 'White') +
+            ' wins',
+            'mate'
+          );
+          return;
+        }
+
+        if(state.chess.is_check()){
+          setStatus(
+            'Check — ' +
+            (state.chess.turn() === 'w'
+              ? 'White'
+              : 'Black') +
+            ' is threatened',
+            'check'
+          );
+          return;
+        }
+
+        if(state.chess.is_draw()){
+          setStatus('Draw');
+          return;
+        }
+
+        if(!state.connection){
+          setStatus('Create or join a room to start');
+          return;
+        }
+
+        if(!state.color){
+          setStatus('Waiting for connection...');
+          return;
+        }
+
+        const turn =
+          state.chess.turn() === state.color
+            ? 'Your turn'
+            : (
+                state.chess.turn() === 'w'
+                  ? 'White'
+                  : 'Black'
+              ) + ' to move';
+
+        setStatus(turn);
+      }
+
+      function render(){
+
+        const board = $('board');
+
+        board.innerHTML = '';
+
+        const rows = state.flipped
+          ? [7,6,5,4,3,2,1,0]
+          : [0,1,2,3,4,5,6,7];
+
+        const cols = state.flipped
+          ? [7,6,5,4,3,2,1,0]
+          : [0,1,2,3,4,5,6,7];
+
+        const data = state.chess.board();
+
+        rows.forEach(r => {
+          cols.forEach(c => {
+
+            const sq = files[c] + (8-r);
+
+            const el = document.createElement('button');
+
+            el.type = 'button';
+
+            el.className =
+              'square ' +
+              (((r+c)%2) ? 'dark' : 'light');
+
+            const p = data[r][c];
+
+            if(state.selected === sq){
+              el.classList.add('selected');
+            }
+
+            if(
+              state.lastMove &&
+              (
+                state.lastMove.from === sq ||
+                state.lastMove.to === sq
+              )
+            ){
+              el.classList.add('last');
+            }
+
+            if(state.selected){
+
+              const legal =
+                state.chess
+                  .moves({
+                    square:state.selected,
+                    verbose:true
+                  })
+                  .some(m => m.to === sq);
+
+              if(legal){
+                el.classList.add('legal');
+              }
+            }
+
+            if(p){
+
+              const span =
+                document.createElement('span');
+
+              span.className = 'piece';
+
+              span.textContent =
+                symbols[p.color][p.type];
+
+              el.appendChild(span);
+            }
+
+            const coord =
+              document.createElement('span');
+
+            coord.className = 'coords';
+
+            coord.textContent = sq;
+
+            el.appendChild(coord);
+
+            el.onclick = () => clickSquare(sq);
+
+            board.appendChild(el);
+          });
+        });
+
+        renderMoves();
+
+        updateStatus();
+        updateRoomUI();
+      }
+
+      function renderMoves(){
+
+        const h = state.chess.history();
+
+        if(!h.length){
+          $('moves').innerHTML =
+            '<div class="move">' +
+              '<em>1.</em>' +
+              '<span>—</span>' +
+              '<span>—</span>' +
+            '</div>';
+
+          return;
+        }
+
+        let html = '';
+
+        for(let i=0; i<h.length; i += 2){
+
+          html +=
+            '<div class="move">' +
+              '<em>' +
+                ((i / 2 | 0) + 1) +
+                '.' +
+              '</em>' +
+              '<span>' +
+                h[i] +
+              '</span>' +
+              '<span>' +
+                (h[i+1] || '') +
+              '</span>' +
+            '</div>';
+        }
+
+        $('moves').innerHTML = html;
+      }
+
+      function clickSquare(sq){
+
+        /*
+         * You can only move while connected
+         * and when it is your color's turn.
+         */
+        if(
+          !state.connection ||
+          !state.connection.open ||
+          !state.color ||
+          state.chess.turn() !== state.color
+        ){
+          return;
+        }
+
+        const piece = state.chess.get(sq);
+
+        if(state.selected){
+
+          const move =
+            state.chess
+              .moves({
+                square:state.selected,
+                verbose:true
+              })
+              .find(m => m.to === sq);
+
+          if(move){
+
+            const played =
+              state.chess.move({
+                from:state.selected,
+                to:sq,
+                promotion:'q'
+              });
+
+            state.lastMove = {
+              from:state.selected,
+              to:sq
+            };
+
+            state.selected = null;
+
+            sendMove(played);
+
+            render();
+
+            return;
+          }
+
+          state.selected =
+            piece && piece.color === state.color
+              ? sq
+              : null;
+
+        }else if(
+          piece &&
+          piece.color === state.color
+        ){
+
+          state.selected = sq;
+        }
+
+        render();
+      }
+
+      function sendMove(move){
+
+        if(
+          state.connection &&
+          state.connection.open
+        ){
+          state.connection.send({
+            type:'move',
+            from:move.from,
+            to:move.to,
+            promotion:move.promotion || 'q'
+          });
+        }
+      }
+
+      function sendHello(){
+
+        if(
+          state.connection &&
+          state.connection.open
+        ){
+          state.connection.send({
+            type:'hello',
+            name:state.name
+          });
+        }
+      }
+
+      function receiveConnection(conn){
+
+        /*
+         * Close any previous connection.
+         */
+        if(
+          state.connection &&
+          state.connection !== conn
+        ){
+          try{
+            state.connection.close();
+          }catch(e){}
+        }
+
+        state.connection = conn;
+
+        conn.on('open', () => {
+
+          sendHello();
+
+          if(state.host){
+            setRoomStatus(
+              'Opponent connected',
+              true
+            );
+          }else{
+            setRoomStatus(
+              'Connected to room ' + state.room,
+              true
+            );
+          }
+
+          render();
+        });
+
+        conn.on('data', data => {
+
+          if(!data || !data.type){
+            return;
+          }
+
+          if(data.type === 'hello'){
+
+            state.opponentName =
+              data.name || 'Opponent';
+
+            $('opponentName').textContent =
+              state.opponentName;
+
+            const initial =
+              (state.opponentName[0] || '♟')
+              .toUpperCase();
+
+            $('opponentAvatar').textContent =
+              initial;
+
+            render();
+
+            return;
+          }
+
+          if(data.type === 'move'){
+
+            /*
+             * Ignore invalid remote moves.
+             */
+            const move =
+              state.chess.move({
+                from:data.from,
+                to:data.to,
+                promotion:data.promotion || 'q'
+              });
+
+            if(move){
+
+              state.lastMove = {
+                from:data.from,
+                to:data.to
+              };
+
+              state.selected = null;
+
+              render();
+            }
+
+            return;
+          }
+
+          if(data.type === 'reset'){
+
+            state.chess.reset();
+            state.lastMove = null;
+            state.selected = null;
+
+            render();
+
+            return;
+          }
+        });
+
+        conn.on('close', () => {
+
+          if(state.connection === conn){
+            state.connection = null;
+          }
+
+          $('opponentName').textContent =
+            'Waiting...';
+
+          $('opponentAvatar').textContent = '♟';
+
+          setRoomStatus(
+            'Opponent disconnected'
+          );
+
+          render();
+        });
+
+        conn.on('error', () => {
+
+          setRoomStatus(
+            'Connection error'
+          );
+        });
+      }
+
+      function cleanupPeer(){
+
+        if(state.connection){
+
+          try{
+            state.connection.close();
+          }catch(e){}
+
+          state.connection = null;
+        }
+
+        if(state.peer){
+
+          try{
+            state.peer.destroy();
+          }catch(e){}
+
+          state.peer = null;
+        }
+      }
+
+      function startRoom(id, host){
+
+        if(typeof Peer === 'undefined'){
+
+          setRoomStatus(
+            'PeerJS could not load. Check your connection.'
+          );
+
+          return;
+        }
+
+        cleanupPeer();
+
+        state.room = id;
+        state.host = host;
+        state.color = host ? 'w' : 'b';
+
+        state.chess.reset();
+        state.selected = null;
+        state.lastMove = null;
+        state.opponentName = 'Waiting...';
+
+        $('opponentName').textContent =
+          'Waiting...';
+
+        $('opponentAvatar').textContent =
+          '♟';
+
+        /*
+         * Host gets deterministic PeerJS ID
+         * based on the room ID.
+         */
+        if(host){
+          state.peer = new Peer('chess-' + id);
+        }else{
+          state.peer = new Peer();
+        }
+
+        state.peer.on('open', () => {
+
+          if(host){
+
+            setRoomStatus(
+              'Room created. Share ID ' +
+              id +
+              ' with your opponent.'
+            );
+
+            render();
+
+          }else{
+
+            setRoomStatus(
+              'Connecting to room ' + id + '...'
+            );
+
+            const conn =
+              state.peer.connect(
+                'chess-' + id,
+                {
+                  reliable:true
+                }
+              );
+
+            receiveConnection(conn);
+          }
+        });
+
+        if(host){
+
+          state.peer.on('connection', conn => {
+
+            /*
+             * Only one opponent is needed.
+             */
+            if(
+              state.connection &&
+              state.connection.open
+            ){
+              try{
+                conn.close();
+              }catch(e){}
+
+              return;
+            }
+
+            receiveConnection(conn);
+          });
+        }
+
+        state.peer.on('error', error => {
+
+          let message = 'Room error';
+
+          if(error.type === 'unavailable-id'){
+            message =
+              'That room already exists. Try another Room ID.';
+          }
+
+          if(error.type === 'peer-unavailable'){
+            message =
+              'Room not found. Check the Room ID.';
+          }
+
+          if(error.type === 'network'){
+            message =
+              'Network error. Check your connection.';
+          }
+
+          setRoomStatus(message);
+
+          console.error('PeerJS error:', error);
+        });
+      }
+
+      function leaveRoom(){
+
+        cleanupPeer();
+
+        state.room = null;
+        state.host = false;
+        state.color = null;
+        state.opponentName = 'Waiting...';
+
+        state.chess.reset();
+        state.selected = null;
+        state.lastMove = null;
+
+        $('opponentName').textContent =
+          'Waiting...';
+
+        $('opponentAvatar').textContent =
+          '♟';
+
+        setRoomStatus(
+          'Create a room and share its ID with another player.'
+        );
+
+        render();
+      }
+
+      function createRoom(){
+
+        const id = randomRoom();
+
+        $('roomInput').value = id;
+
+        startRoom(id, true);
+      }
+
+      function joinRoom(){
+
+        const id =
+          $('roomInput')
+            .value
+            .trim()
+            .replace(/\D/g,'');
+
+        if(id.length !== 14){
+
+          setRoomStatus(
+            'Enter a valid 14-digit Room ID.'
+          );
+
+          return;
+        }
+
+        startRoom(id, false);
+      }
+
+      function buildThemes(){
+
+        $('themeGrid').innerHTML = '';
+
+        themes.forEach(([key,a,b]) => {
+
+          const el =
+            document.createElement('button');
+
+          el.type = 'button';
+
+          el.className = 'theme';
+
+          el.dataset.theme = key;
+
+          el.innerHTML =
+            '<div class="preview" ' +
+              'style="--a:'+a+';--b:'+b+'">' +
+            '</div>' +
+            '<b>' +
+              key[0].toUpperCase() +
+              key.slice(1) +
+            '</b>';
+
+          el.onclick = () => {
+
+            state.theme = key;
+
+            applyTheme();
+          };
+
+          $('themeGrid').appendChild(el);
+        });
+      }
+
+      /*
+       * SETTINGS
+       */
+
+      bind('settingsBtn', () => {
+
+        $('nameInput').value = state.name;
+
+        show('settingsMenu');
+      });
+
+      bind('saveSettings', () => {
+
+        const name =
+          $('nameInput')
+            .value
+            .trim()
+            .slice(0,24);
+
+        state.name = name || 'Player';
+
+        localStorage.setItem(
+          'chessName',
+          state.name
+        );
+
+        localStorage.setItem(
+          'chessTheme',
+          state.theme
+        );
+
+        profile();
+
+        /*
+         * Update opponent with new name.
+         */
+        sendHello();
+
+        hide('settingsMenu');
+      });
+
+      /*
+       * ROOM CONTROLS
+       */
+
+      bind('roomBtn', () => {
+
+        createRoom();
+      });
+
+      bind('createBtn', () => {
+
+        createRoom();
+      });
+
+      bind('joinBtn', () => {
+
+        joinRoom();
+      });
+
+      bind('leaveBtn', () => {
+
+        leaveRoom();
+      });
+
+      /*
+       * BOARD CONTROLS
+       */
+
+      bind('flipBtn', () => {
+
+        state.flipped = !state.flipped;
+
+        render();
+      });
+
+      /*
+       * Undo is intentionally local-only.
+       *
+       * In a real online chess game, an undo must be
+       * agreed upon by both players. This prevents one
+       * player from silently desynchronizing the game.
+       */
+      bind('undoBtn', () => {
+
+        if(!state.connection){
+          return;
+        }
+
+        setRoomStatus(
+          'Undo is disabled during online play.'
+        );
+      });
+
+      /*
+       * MODAL CLOSE BUTTONS
+       */
+
+      document
+        .querySelectorAll('[data-close]')
+        .forEach(el => {
+
+          el.onclick = () =>
+            hide(el.dataset.close);
+        });
+
+      /*
+       * Close settings by clicking outside.
+       */
+      $('settingsMenu').addEventListener(
+        'click',
+        event => {
+
+          if(event.target === $('settingsMenu')){
+            hide('settingsMenu');
+          }
+        }
+      );
+
+      /*
+       * Room ID input:
+       * numbers only, maximum 14 digits.
+       */
+      $('roomInput').addEventListener(
+        'input',
+        () => {
+
+          $('roomInput').value =
+            $('roomInput')
+              .value
+              .replace(/\D/g,'')
+              .slice(0,14);
+        }
+      );
+
+      /*
+       * Enter key joins the room.
+       */
+      $('roomInput').addEventListener(
+        'keydown',
+        event => {
+
+          if(event.key === 'Enter'){
+            joinRoom();
+          }
+        }
+      );
+
+      /*
+       * INITIALIZATION
+       */
+
+      buildThemes();
+      profile();
+      render();
+
     })();
   </script>
 </body>
