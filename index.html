@@ -7,28 +7,434 @@
   <title>Royal Chess Arena</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
   <style>
-    :root{--bg:#08111f;--panel:#101d2e;--panel2:#16263a;--line:#2a4058;--text:#eef6ff;--muted:#91a5ba;--gold:#f1c46b;--blue:#62b9ff;--light:#e9d4ad;--dark:#6f8f70;--frame:#1b2b3d}
-    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 15% -10%,#1d4b78 0,#0d1b2e 34%,var(--bg) 72%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}button,input{font:inherit}button{cursor:pointer;color:inherit}.app{width:min(1280px,100%);margin:auto;padding:0 18px 42px}.nav{height:72px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.1rem}.brand-mark{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--gold),#b97625);color:#131b24;font-size:1.55rem}.nav-actions{margin-left:auto;display:flex;gap:8px}.btn,.icon-btn{border:1px solid var(--line);background:#ffffff0b;border-radius:11px;padding:10px 14px;font-weight:800;transition:.2s}.btn:hover,.icon-btn:hover{transform:translateY(-2px);background:#ffffff18}.btn.primary{border:0;background:linear-gradient(135deg,var(--gold),#b97625);color:#121a24}.hero{padding:38px 0 26px;display:flex;justify-content:space-between;align-items:end;gap:24px}.eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:.16em;font-size:.72rem;font-weight:900}.hero h1{font-size:clamp(2.2rem,6vw,4.5rem);line-height:.95;letter-spacing:-.07em;margin:12px 0}.hero p{color:var(--muted);max-width:600px;line-height:1.6;margin:0}.identity{min-width:235px;background:#ffffff09;border:1px solid var(--line);border-radius:16px;padding:14px}.identity small,.label{display:block;color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;font-weight:800}.identity strong{display:block;color:var(--gold);font-variant-numeric:tabular-nums;font-size:1.15rem;margin-top:5px}.game{display:grid;grid-template-columns:minmax(220px,285px) minmax(300px,680px) minmax(220px,285px);gap:16px;align-items:start}.card,.board-shell{background:linear-gradient(180deg,#ffffff0b,#ffffff05);border:1px solid var(--line);border-radius:18px;padding:14px}.card{display:flex;flex-direction:column;gap:12px}.card h2{font-size:.78rem;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);margin:0}.player{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #ffffff12;border-radius:13px;background:#ffffff08}.avatar{width:40px;height:40px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(135deg,#52b9ff,#3b64ef);font-weight:900}.player-info{min-width:0}.player-info strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.clock{margin-left:auto;color:var(--gold);font-weight:900;font-variant-numeric:tabular-nums}.board-shell{padding:clamp(8px,2vw,16px);box-shadow:0 25px 70px #0005}.board{width:100%;max-width:660px;aspect-ratio:1;margin:auto;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);border:clamp(4px,1vw,8px) solid var(--frame);border-radius:14px;overflow:hidden;box-shadow:0 0 0 2px #ffffff10,0 16px 35px #0005}.square{position:relative;border:0;padding:0;display:grid;place-items:center;min-width:0;line-height:1;user-select:none;transition:filter .15s,transform .12s}.square.light{background:var(--light)}.square.dark{background:var(--dark)}.square:hover{filter:brightness(1.1);z-index:1}.square.selected{box-shadow:inset 0 0 0 5px #61baff}.square.legal:after{content:"";width:20%;height:20%;border-radius:50%;background:#35c978cc;box-shadow:0 0 0 5px #35c9782b}.piece{font-family:"DejaVu Sans",serif;font-size:clamp(1.7rem,6vw,4rem);filter:drop-shadow(0 3px 1px #0007);transform:translateY(-2%)}.white-piece{color:#fff;text-shadow:0 1px 0 #444,0 3px 4px #0009}.black-piece{color:#202934;text-shadow:0 1px 0 #fff8,0 3px 4px #0009}.status{text-align:center;color:var(--muted);padding:12px 4px 2px;font-weight:700}.moves{max-height:285px;overflow:auto}.move{display:grid;grid-template-columns:35px 1fr 1fr;padding:8px 4px;border-bottom:1px solid #ffffff0d}.move em{color:var(--muted);font-style:normal}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.settings{position:fixed;inset:0;display:grid;place-items:center;padding:18px;background:#000b;z-index:10}.settings[hidden]{display:none}.modal{width:min(410px,100%);background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 25px 80px #0009}.modal header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.modal h2{margin:0}.modal label{display:block;color:var(--muted);font-size:.85rem;font-weight:700;margin:14px 0 7px}.modal input{width:100%;background:#ffffff0b;border:1px solid var(--line);border-radius:10px;padding:12px;color:var(--text);outline:0}.modal input:focus{border-color:var(--blue);box-shadow:0 0 0 3px #62b9ff22}.modal footer{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}@media(max-width:1050px){.game{grid-template-columns:240px minmax(300px,1fr)}.game>.card:last-child{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;align-items:start}.moves{max-height:190px}}@media(max-width:700px){.app{padding:0 10px 28px}.nav{height:62px}.brand span{display:none}.hero{padding:26px 2px 20px;display:block}.hero h1{font-size:clamp(2.4rem,13vw,4rem)}.identity{margin-top:18px}.game{display:flex;flex-direction:column;gap:12px}.board-shell{order:1;width:100%;padding:8px}.game>.card:first-child{order:2;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:8px}.game>.card:first-child h2{grid-column:1/-1}.game>.card:last-child{order:3;width:100%;display:block}.player{min-width:0}.player:nth-of-type(2){grid-column:2}.clock{font-size:.9rem}.piece{font-size:clamp(1.8rem,11vw,3.2rem)}.status{font-size:.85rem}.nav-actions .btn{padding:9px 10px;font-size:.8rem}}
-  </style>
+    :root{
+      --bg:#07131f;--bg2:#0b1c2d;--panel:#112234;--panel2:#162c3e;--line:#2b3f55;--text:#eff7ff;--muted:#9db1c7;--gold:#f3c96b;--gold2:#bb7a37;--blue:#64b8ff;--green:#57d68d;--red:#ff7a8e;--light:#ead7b4;--dark:#708d69;--frame:#1d3149;--shadow:#0006;--square-light:#e9d5b1;--square-dark:#6e8e6a;--board-glow:rgba(100,184,255,.2)
+    }
+    body[data-theme="classic"]{--light:#eed7ad;--dark:#8a6b45;--panel:#111d2d;--bg2:#0d1d2c;--panel2:#182b3d;--board-glow:rgba(90,190,255,.16)}
+    body[data-theme="royal"]{--light:#f2d9a8;--dark:#a67b47;--panel:#101d2d;--bg2:#091620;--panel2:#173046;--board-glow:rgba(180,130,66,.18)}
+    body[data-theme="neon"]{--light:#dfeaff;--dark:#4e6ea8;--panel:#0f172a;--bg2:#090d1d;--panel2:#1a2540;--board-glow:rgba(62,206,255,.18)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% -10%,#1d4b78 0,#0b1f31 34%,var(--bg) 72%);color:var(--text);font-family:Inter,Arial,Helvetica,sans-serif}button,input{font:inherit}button{cursor:pointer;color:inherit}.app{width:min(1280px,100%);margin:auto;padding:0 18px 44px}.nav{height:72px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:12px;font-weight:900;font-size:1.12rem}.brand-mark{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#121c25;font-size:1.5rem}.nav-actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}.btn,.icon-btn,.mode-btn{border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:10px;padding:10px 14px;font-weight:800;transition:transform .2s,background .2s,box-shadow .2s}.btn:hover,.icon-btn:hover,.mode-btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.1)}.btn.primary{border:0;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#111b24;box-shadow:0 0 28px rgba(243,201,107,.23)}.btn.blue{border:0;background:linear-gradient(135deg,var(--blue),#3b5cf4);box-shadow:0 0 24px rgba(100,184,255,.18)}.hero{padding:38px 0 28px;display:flex;justify-content:space-between;align-items:flex-end;gap:18px}.eyebrow{color:var(--gold);font-size:.72rem;text-transform:uppercase;letter-spacing:.18em;font-weight:900}.hero h1{margin:12px 0 10px;font-size:clamp(2.2rem,6vw,4.5rem);line-height:.94;letter-spacing:-.07em}.hero p{margin:0;max-width:620px;color:var(--muted);line-height:1.7}.identity{min-width:240px;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:18px;padding:14px}.identity small,.label{display:block;color:var(--muted);font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;font-weight:800}.identity strong{display:block;margin-top:6px;font-size:1.2rem;font-variant-numeric:tabular-nums}.game{display:grid;grid-template-columns:minmax(220px,280px) minmax(300px,680px) minmax(220px,280px);gap:16px;align-items:start}.card,.board-shell{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.02));border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}.card{display:flex;flex-direction:column;gap:12px}.card h2{margin:0;font-size:.76rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted)}.player{display:flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:12px;background:rgba(255,255,255,.04)}.avatar{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#56c4ff,#466ef5);font-weight:900}.player-info{min-width:0}.player-info strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.clock{margin-left:auto;color:var(--gold);font-weight:900;font-variant-numeric:tabular-nums}.board-shell{padding:clamp(8px,2vw,16px);background:linear-gradient(180deg,rgba(14,22,34,.95),rgba(11,16,24,.95));box-shadow:0 18px 60px rgba(0,0,0,.25),0 0 30px var(--board-glow)}.board{width:100%;max-width:660px;aspect-ratio:1;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);border:clamp(4px,1vw,8px) solid var(--frame);border-radius:16px;overflow:hidden;box-shadow:0 0 0 2px rgba(255,255,255,.04),0 18px 38px rgba(0,0,0,.18);margin:0 auto}.square{position:relative;border:0;padding:0;display:grid;place-items:center;transition:filter .15s,transform .12s;user-select:none}.square.light{background:var(--light)}.square.dark{background:var(--dark)}.square:hover{filter:brightness(1.06);transform:scale(1.01)}.square.selected{box-shadow:inset 0 0 0 5px rgba(100,184,255,.9)}.square.last{box-shadow:inset 0 0 0 4px rgba(243,201,107,.95)}.square.legal::after{content:"";position:absolute;width:20%;height:20%;border-radius:50%;background:rgba(87,214,141,.85);box-shadow:0 0 0 5px rgba(87,214,141,.15)}.coord-label{position:absolute;bottom:5px;left:6px;font-size:.65rem;font-weight:900;color:rgba(9,15,22,.6);pointer-events:none}.piece{font-family:Segoe UI Symbol,DejaVu Sans,Arial,sans-serif;font-size:clamp(1.8rem,5vw,3.8rem);line-height:1;filter:drop-shadow(0 2px 1px rgba(0,0,0,.5));transform:translateY(-1%)}.white-piece{color:#ffffff;text-shadow:0 1px 0 rgba(0,0,0,.35),0 3px 4px rgba(0,0,0,.3)}.black-piece{color:#1a1f2b;text-shadow:0 1px 0 rgba(255,255,255,.2),0 3px 4px rgba(0,0,0,.35)}.status{padding:10px 8px 2px;text-align:center;color:var(--muted);font-weight:700;min-height:34px}.moves{max-height:280px;overflow:auto}.move{display:grid;grid-template-columns:36px 1fr 1fr;gap:8px;align-items:center;padding:7px 2px;border-bottom:1px solid rgba(255,255,255,.06)}.move em{font-style:normal;color:var(--muted)}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.quick-tip{padding:10px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.05);color:var(--muted);font-size:.9rem;line-height:1.5}.settings,.overlay{position:fixed;inset:0;display:grid;place-items:center;padding:18px;background:rgba(0,0,0,.68);z-index:30}.settings[hidden],.overlay[hidden]{display:none}.modal{width:min(430px,100%);padding:22px;border-radius:18px;border:1px solid var(--line);background:linear-gradient(180deg,var(--panel2),var(--panel));box-shadow:0 24px 70px rgba(0,0,0,.4)}.modal header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.modal h2{margin:0;font-size:1.7rem;letter-spacing:-.04em}.modal label{display:block;margin:14px 0 7px;color:var(--muted);font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em}.modal input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:11px 12px;outline:none}.modal input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(100,184,255,.12)}.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.mode-btn{width:100%;padding:10px 8px;background:rgba(255,255,255,.04)}.mode-btn.active{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#121b24;border-color:transparent}.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);margin-top:12px}.toggle-row span{font-weight:700}.tiny{font-size:.72rem;color:var(--muted)}.modal footer{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.start-card{width:min(520px,100%);background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:0 24px 70px rgba(0,0,0,.35)}.start-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}.start-card h1{margin:0;font-size:clamp(2rem,5vw,3.2rem);letter-spacing:-.05em}.start-card p{color:var(--muted);line-height:1.6;margin:0 0 16px}.field{margin-top:10px}.field input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--text)}.field input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px rgba(100,184,255,.14)}.cta-row{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:rgba(255,255,255,.04);padding:7px 10px;border-radius:999px;color:var(--muted);font-weight:700}.@media(max-width:1050px){.game{grid-template-columns:240px minmax(300px,1fr)}.game>.card:last-child{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;align-items:start}.moves{max-height:200px}}@media(max-width:720px){.app{padding:0 10px 28px}.nav{height:64px}.brand span{display:none}.hero{display:block;padding:24px 2px 18px}.identity{margin-top:18px}.game{display:flex;flex-direction:column;gap:12px}.board-shell{order:1}.game>.card:first-child{order:2}.game>.card:last-child{order:3;display:block}.board{max-width:96vw}.actions{grid-template-columns:1fr 1fr}.status{font-size:.9rem}.nav-actions .btn{padding:9px 10px;font-size:.8rem}.theme-grid{grid-template-columns:1fr}.start-card{padding:18px}.cta-row{flex-direction:column}.cta-row .btn{width:100%}}</style>
 </head>
-<body>
+<body data-theme="royal">
 <div class="app">
-  <nav class="nav"><div class="brand"><div class="brand-mark">♞</div><span>Royal Chess Arena</span></div><div class="nav-actions"><button class="btn" id="settingsBtn">⚙ Settings</button><button class="btn primary" id="newGameBtn">New game</button></div></nav>
-  <section class="hero"><div><div class="eyebrow">Play. Think. Conquer.</div><h1>Chess, refined<br><span style="color:var(--blue)">for every move.</span></h1><p>A focused chess board with a cleaner mobile layout, stronger piece contrast, and personal player settings.</p></div><div class="identity"><small>Game ID</small><strong id="gameId">00000000000000</strong><small style="margin-top:10px">Playing as</small><strong id="playerName">Player</strong></div></section>
-  <main class="game"><section class="card"><h2>Players</h2><div class="player"><div class="avatar" id="avatar">P</div><div class="player-info"><span class="label">White</span><strong id="whiteName">Player</strong></div><span class="clock">10:00</span></div><div class="player"><div class="avatar" style="background:linear-gradient(135deg,#293b51,#172433)">♟</div><div class="player-info"><span class="label">Black</span><strong>Opponent</strong></div><span class="clock">10:00</span></div><div class="actions"><button class="btn" id="undoBtn">Undo</button><button class="btn" id="flipBtn">Flip board</button></div></section>
-    <section class="board-shell"><div class="board" id="board" role="grid" aria-label="Chess board"></div><div class="status" id="status">White to move</div></section>
-    <section class="card"><h2>Move history</h2><div class="moves" id="moves"><div style="color:var(--muted)">No moves yet</div></div><div class="card" style="padding:10px;background:#ffffff05"><span class="label">Quick tip</span><div style="color:var(--muted);font-size:.9rem;line-height:1.5">Tap a piece, then tap a highlighted square to move.</div></div></section>
+  <nav class="nav">
+    <div class="brand"><div class="brand-mark">♞</div><span>Royal Chess Arena</span></div>
+    <div class="nav-actions">
+      <button class="btn" id="settingsBtn">⚙ Settings</button>
+      <button class="btn primary" id="newGameBtn">New game</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div>
+      <div class="eyebrow">Play. Think. Conquer.</div>
+      <h1>Chess, refined<br><span style="color:var(--blue)">for every move.</span></h1>
+      <p>Elegant board play, mobile-first layout, customizable settings, and stronger piece detail for an immersive match.</p>
+    </div>
+    <div class="identity">
+      <small>Game ID</small>
+      <strong id="gameId">00000000000000</strong>
+      <small style="margin-top:10px">Playing as</small>
+      <strong id="playerName">Player</strong>
+    </div>
+  </section>
+
+  <main class="game">
+    <section class="card">
+      <h2>Players</h2>
+      <div class="player">
+        <div class="avatar" id="avatar">P</div>
+        <div class="player-info"><span class="label">White</span><strong id="whiteName">Player</strong></div>
+        <span class="clock">10:00</span>
+      </div>
+      <div class="player">
+        <div class="avatar" style="background:linear-gradient(135deg,#243141,#1a2838)">♟</div>
+        <div class="player-info"><span class="label">Black</span><strong>Opponent</strong></div>
+        <span class="clock">10:00</span>
+      </div>
+      <div class="actions">
+        <button class="btn" id="undoBtn">Undo</button>
+        <button class="btn" id="flipBtn">Flip</button>
+      </div>
+    </section>
+
+    <section class="board-shell">
+      <div class="board" id="board" role="grid" aria-label="Chess board"></div>
+      <div class="status" id="status">White to move</div>
+    </section>
+
+    <section class="card">
+      <h2>Move history</h2>
+      <div class="moves" id="moves"><div class="move"><em>1.</em><span>—</span><span>—</span></div></div>
+      <div class="quick-tip"><strong style="color:var(--text)">Quick tip:</strong> select a piece, then choose a highlighted square to move.</div>
+    </section>
   </main>
 </div>
-<div class="settings" id="settings" hidden><div class="modal"><header><h2>Settings</h2><button class="icon-btn" id="closeSettings" aria-label="Close">✕</button></header><label for="nameInput">Display name</label><input id="nameInput" maxlength="24" placeholder="Enter your name"><label for="idInput">Game ID</label><input id="idInput" inputmode="numeric" maxlength="14" pattern="[0-9]{14}"><div style="color:var(--muted);font-size:.78rem;margin-top:7px">Game IDs must contain exactly 14 random numbers.</div><footer><button class="btn" id="cancelSettings">Cancel</button><button class="btn primary" id="saveSettings">Save changes</button></footer></div></div>
+
+<div class="settings" id="settings" hidden>
+  <div class="modal">
+    <header>
+      <h2>Settings</h2>
+      <button class="icon-btn" id="closeSettings" aria-label="Close">✕</button>
+    </header>
+
+    <label for="nameInput">Display name</label>
+    <input id="nameInput" maxlength="24" placeholder="Enter your name">
+
+    <label for="idInput">Game ID</label>
+    <input id="idInput" inputmode="numeric" maxlength="14" pattern="[0-9]{14}" placeholder="14 random numbers">
+    <div class="tiny">Game IDs must contain exactly 14 digits.</div>
+
+    <label>Board theme</label>
+    <div class="theme-grid">
+      <button class="mode-btn active" data-theme="royal">Royal</button>
+      <button class="mode-btn" data-theme="classic">Classic</button>
+      <button class="mode-btn" data-theme="neon">Neon</button>
+    </div>
+
+    <div class="toggle-row">
+      <span>Sound effects</span>
+      <button class="btn" id="soundToggleBtn">On</button>
+    </div>
+
+    <footer>
+      <button class="btn" id="cancelSettings">Cancel</button>
+      <button class="btn primary" id="saveSettings">Save changes</button>
+    </footer>
+  </div>
+</div>
+
+<div class="overlay" id="startOverlay">
+  <div class="start-card">
+    <div class="start-head">
+      <div>
+        <div class="eyebrow">Ready to play</div>
+        <h1>Royal Chess Arena</h1>
+      </div>
+      <div class="pill" id="soundBadge">🔊 On</div>
+    </div>
+    <p>Launch a fresh match, set your name, pick a visual style, and begin your next chess battle.</p>
+
+    <div class="field">
+      <label class="label" for="startNameInput">Player name</label>
+      <input id="startNameInput" maxlength="24" placeholder="Enter your name">
+    </div>
+
+    <div class="field">
+      <label class="label" for="startIdInput">Game ID</label>
+      <input id="startIdInput" maxlength="14" placeholder="14 random numbers">
+    </div>
+
+    <label class="label" style="margin-top:16px">Board style</label>
+    <div class="theme-grid">
+      <button class="mode-btn active" data-start-theme="royal">Royal</button>
+      <button class="mode-btn" data-start-theme="classic">Classic</button>
+      <button class="mode-btn" data-start-theme="neon">Neon</button>
+    </div>
+
+    <div class="toggle-row" style="margin-top:16px">
+      <span>Sound effects</span>
+      <button class="btn" id="launchSoundToggleBtn">On</button>
+    </div>
+
+    <div class="cta-row">
+      <button class="btn blue" id="startMatchBtn">Start match</button>
+    </div>
+  </div>
+</div>
+
 <script>
-  const glyphs={p:'♟',r:'♜',n:'♞',b:'♝',q:'♛',k:'♚',P:'♙',R:'♖',N:'♘',B:'♗',Q:'♕',K:'♔'};
-  const files='abcdefgh';let chess=new Chess(),selected=null,flipped=false;
-  const $=id=>document.getElementById(id); const randomId=()=>Array.from({length:14},()=>Math.floor(Math.random()*10)).join('');
-  let name=localStorage.getItem('chessName')||'Player',gameId=localStorage.getItem('chessGameId')||randomId(); localStorage.setItem('chessGameId',gameId);
-  function render(){const board=$('board');board.innerHTML='';let rows=[...Array(8).keys()];if(flipped)rows.reverse();rows.forEach(r=>{let cols=[...Array(8).keys()];if(flipped)cols.reverse();cols.forEach(c=>{const square=files[c]+(8-r),el=document.createElement('button');el.className='square '+((r+c)%2?'dark':'light');el.dataset.square=square;el.setAttribute('role','gridcell');const piece=chess.get(square);if(piece){const span=document.createElement('span');span.className='piece '+(piece.color==='w'?'white-piece':'black-piece');span.textContent=glyphs[piece.color==='w'?piece.type.toUpperCase():piece.type];el.append(span)}if(square===selected)el.classList.add('selected');if(selected&&chess.moves({square:selected,verbose:true}).some(m=>m.to===square))el.classList.add('legal');el.onclick=()=>clickSquare(square);board.append(el)})});updateMoves();$('status').textContent=chess.game_over()?(chess.in_checkmate()?'Checkmate': 'Game over'):(chess.turn()==='w'?'White':'Black')+' to move'+(chess.in_check()?' — Check':'')}
-  function clickSquare(square){const piece=chess.get(square);if(selected){const move=chess.move({from:selected,to:square,promotion:'q'});if(move){selected=null;render();return}selected=piece&&piece.color===chess.turn()?square:null}else if(piece&&piece.color===chess.turn())selected=square;render()}
-  function updateMoves(){const list=$('moves');const history=chess.history();if(!history.length){list.innerHTML='<div style="color:var(--muted)">No moves yet</div>';return}list.innerHTML='';for(let i=0;i<history.length;i+=2){const row=document.createElement('div');row.className='move';row.innerHTML='<em>'+(i/2+1)+'.</em><span>'+history[i]+'</span><span>'+(history[i+1]||'')+'</span>';list.append(row)}}
-  function applyIdentity(){$('gameId').textContent=gameId;$('playerName').textContent=name;$('whiteName').textContent=name;$('avatar').textContent=name.trim().charAt(0).toUpperCase()||'P'}
-  $('newGameBtn').onclick=()=>{chess.reset();selected=null;render()};$('undoBtn').onclick=()=>{chess.undo();selected=null;render()};$('flipBtn').onclick=()=>{flipped=!flipped;render()};$('settingsBtn').onclick=()=>{$('nameInput').value=name;$('idInput').value=gameId;$('settings').hidden=false};$('closeSettings').onclick=$('cancelSettings').onclick=()=>{$('settings').hidden=true};$('saveSettings').onclick=()=>{const nextId=$('idInput').value.replace(/\D/g,'');if(nextId.length!==14){alert('Game ID must be exactly 14 numbers.');return}name=$('nameInput').value.trim()||'Player';gameId=nextId;localStorage.setItem('chessName',name);localStorage.setItem('chessGameId',gameId);applyIdentity();$('settings').hidden=true};applyIdentity();render();
-</script></body></html>
+  const files = 'abcdefgh';
+  const pieceGlyphs = {
+    w: { p: '♙', r: '♖', n: '♘', b: '♗', q: '♕', k: '♔' },
+    b: { p: '♟', r: '♜', n: '♞', b: '♝', q: '♛', k: '♚' }
+  };
+
+  const state = {
+    name: localStorage.getItem('chessName') || 'Player',
+    gameId: localStorage.getItem('chessGameId') || randomId(),
+    theme: localStorage.getItem('chessTheme') || 'royal',
+    soundOn: localStorage.getItem('chessSound') !== 'off',
+    started: false,
+    flipped: false,
+    selected: null,
+    chess: new Chess()
+  };
+
+  const $ = (id) => document.getElementById(id);
+
+  function randomId() {
+    return Array.from({ length: 14 }, () => Math.floor(Math.random() * 10)).join('');
+  }
+
+  function applyTheme(theme) {
+    document.body.setAttribute('data-theme', theme);
+    state.theme = theme;
+    localStorage.setItem('chessTheme', theme);
+
+    document.querySelectorAll('[data-theme]').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.theme === theme);
+    });
+    document.querySelectorAll('[data-start-theme]').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.startTheme === theme);
+    });
+  }
+
+  function setSound(on) {
+    state.soundOn = on;
+    localStorage.setItem('chessSound', on ? 'on' : 'off');
+    $('soundToggleBtn').textContent = on ? 'On' : 'Off';
+    $('launchSoundToggleBtn').textContent = on ? 'On' : 'Off';
+    $('soundBadge').textContent = on ? '🔊 On' : '🔇 Off';
+  }
+
+  function playTone(type = 'move') {
+    if (!state.soundOn) return;
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type === 'capture' ? 'square' : 'sine';
+    osc.frequency.value = type === 'capture' ? 210 : 440;
+    gain.gain.value = 0.03;
+    osc.connect(gain).connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.12);
+  }
+
+  function renderBoard() {
+    const board = $('board');
+    board.innerHTML = '';
+    const rows = state.flipped ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
+
+    rows.forEach((r) => {
+      const cols = state.flipped ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
+      cols.forEach((c) => {
+        const sq = `${files[c]}${8 - r}`;
+        const el = document.createElement('button');
+        const isLight = (r + c) % 2 === 0;
+        el.className = `square ${isLight ? 'light' : 'dark'}`;
+        el.type = 'button';
+        el.dataset.square = sq;
+        el.setAttribute('role', 'gridcell');
+
+        const piece = state.chess.get(sq);
+        if (piece) {
+          const span = document.createElement('span');
+          span.className = `piece ${piece.color === 'w' ? 'white-piece' : 'black-piece'}`;
+          span.textContent = pieceGlyphs[piece.color][piece.type];
+          el.appendChild(span);
+        }
+
+        const label = document.createElement('span');
+        label.className = 'coord-label';
+        if ((r === 7 && !state.flipped) || (r === 0 && state.flipped)) {
+          label.textContent = files[c];
+        }
+        if ((c === 0 && !state.flipped) || (c === 7 && state.flipped)) {
+          label.textContent += `${8 - r}`;
+        }
+        if (label.textContent) el.appendChild(label);
+
+        if (state.selected === sq) el.classList.add('selected');
+        if (state.selected && state.chess.moves({ square: state.selected, verbose: true }).some((m) => m.to === sq)) {
+          el.classList.add('legal');
+        }
+        if (state.lastMove && state.lastMove.from === sq || state.lastMove && state.lastMove.to === sq) {
+          el.classList.add('last');
+        }
+
+        el.addEventListener('click', () => handleSquareClick(sq));
+        board.appendChild(el);
+      });
+    });
+  }
+
+  function updateStatus() {
+    const status = $('status');
+    if (state.chess.isCheckmate()) {
+      status.textContent = `Checkmate — ${state.chess.turn() === 'w' ? 'Black' : 'White'} wins`;
+      return;
+    }
+    if (state.chess.isStalemate()) {
+      status.textContent = 'Stalemate';
+      return;
+    }
+    if (state.chess.isThreefoldRepetition()) {
+      status.textContent = 'Draw by repetition';
+      return;
+    }
+    if (state.chess.isDraw()) {
+      status.textContent = 'Draw';
+      return;
+    }
+    status.textContent = `${state.chess.turn() === 'w' ? 'White' : 'Black'} to move${state.chess.inCheck() ? ' — Check' : ''}`;
+  }
+
+  function renderMoves() {
+    const list = $('moves');
+    const history = state.chess.history();
+    if (!history.length) {
+      list.innerHTML = '<div class="move"><em>1.</em><span>—</span><span>—</span></div>';
+      return;
+    }
+
+    const rows = [];
+    for (let i = 0; i < history.length; i += 2) {
+      rows.push({
+        num: Math.floor(i / 2) + 1,
+        white: history[i],
+        black: history[i + 1] || ''
+      });
+    }
+
+    list.innerHTML = rows.map((row) => `
+      <div class="move">
+        <em>${row.num}.</em>
+        <span>${row.white}</span>
+        <span>${row.black}</span>
+      </div>
+    `).join('');
+  }
+
+  function renderIdentity() {
+    $('gameId').textContent = state.gameId;
+    $('playerName').textContent = state.name;
+    $('whiteName').textContent = state.name;
+    $('avatar').textContent = (state.name.trim().charAt(0) || 'P').toUpperCase();
+    $('nameInput').value = state.name;
+    $('idInput').value = state.gameId;
+    $('startNameInput').value = state.name;
+    $('startIdInput').value = state.gameId;
+  }
+
+  function handleSquareClick(square) {
+    const piece = state.chess.get(square);
+
+    if (state.selected) {
+      const legalMoves = state.chess.moves({ square: state.selected, verbose: true });
+      const target = legalMoves.find((move) => move.to === square);
+      if (target) {
+        const move = state.chess.move({ from: state.selected, to: square, promotion: 'q' });
+        if (move) {
+          state.lastMove = { from: state.selected, to: square };
+          state.selected = null;
+          playTone(move.captured ? 'capture' : 'move');
+          render();
+        }
+        return;
+      }
+      if (piece && piece.color === state.chess.turn()) {
+        state.selected = square;
+      } else {
+        state.selected = null;
+      }
+      renderBoard();
+      return;
+    }
+
+    if (piece && piece.color === state.chess.turn()) {
+      state.selected = square;
+      renderBoard();
+    }
+  }
+
+  function render() {
+    renderBoard();
+    updateStatus();
+    renderMoves();
+  }
+
+  function resetBoard() {
+    state.chess.reset();
+    state.selected = null;
+    state.lastMove = null;
+    render();
+  }
+
+  function startMatch() {
+    const nextName = $('startNameInput').value.trim() || 'Player';
+    const nextId = $('startIdInput').value.replace(/\D/g, '');
+    if (nextId.length !== 14) {
+      alert('Game ID must contain exactly 14 digits.');
+      return;
+    }
+    state.name = nextName;
+    state.gameId = nextId;
+    localStorage.setItem('chessName', state.name);
+    localStorage.setItem('chessGameId', state.gameId);
+    renderIdentity();
+    resetBoard();
+    state.started = true;
+    $('startOverlay').hidden = true;
+  }
+
+  document.getElementById('newGameBtn').addEventListener('click', () => {
+    resetBoard();
+    $('startOverlay').hidden = false;
+  });
+
+  document.getElementById('undoBtn').addEventListener('click', () => {
+    state.chess.undo();
+    state.selected = null;
+    state.lastMove = null;
+    render();
+  });
+
+  document.getElementById('flipBtn').addEventListener('click', () => {
+    state.flipped = !state.flipped;
+    renderBoard();
+  });
+
+  document.getElementById('settingsBtn').addEventListener('click', () => {
+    $('nameInput').value = state.name;
+    $('idInput').value = state.gameId;
+    $('settings').hidden = false;
+    document.querySelectorAll('[data-theme]').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.theme === state.theme);
+    });
+  });
+
+  document.getElementById('closeSettings').addEventListener('click', () => $('settings').hidden = true);
+  document.getElementById('cancelSettings').addEventListener('click', () => $('settings').hidden = true);
+
+  document.getElementById('saveSettings').addEventListener('click', () => {
+    const nextName = $('nameInput').value.trim() || 'Player';
+    const nextId = $('idInput').value.replace(/\D/g, '');
+    if (nextId.length !== 14) {
+      alert('Game ID must contain exactly 14 digits.');
+      return;
+    }
+    state.name = nextName;
+    state.gameId = nextId;
+    localStorage.setItem('chessName', state.name);
+    localStorage.setItem('chessGameId', state.gameId);
+    renderIdentity();
+    $('settings').hidden = true;
+  });
+
+  document.querySelectorAll('[data-theme]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      applyTheme(btn.dataset.theme);
+    });
+  });
+
+  document.querySelectorAll('[data-start-theme]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      applyTheme(btn.dataset.startTheme);
+    });
+  });
+
+  $('soundToggleBtn').addEventListener('click', () => setSound(!state.soundOn));
+  $('launchSoundToggleBtn').addEventListener('click', () => setSound(!state.soundOn));
+  $('startMatchBtn').addEventListener('click', startMatch);
+
+  applyTheme(state.theme);
+  setSound(state.soundOn);
+  renderIdentity();
+  render();
+  $('startOverlay').hidden = false;
+</script>
+</body>
+</html>
