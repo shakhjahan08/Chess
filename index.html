@@ -2,111 +2,499 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Royal Chess Online</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Royal Online Chess</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <style>
-    :root{--bg:#07131f;--panel:#122438;--line:#304961;--text:#eef7ff;--muted:#9db2c7;--blue:#62baff;--light:#ead6b0;--dark:#718e6b}
-    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 15% -10%,#24527c,#0b2033 38%,var(--bg) 76%);color:var(--text);font-family:system-ui,Arial,sans-serif}.app{max-width:1050px;margin:auto;padding:24px 16px 40px}h1{margin:10px 0 4px}p{color:var(--muted)}.layout{display:grid;grid-template-columns:minmax(300px,700px) 280px;gap:18px;align-items:start}.panel{background:#ffffff08;border:1px solid var(--line);border-radius:16px;padding:16px}.board{width:100%;aspect-ratio:1;display:grid;grid-template-columns:repeat(8,1fr);border:6px solid #1b3046;border-radius:12px;overflow:hidden}.square{border:0;display:grid;place-items:center;padding:0;font-size:clamp(1.7rem,7vw,4.5rem);cursor:pointer}.light{background:var(--light)}.dark{background:var(--dark)}.selected{box-shadow:inset 0 0 0 5px var(--blue)}.legal:after{content:"";width:20%;height:20%;border-radius:50%;background:#58d78caa}.piece{line-height:1;filter:drop-shadow(0 3px 2px #0008);user-select:none}.row{display:flex;gap:8px;margin:10px 0}.row>*{min-width:0;flex:1}.btn,input{font:inherit;border:1px solid var(--line);border-radius:9px;padding:10px;background:#ffffff0d;color:var(--text)}.btn{cursor:pointer;font-weight:700}.btn.primary{background:linear-gradient(135deg,#62baff,#3d62ed);border:0}.btn:disabled{opacity:.5;cursor:not-allowed}.room{font-size:1.35rem;letter-spacing:.12em;color:#f1c66b;word-break:break-all}.status{padding:11px;border-radius:10px;background:#ffffff0a;color:var(--muted);text-align:center;margin-top:12px}.player{padding:10px;border:1px solid #ffffff14;border-radius:10px;margin:8px 0}.label{display:block;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.1em}.you{color:#f1c66b;float:right}@media(max-width:800px){.layout{grid-template-columns:1fr}.app{padding:12px 10px 28px}}
+    :root {
+      --bg: #161512;
+      --panel: #262421;
+      --panel-border: #363431;
+      --text: #bababa;
+      --light-square: #ebedd0;
+      --dark-square: #779952;
+      --highlight: rgba(255, 255, 0, 0.4);
+      --last-move: rgba(155, 199, 0, 0.41);
+      --green-btn: #81b64c;
+      --green-btn-hover: #a3d168;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background-color: var(--bg);
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 1100px;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: minmax(320px, 680px) 340px;
+      gap: 24px;
+    }
+
+    /* Board Area */
+    .board-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      background: #000;
+      border-radius: 4px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      user-select: none;
+    }
+
+    .board-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      width: 100%;
+      height: 100%;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .square {
+      position: relative;
+      border: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .square.light { background-color: var(--light-square); }
+    .square.dark { background-color: var(--dark-square); }
+
+    .square.selected::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-color: var(--highlight);
+    }
+
+    .square.last-move::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-color: var(--last-move);
+    }
+
+    .square.legal-move::before {
+      content: "";
+      width: 28%;
+      height: 28%;
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 50%;
+      z-index: 2;
+    }
+
+    /* Piece Container & Smooth Slide Animation */
+    .piece-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .piece {
+      position: absolute;
+      width: 12.5%;
+      height: 12.5%;
+      display: grid;
+      place-items: center;
+      font-size: clamp(2rem, 8vw, 4.2rem);
+      line-height: 1;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      transition: transform 0.18s cubic-bezier(0.2, 0, 0.2, 1);
+      will-change: transform;
+      z-index: 5;
+    }
+
+    /* UI Panel */
+    .panel {
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      border: 1px solid var(--panel-border);
+    }
+
+    h2 { margin: 0; font-size: 1.4rem; color: #fff; }
+    p { margin: 0; color: var(--text); font-size: 0.95rem; }
+
+    .status-bar {
+      background: rgba(0,0,0,0.2);
+      padding: 12px;
+      border-radius: 6px;
+      text-align: center;
+      font-weight: 600;
+      color: #fff;
+      border: 1px solid var(--panel-border);
+    }
+
+    .room-box {
+      background: #191816;
+      border: 1px solid var(--panel-border);
+      padding: 12px;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .room-id {
+      font-family: monospace;
+      font-size: 2rem;
+      letter-spacing: 4px;
+      color: #f1c66b;
+      margin-top: 4px;
+    }
+
+    .row { display: flex; gap: 8px; }
+    .row > * { flex: 1; }
+
+    input, button {
+      font: inherit;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid var(--panel-border);
+      outline: none;
+    }
+
+    input {
+      background: #191816;
+      color: #fff;
+      text-align: center;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: bold;
+      color: #fff;
+      background: #363431;
+      transition: background 0.2s;
+    }
+
+    button:hover { background: #45433f; }
+
+    button.primary {
+      background: var(--green-btn);
+      border: 0;
+    }
+
+    button.primary:hover { background: var(--green-btn-hover); }
+
+    .player-card {
+      background: #191816;
+      padding: 10px 14px;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid var(--panel-border);
+    }
+
+    .turn-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #45433f;
+    }
+
+    .turn-indicator.active { background: #81b64c; box-shadow: 0 0 8px #81b64c; }
+
+    @media (max-width: 800px) {
+      .app { grid-template-columns: 1fr; padding: 10px; }
+    }
   </style>
 </head>
 <body>
-  <main class="app">
-    <h1>♞ Royal Chess Online</h1>
-    <p>Connect to a private room and play chess in real time.</p>
-    <div class="layout">
-      <section class="panel"><div id="board" class="board" aria-label="Chess board"></div><div id="status" class="status">Create or join a room to start</div></section>
-      <aside class="panel">
-        <span class="label">Room ID</span><div id="roomDisplay" class="room">Not connected</div>
-        <div class="row"><input id="roomInput" inputmode="numeric" maxlength="6" placeholder="6-digit room ID"><button id="createBtn" class="btn primary">Create</button></div>
-        <button id="joinBtn" class="btn" style="width:100%">Join room</button>
-        <button id="leaveBtn" class="btn" style="width:100%;margin-top:8px">Leave room</button>
-        <p id="roomStatus">Create a room and share its ID with another player.</p>
-        <div class="player"><span class="label">You <span id="myTurn" class="you"></span></span><strong id="myColor">Waiting for opponent</strong></div>
-        <div class="player"><span class="label">Opponent</span><strong id="opponentName">Waiting...</strong><br><span id="opponentColor">—</span></div>
-      </aside>
+
+<main class="app">
+  <div class="board-container">
+    <div id="boardGrid" class="board-grid"></div>
+    <div id="pieceLayer" class="piece-layer"></div>
+  </div>
+
+  <aside class="panel">
+    <h2>♟️ Chess Online</h2>
+    <div id="status" class="status-bar">Create or Join a Room</div>
+
+    <div class="room-box">
+      <span style="font-size: 0.8rem; color: var(--text);">ONLINE ROOM ID</span>
+      <div id="roomDisplay" class="room-id">------</div>
     </div>
-  </main>
+
+    <div class="row">
+      <input id="roomInput" inputmode="numeric" maxlength="6" placeholder="6-Digit ID">
+      <button id="joinBtn">Join</button>
+    </div>
+
+    <button id="createBtn" class="primary">Create 6-Digit Room</button>
+    <button id="leaveBtn" style="opacity: 0.7;">Leave Room</button>
+
+    <div class="player-card">
+      <div>
+        <small style="color: var(--text); display: block;">YOU</small>
+        <strong id="mySide">Not connected</strong>
+      </div>
+      <div id="myTurnDot" class="turn-indicator"></div>
+    </div>
+
+    <div class="player-card">
+      <div>
+        <small style="color: var(--text); display: block;">OPPONENT</small>
+        <strong id="oppSide">Waiting...</strong>
+      </div>
+      <div id="oppTurnDot" class="turn-indicator"></div>
+    </div>
+  </aside>
+</main>
+
 <script>
 (() => {
   'use strict';
+
   const $ = id => document.getElementById(id);
   const files = 'abcdefgh';
-  const symbols = {w:{p:'♙',r:'♖',n:'♘',b:'♗',q:'♕',k:'♔'},b:{p:'♟',r:'♜',n:'♞',b:'♝',q:'♛',k:'♚'}};
-  const state = { chess:new Chess(), peer:null, connection:null, room:null, host:false, color:null, selected:null, opponentName:'Waiting...' };
-  const opposite = color => color === 'w' ? 'b' : 'w';
-  const colorName = color => color === 'w' ? 'White' : 'Black';
-  function status(text){ $('status').textContent = text; }
-  function renderLabels(){
-    $('roomDisplay').textContent = state.room || 'Not connected';
-    $('myColor').textContent = state.color ? colorName(state.color) : 'Waiting for opponent';
-    $('opponentColor').textContent = state.color ? colorName(opposite(state.color)) : '—';
-    $('myTurn').textContent = state.color && state.chess.turn() === state.color ? 'YOUR TURN' : '';
+  const symbols = {
+    w: { p: '♙', r: '♖', n: '♘', b: '♗', q: '♕', k: '♔' },
+    b: { p: '♟', r: '♜', n: '♞', b: '♝', q: '♛', k: '♚' }
+  };
+
+  const state = {
+    chess: new Chess(),
+    peer: null,
+    conn: null,
+    room: null,
+    host: false,
+    color: null,
+    selected: null,
+    lastMove: null
+  };
+
+  // Audio effects using Web Audio API Synth
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  function playSound(type) {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    if (type === 'move') {
+      osc.frequency.setValueAtTime(320, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+      osc.start(); osc.stop(audioCtx.currentTime + 0.08);
+    } else if (type === 'capture') {
+      osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+      osc.start(); osc.stop(audioCtx.currentTime + 0.12);
+    }
   }
-  function render(){
-    const board = $('board'); board.innerHTML = '';
-    const rows = state.color === 'b' ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
-    const cols = state.color === 'b' ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
-    const data = state.chess.board();
-    rows.forEach(r => cols.forEach(c => {
-      const square = files[c] + (8-r), button = document.createElement('button');
-      button.className = 'square ' + (((r+c)%2) ? 'dark' : 'light'); button.type='button';
-      if(state.selected === square) button.classList.add('selected');
-      if(state.selected && state.chess.moves({square:state.selected,verbose:true}).some(m=>m.to===square)) button.classList.add('legal');
-      const piece = data[r][c];
-      if(piece){ const span=document.createElement('span'); span.className='piece'; span.textContent=symbols[piece.color][piece.type]; button.appendChild(span); }
-      button.onclick=()=>clickSquare(square); board.appendChild(button);
-    }));
-    renderLabels();
-    if(!state.connection){ status('Create or join a room to start'); return; }
-    if(!state.color){ status('Connected — assigning colors...'); return; }
-    if(state.chess.is_checkmate()) status('Checkmate');
-    else if(state.chess.is_draw()) status('Draw');
-    else if(state.chess.in_check()) status('Check — ' + colorName(state.chess.turn()) + ' is threatened');
-    else status(state.chess.turn() === state.color ? 'Your turn' : colorName(state.chess.turn()) + ' to move');
-  }
-  function clickSquare(square){
-    if(!state.connection?.open || !state.color || state.chess.turn() !== state.color || state.chess.game_over()) return;
-    const piece=state.chess.get(square);
-    if(state.selected){
-      const legal=state.chess.moves({square:state.selected,verbose:true}).find(m=>m.to===square);
-      if(legal){ const move=state.chess.move({from:state.selected,to:square,promotion:'q'}); state.connection.send({type:'move',from:move.from,to:move.to,promotion:move.promotion||'q'}); state.selected=null; render(); return; }
-      state.selected=piece?.color===state.color ? square : null;
-    } else if(piece?.color===state.color) state.selected=square;
-    render();
-  }
-  function sendHello(){ if(state.connection?.open) state.connection.send({type:'hello',name:'Player'}); }
-  function receiveConnection(connection){
-    state.connection=connection;
-    connection.on('open',()=>{ sendHello(); $('roomStatus').textContent='Connected to room '+state.room; render(); });
-    connection.on('data',data=>{
-      if(!data?.type) return;
-      if(data.type==='hello'){
-        $('opponentName').textContent=data.name||'Opponent';
-        if(state.host){ state.connection.send({type:'color-assignment',color:state.color}); }
-        render(); return;
-      }
-      if(data.type==='color-assignment' && !state.host){ state.color=data.color; state.chess.reset(); render(); return; }
-      if(data.type==='move' && state.color && state.chess.turn()!==state.color){ const move=state.chess.move({from:data.from,to:data.to,promotion:data.promotion||'q'}); if(move) render(); }
+
+  const opposite = c => c === 'w' ? 'b' : 'w';
+
+  function renderBoardSquares() {
+    const grid = $('boardGrid');
+    grid.innerHTML = '';
+    const isBlack = state.color === 'b';
+    const rows = isBlack ? [0,1,2,3,4,5,6,7] : [7,6,5,4,3,2,1,0];
+    const cols = isBlack ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
+
+    rows.forEach(r => {
+      cols.forEach(c => {
+        const sq = files[c] + (r + 1);
+        const btn = document.createElement('button');
+        btn.className = `square ${(r + c) % 2 === 0 ? 'dark' : 'light'}`;
+        btn.dataset.sq = sq;
+
+        if (state.selected === sq) btn.classList.add('selected');
+        if (state.lastMove && (state.lastMove.from === sq || state.lastMove.to === sq)) {
+          btn.classList.add('last-move');
+        }
+
+        if (state.selected && state.chess.moves({ square: state.selected, verbose: true }).some(m => m.to === sq)) {
+          btn.classList.add('legal-move');
+        }
+
+        btn.onclick = () => onSquareClick(sq);
+        grid.appendChild(btn);
+      });
     });
-    connection.on('close',()=>{state.connection=null; state.color=state.host?state.color:null; $('opponentName').textContent='Waiting...'; $('roomStatus').textContent='Opponent disconnected'; render();});
-    connection.on('error',()=>{ $('roomStatus').textContent='Connection error'; });
   }
-  function cleanup(){ try{state.connection?.close()}catch(e){} try{state.peer?.destroy()}catch(e){} state.connection=null; state.peer=null; }
-  function startRoom(id,host){
-    cleanup(); state.room=id; state.host=host; state.color=host ? (Math.random()<.5?'w':'b') : null; state.chess.reset(); state.selected=null; render();
-    state.peer=host ? new Peer('chess-'+id) : new Peer();
-    state.peer.on('open',()=>{ if(host){$('roomStatus').textContent='Room created. Share ID '+id+' with your opponent.'; render();} else receiveConnection(state.peer.connect('chess-'+id,{reliable:true})); });
-    if(host) state.peer.on('connection',connection=>{ if(state.connection?.open) connection.close(); else receiveConnection(connection); });
-    state.peer.on('error',error=>{ $('roomStatus').textContent=error.type==='peer-unavailable'?'Room not found. Check the Room ID.':'Connection error: '+error.type; });
+
+  function renderPieces() {
+    const layer = $('pieceLayer');
+    layer.innerHTML = '';
+    const board = state.chess.board();
+    const isBlack = state.color === 'b';
+
+    for (let r = 0; r < 8; r++) {
+      for (let c = 0; c < 8; c++) {
+        const piece = board[r][c];
+        if (!piece) continue;
+
+        const sq = files[c] + (8 - r);
+        const el = document.createElement('div');
+        el.className = 'piece';
+        el.textContent = symbols[piece.color][piece.type];
+
+        // Animated Position Calculation
+        const displayCol = isBlack ? 7 - c : c;
+        const displayRow = isBlack ? r : 7 - r;
+
+        el.style.transform = `translate(${displayCol * 100}%, ${displayRow * 100}%)`;
+        layer.appendChild(el);
+      }
+    }
   }
-  function leave(){ cleanup(); state.room=null; state.host=false; state.color=null; state.chess.reset(); state.selected=null; $('opponentName').textContent='Waiting...'; $('roomStatus').textContent='Create a room and share its ID with another player.'; render(); }
-  $('createBtn').onclick=()=>{const id=String(Math.floor(100000+Math.random()*900000)); $('roomInput').value=id; startRoom(id,true);};
-  $('joinBtn').onclick=()=>{const id=$('roomInput').value.replace(/\D/g,''); if(id.length!==6){$('roomStatus').textContent='Enter a valid 6-digit Room ID.';return;} startRoom(id,false);};
-  $('leaveBtn').onclick=leave; $('roomInput').oninput=()=>{$('roomInput').value=$('roomInput').value.replace(/\D/g,'').slice(0,6)}; $('roomInput').onkeydown=e=>{if(e.key==='Enter')$('joinBtn').click()};
-  render();
+
+  function updateUI() {
+    renderBoardSquares();
+    renderPieces();
+
+    $('roomDisplay').textContent = state.room \vert{}\vert{} '------';$('mySide').textContent = state.color ? (state.color === 'w' ? 'White' : 'Black') : 'Waiting...';
+    $('oppSide').textContent = state.color ? (state.color === 'w' ? 'Black' : 'White') : 'Waiting...';
+
+    const myTurn = state.color && state.chess.turn() === state.color;
+    $('myTurnDot').className = `turn-indicator ${myTurn ? 'active' : ''}`;
+    $('oppTurnDot').className = `turn-indicator ${state.color && !myTurn ? 'active' : ''}`;
+
+    if (!state.conn) $('status').textContent = 'Create or join a 6-digit room';
+    else if (!state.color) $('status').textContent = 'Connecting with opponent...';
+    else if (state.chess.is_checkmate()) $('status').textContent = 'Checkmate!';
+    else if (state.chess.is_draw()) $('status').textContent = 'Draw!';
+    else $('status').textContent = myTurn ? 'Your Turn' : "Opponent's Turn";
+  }
+
+  function executeMove(moveObj, emit = false) {
+    const captured = state.chess.get(moveObj.to);
+    const result = state.chess.move(moveObj);
+    if (!result) return false;
+
+    state.lastMove = { from: result.from, to: result.to };
+    playSound(captured ? 'capture' : 'move');
+
+    if (emit && state.conn?.open) {
+      state.conn.send({ type: 'move', move: moveObj });
+    }
+
+    state.selected = null;
+    updateUI();
+    return true;
+  }
+
+  function onSquareClick(sq) {
+    if (!state.conn?.open || !state.color || state.chess.turn() !== state.color || state.chess.game_over()) return;
+
+    const piece = state.chess.get(sq);
+
+    if (state.selected) {
+      const legal = state.chess.moves({ square: state.selected, verbose: true }).find(m => m.to === sq);
+      if (legal) {
+        executeMove({ from: state.selected, to: sq, promotion: 'q' }, true);
+        return;
+      }
+      state.selected = piece?.color === state.color ? sq : null;
+    } else if (piece?.color === state.color) {
+      state.selected = sq;
+    }
+    updateUI();
+  }
+
+  function connectToPeer(connection) {
+    state.conn = connection;
+
+    connection.on('open', () => {
+      if (state.host) {
+        state.conn.send({ type: 'init', color: opposite(state.color) });
+      }
+      updateUI();
+    });
+
+    connection.on('data', data => {
+      if (data.type === 'init' && !state.host) {
+        state.color = data.color;
+        state.chess.reset();
+        updateUI();
+      } else if (data.type === 'move') {
+        executeMove(data.move, false);
+      }
+    });
+
+    connection.on('close', () => {
+      state.conn = null;
+      $('status').textContent = 'Opponent Disconnected';
+      updateUI();
+    });
+  }
+
+  function startRoom(roomId, isHost) {
+    if (state.peer) state.peer.destroy();
+
+    state.room = roomId;
+    state.host = isHost;
+    state.color = isHost ? (Math.random() < 0.5 ? 'w' : 'b') : null;
+    state.chess.reset();
+    state.lastMove = null;
+
+    // Use pure 6-digit ID over PeerJS network
+    state.peer = new Peer(`royal-chess-${roomId}`);
+
+    state.peer.on('open', () => {
+      if (!isHost) {
+        const connection = state.peer.connect(`royal-chess-${roomId}`, { reliable: true });
+        connectToPeer(connection);
+      }
+      updateUI();
+    });
+
+    if (isHost) {
+      state.peer.on('connection', connectToPeer);
+    }
+
+    state.peer.on('error', err => {
+      alert('Room Connection Error: ' + err.type);
+    });
+  }
+
+  // Generate 6-digit numeric room code
+  $('createBtn').onclick = () => {
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    startRoom(code, true);
+  };
+
+  $('joinBtn').onclick = () => {
+    const code = $('roomInput').value.trim();
+    if (code.length !== 6) return alert('Enter a valid 6-digit Room ID');
+    startRoom(code, false);
+  };
+
+  $('leaveBtn').onclick = () => {
+    if (state.peer) state.peer.destroy();
+    state.conn = null;
+    state.room = null;
+    state.color = null;
+    state.chess.reset();
+    updateUI();
+  };
+
+  updateUI();
 })();
 </script>
+
 </body>
 </html>
