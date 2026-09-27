@@ -391,26 +391,37 @@
     opponentName: 'Waiting...'
   };
 
-  // Web Audio Synth
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  function playSound(type) {
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    if (type === 'move') {
-      osc.frequency.setValueAtTime(320, audioCtx.currentTime);
-      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
-      osc.start(); osc.stop(audioCtx.currentTime + 0.08);
-    } else if (type === 'capture') {
-      osc.frequency.setValueAtTime(180, audioCtx.currentTime);
-      gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
-      osc.start(); osc.stop(audioCtx.currentTime + 0.12);
+  // Web Audio Synth for Sounds
+  let audioCtx = null;
+  function initAudio() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+  }
+
+  function playSound(type) {
+    try {
+      initAudio();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (type === 'move') {
+        osc.frequency.setValueAtTime(320, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.08);
+      } else if (type === 'capture') {
+        osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.12);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.12);
+      }
+    } catch(e) {}
   }
 
   const opposite = c => c === 'w' ? 'b' : 'w';
@@ -426,6 +437,7 @@
       cols.forEach(c => {
         const sq = files[c] + (r + 1);
         const btn = document.createElement('button');
+        btn.type = 'button';
         btn.className = `square ${(r + c) % 2 === 0 ? 'dark' : 'light'}`;
         btn.dataset.sq = sq;
 
@@ -507,6 +519,7 @@
   }
 
   function onSquareClick(sq) {
+    initAudio();
     if (!state.conn?.open || !state.color || state.chess.turn() !== state.color || state.chess.game_over()) return;
 
     const piece = state.chess.get(sq);
@@ -590,42 +603,47 @@
     });
   }
 
-  // Room Buttons
-  $('createBtn').onclick = () => {
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    startRoom(code, true);
-  };
+  // Bind Buttons directly once DOM is ready
+  window.addEventListener('DOMContentLoaded', () => {
+    $('createBtn').addEventListener('click', () => {
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      startRoom(code, true);
+    });
 
-  $('joinBtn').onclick = () => {
-    const code = $('roomInput').value.trim();
-    if (code.length !== 6) return alert('Enter a valid 6-digit Room ID');
-    startRoom(code, false);
-  };
+    $('joinBtn').addEventListener('click', () => {
+      const code = $('roomInput').value.trim();
+      if (code.length !== 6) return alert('Enter a valid 6-digit Room ID');
+      startRoom(code, false);
+    });
 
-  $('leaveBtn').onclick = () => {
-    if (state.peer) state.peer.destroy();
-    state.conn = null;
-    state.room = null;
-    state.color = null;
-    state.opponentName = 'Waiting...';
-    state.chess.reset();
+    $('leaveBtn').addEventListener('click', () => {
+      if (state.peer) state.peer.destroy();
+      state.conn = null;
+      state.room = null;
+      state.color = null;
+      state.opponentName = 'Waiting...';
+      state.chess.reset();
+      updateUI();
+    });
+
+    $('openSettingsBtn').addEventListener('click', () => {$('settingsModal').classList.add('open');
+    });
+
+    $('closeSettingsBtn').addEventListener('click', () => {
+      const newName = $('nameInput').value.trim();
+      if (newName) {
+        state.name = newName;
+        sendProfile();
+      }
+      document.body.setAttribute('data-theme', $('themeSelect').value);$('settingsModal').classList.remove('open');
+      updateUI();
+    });
+
     updateUI();
-  };
-
-  // Settings Logic
-  $('openSettingsBtn').onclick = () => $('settingsModal').classList.add('open');$('closeSettingsBtn').onclick = () => {
-    const newName = $('nameInput').value.trim();
-    if (newName) {
-      state.name = newName;
-      sendProfile();
-    }
-    document.body.setAttribute('data-theme', $('themeSelect').value);$('settingsModal').classList.remove('open');
-    updateUI();
-  };
-
-  updateUI();
+  });
 })();
 </script>
-
+  
+          
 </body>
 </html>
