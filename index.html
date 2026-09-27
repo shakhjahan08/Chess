@@ -574,7 +574,7 @@ button{user-select:none}
     </h1>
 
     <p>
-      Create a private room, share the 14-digit
+      Create a private room, share the 6-digit
       Room ID, and play in real time from two browsers.
     </p>
   </div>
@@ -616,8 +616,8 @@ button{user-select:none}
     <input
       id="roomInput"
       inputmode="numeric"
-      maxlength="14"
-      placeholder="14-digit Room ID"
+      maxlength="6"
+      placeholder="6-digit Room ID"
       autocomplete="off"
     >
 
@@ -749,7 +749,7 @@ const state = {
   opponentName: 'Waiting...'
 };
 
-/* Audio Synth for effects */
+/* Web Audio Synthesizer */
 let audioCtx = null;
 function initAudio() {
   if (!audioCtx) {
@@ -784,7 +784,7 @@ function playSound(type) {
 
 function randomRoom() {
   let res = '';
-  for (let i = 0; i < 14; i++) res += Math.floor(Math.random() * 10);
+  for (let i = 0; i < 6; i++) res += Math.floor(Math.random() * 10);
   return res;
 }
 
@@ -977,3 +977,5 @@ function render() {
     void board.offsetWidth;
     board.classList.add('checkmate-shake');
   }
+
+  const
