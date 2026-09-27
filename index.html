@@ -241,7 +241,6 @@ button{user-select:none}
   pointer-events:none;
 }
 
-/* CHECK ANIMATION */
 .square.king-check{
   z-index:5;
   animation:checkPulse .55s ease-in-out infinite alternate;
@@ -262,7 +261,6 @@ button{user-select:none}
   }
 }
 
-/* CHECKMATE ANIMATION */
 .square.king-mate{
   z-index:6;
   animation:matePulse .38s ease-in-out infinite alternate;
@@ -705,7 +703,7 @@ button{user-select:none}
 <div class="theme-grid" id="themeGrid"></div>
 
 <div class="tip" style="margin-top:12px">
-  Choose one of the five board styles.
+  Choose one of the board styles using the radio buttons above.
 </div>
 
 <footer>
@@ -806,7 +804,9 @@ function applyTheme() {
   document.documentElement.style.setProperty('--dark', theme[2]);
 
   document.querySelectorAll('.theme').forEach(el => {
-    el.classList.toggle('active', el.dataset.theme === state.theme);
+    const radio = el.querySelector('input[type="radio"]');
+    const isActive = radio ? radio.checked : false;
+    el.classList.toggle('active', isActive);
   });
 }
 
@@ -830,19 +830,28 @@ function buildThemes() {
   const grid = $('themeGrid');
   grid.innerHTML = '';
   themes.forEach(([key, a, b]) => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'theme';
-    button.dataset.theme = key;
-    button.innerHTML = `
-      <div class="preview" style="--a:${a};--b:${b}"></div>
-      <b>${key.charAt(0).toUpperCase() + key.slice(1)}</b>
+    const label = document.createElement('label');
+    label.className = `theme ${key === state.theme ? 'active' : ''}`;
+    label.style.display = 'flex';
+    label.style.alignItems = 'center';
+    label.style.gap = '10px';
+    label.style.cursor = 'pointer';
+
+    label.innerHTML = `
+      <input type="radio" name="chessThemeOption" value="${key}" ${key === state.theme ? 'checked' : ''} style="width:auto;margin:0;">
+      <div style="flex:1;">
+        <div class="preview" style="--a:${a};--b:${b}"></div>
+        <b>${key.charAt(0).toUpperCase() + key.slice(1)}</b>
+      </div>
     `;
-    button.onclick = () => {
+
+    const radio = label.querySelector('input');
+    radio.addEventListener('change', () => {
       state.theme = key;
       applyTheme();
-    };
-    grid.appendChild(button);
+    });
+
+    grid.appendChild(label);
   });
 }
 
@@ -969,14 +978,4 @@ function render() {
     board.classList.add('checkmate-shake');
   }
 
-  const rows = state.flipped ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
-  const cols = state.flipped ? [7,6,5,4,3,2,1,0] : [0,1,2,3,4,5,6,7];
-  const data = state.chess.board();
-
-  const checkColor = state.chess.in_check() ? state.chess.turn() : null;
-  const kingSquare = checkColor ? getKingSquare(checkColor) : null;
-
-  rows.forEach(r => {
-    cols.forEach(c => {
-      const square = files[c] + (8 - r);
-      const button =
+ 
