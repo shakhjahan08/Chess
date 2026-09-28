@@ -2,16 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+
   <meta
     name="viewport"
-    content="width=device-width,initial-scale=1.0,viewport-fit=cover"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
   >
 
   <title>Royal Chess Online</title>
 
   <link rel="stylesheet" href="style.css">
 
+  <!-- Chess.js -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+
+  <!-- PeerJS -->
   <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 </head>
 
@@ -19,23 +23,32 @@
 
 <div class="app">
 
+  <!-- NAVIGATION -->
   <nav class="nav">
+
     <div class="brand">
       <div class="logo">♚</div>
       <span>Royal Chess Online</span>
     </div>
 
     <div class="nav-actions">
-      <button class="btn" id="settingsBtn">
+      <button
+        class="btn"
+        id="settingsBtn"
+        type="button"
+      >
         ⚙ Settings
       </button>
     </div>
+
   </nav>
 
 
+  <!-- HERO -->
   <header class="hero">
 
     <div>
+
       <div class="eyebrow">
         Private online chess
       </div>
@@ -49,11 +62,14 @@
         Create a private room, share the 6-digit Room ID,
         and play in real time from two browsers.
       </p>
+
     </div>
+
 
     <div class="identity">
 
       <small>Room ID</small>
+
       <strong id="headerRoom">
         Not connected
       </strong>
@@ -71,10 +87,10 @@
   </header>
 
 
+  <!-- MAIN -->
   <main class="layout">
 
     <!-- CHESS BOARD -->
-
     <section class="board-shell">
 
       <div
@@ -84,7 +100,10 @@
         aria-label="Chess board"
       ></div>
 
-      <div class="status" id="status">
+      <div
+        class="status"
+        id="status"
+      >
         <span class="label">Game</span>
         <span>Create or join a room to start</span>
       </div>
@@ -93,12 +112,13 @@
 
 
     <!-- SIDE PANEL -->
-
     <aside class="card">
 
       <h2>Online room</h2>
 
+
       <div class="room-box">
+
         <span class="label">
           Current room
         </span>
@@ -106,6 +126,7 @@
         <strong id="roomDisplay">
           Not connected
         </strong>
+
       </div>
 
 
@@ -122,6 +143,7 @@
         <button
           class="btn blue"
           id="createBtn"
+          type="button"
         >
           Create
         </button>
@@ -132,6 +154,7 @@
       <button
         class="btn"
         id="joinBtn"
+        type="button"
       >
         Join room
       </button>
@@ -140,23 +163,29 @@
       <button
         class="btn danger"
         id="leaveBtn"
+        type="button"
       >
         Leave room
       </button>
 
 
-      <div class="tip" id="roomStatus">
+      <div
+        class="tip"
+        id="roomStatus"
+      >
         <span class="connection-dot"></span>
         Create a room and share its ID with another player.
       </div>
 
 
       <!-- PLAYERS -->
-
       <h2>Players</h2>
 
 
-      <div class="player" id="whitePlayer">
+      <div
+        class="player"
+        id="whitePlayer"
+      >
 
         <div
           class="avatar white-avatar"
@@ -185,7 +214,10 @@
       </div>
 
 
-      <div class="player" id="blackPlayer">
+      <div
+        class="player"
+        id="blackPlayer"
+      >
 
         <div
           class="avatar black-avatar"
@@ -215,15 +247,16 @@
 
 
       <!-- NEW GAME -->
-
       <button
         class="btn new-game-btn"
         id="newGameBtn"
+        type="button"
       >
         ♻ New Game
       </button>
 
 
+      <!-- MOVE HISTORY -->
       <h2>Move history</h2>
 
       <div
@@ -239,22 +272,30 @@
 
 
 <!-- SETTINGS MODAL -->
-
 <div
   class="modal-bg"
   id="settingsMenu"
   hidden
 >
 
-  <div class="modal">
+  <div
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="settingsTitle"
+  >
 
     <header>
 
-      <h2>Settings</h2>
+      <h2 id="settingsTitle">
+        Settings
+      </h2>
 
       <button
         class="btn"
         id="closeSettingsBtn"
+        type="button"
+        aria-label="Close settings"
       >
         ✕
       </button>
@@ -262,7 +303,7 @@
     </header>
 
 
-    <label>
+    <label for="nameInput">
       Player name
     </label>
 
@@ -297,6 +338,7 @@
       <button
         class="btn"
         id="cancelSettingsBtn"
+        type="button"
       >
         Cancel
       </button>
@@ -304,6 +346,7 @@
       <button
         class="btn primary"
         id="saveSettings"
+        type="button"
       >
         Save changes
       </button>
@@ -315,6 +358,7 @@
 </div>
 
 
+<!-- APP SCRIPT -->
 <script src="script.js"></script>
 
 </body>
