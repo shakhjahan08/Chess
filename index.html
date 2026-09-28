@@ -1,180 +1,321 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
-<title>Royal Chess Online</title>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1.0,viewport-fit=cover"
+  >
 
-<link rel="stylesheet" href="style.css">
+  <title>Royal Chess Online</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 </head>
 
 <body>
 
 <div class="app">
 
-<nav class="nav">
-  <div class="brand">
-    <div class="logo">♚</div>
-    <span>Royal Chess Online</span>
-  </div>
+  <nav class="nav">
+    <div class="brand">
+      <div class="logo">♚</div>
+      <span>Royal Chess Online</span>
+    </div>
 
-  <div class="nav-actions">
-    <button class="btn" id="settingsBtn">⚙ Settings</button>
-  </div>
-</nav>
+    <div class="nav-actions">
+      <button class="btn" id="settingsBtn">
+        ⚙ Settings
+      </button>
+    </div>
+  </nav>
 
-<header class="hero">
-  <div>
-    <div class="eyebrow">Private online chess</div>
-    <h1>
-      Play chess<br>
-      <span style="color:var(--blue)">with anyone.</span>
-    </h1>
 
-    <p>
-      Create a private room, share the 6-digit
-      Room ID, and play in real time from two browsers.
-    </p>
-  </div>
+  <header class="hero">
 
-  <div class="identity">
-    <small>Room ID</small>
-    <strong id="headerRoom">Not connected</strong>
+    <div>
+      <div class="eyebrow">
+        Private online chess
+      </div>
 
-    <small style="margin-top:10px">Playing as</small>
-    <strong id="playerName">Player</strong>
-  </div>
-</header>
+      <h1>
+        Play chess<br>
+        <span>with anyone.</span>
+      </h1>
 
-<main class="layout">
+      <p>
+        Create a private room, share the 6-digit Room ID,
+        and play in real time from two browsers.
+      </p>
+    </div>
 
-<section class="board-shell">
-  <div
-    class="board"
-    id="board"
-    role="grid"
-    aria-label="Chess board"
-  ></div>
+    <div class="identity">
 
-  <div class="status" id="status">
-    <span class="label">Game</span>
-    <span>Create or join a room to start</span>
-  </div>
-</section>
+      <small>Room ID</small>
+      <strong id="headerRoom">
+        Not connected
+      </strong>
 
-<aside class="card">
-  <h2>Online room</h2>
+      <small class="identity-label">
+        Playing as
+      </small>
 
-  <div class="room-box">
-    <span class="label">Current room</span>
-    <strong id="roomDisplay">Not connected</strong>
-  </div>
+      <strong id="playerName">
+        Player
+      </strong>
 
-  <div class="input-row">
+    </div>
+
+  </header>
+
+
+  <main class="layout">
+
+    <!-- CHESS BOARD -->
+
+    <section class="board-shell">
+
+      <div
+        class="board"
+        id="board"
+        role="grid"
+        aria-label="Chess board"
+      ></div>
+
+      <div class="status" id="status">
+        <span class="label">Game</span>
+        <span>Create or join a room to start</span>
+      </div>
+
+    </section>
+
+
+    <!-- SIDE PANEL -->
+
+    <aside class="card">
+
+      <h2>Online room</h2>
+
+      <div class="room-box">
+        <span class="label">
+          Current room
+        </span>
+
+        <strong id="roomDisplay">
+          Not connected
+        </strong>
+      </div>
+
+
+      <div class="input-row">
+
+        <input
+          id="roomInput"
+          inputmode="numeric"
+          maxlength="6"
+          placeholder="6-digit Room ID"
+          autocomplete="off"
+        >
+
+        <button
+          class="btn blue"
+          id="createBtn"
+        >
+          Create
+        </button>
+
+      </div>
+
+
+      <button
+        class="btn"
+        id="joinBtn"
+      >
+        Join room
+      </button>
+
+
+      <button
+        class="btn danger"
+        id="leaveBtn"
+      >
+        Leave room
+      </button>
+
+
+      <div class="tip" id="roomStatus">
+        <span class="connection-dot"></span>
+        Create a room and share its ID with another player.
+      </div>
+
+
+      <!-- PLAYERS -->
+
+      <h2>Players</h2>
+
+
+      <div class="player" id="whitePlayer">
+
+        <div
+          class="avatar white-avatar"
+          id="whiteAvatar"
+        >
+          ♔
+        </div>
+
+        <div class="player-info">
+
+          <span class="label">
+            White
+          </span>
+
+          <strong id="whitePlayerName">
+            Waiting...
+          </strong>
+
+        </div>
+
+        <span
+          class="turn"
+          id="whiteTurn"
+        ></span>
+
+      </div>
+
+
+      <div class="player" id="blackPlayer">
+
+        <div
+          class="avatar black-avatar"
+          id="blackAvatar"
+        >
+          ♚
+        </div>
+
+        <div class="player-info">
+
+          <span class="label">
+            Black
+          </span>
+
+          <strong id="blackPlayerName">
+            Waiting...
+          </strong>
+
+        </div>
+
+        <span
+          class="turn"
+          id="blackTurn"
+        ></span>
+
+      </div>
+
+
+      <!-- NEW GAME -->
+
+      <button
+        class="btn new-game-btn"
+        id="newGameBtn"
+      >
+        ♻ New Game
+      </button>
+
+
+      <h2>Move history</h2>
+
+      <div
+        class="moves"
+        id="moves"
+      ></div>
+
+    </aside>
+
+  </main>
+
+</div>
+
+
+<!-- SETTINGS MODAL -->
+
+<div
+  class="modal-bg"
+  id="settingsMenu"
+  hidden
+>
+
+  <div class="modal">
+
+    <header>
+
+      <h2>Settings</h2>
+
+      <button
+        class="btn"
+        id="closeSettingsBtn"
+      >
+        ✕
+      </button>
+
+    </header>
+
+
+    <label>
+      Player name
+    </label>
+
     <input
-      id="roomInput"
-      inputmode="numeric"
-      maxlength="6"
-      placeholder="6-digit Room ID"
+      id="nameInput"
+      maxlength="24"
+      placeholder="Enter your name"
       autocomplete="off"
     >
 
-    <button class="btn blue" id="createBtn">
-      Create
-    </button>
-  </div>
 
-  <button class="btn" id="joinBtn">
-    Join room
-  </button>
+    <label>
+      Board style
+    </label>
 
-  <button class="btn danger" id="leaveBtn">
-    Leave room
-  </button>
-
-  <div class="tip" id="roomStatus">
-    <span class="connection-dot"></span>
-    Create a room and share its ID with another player.
-  </div>
-
-  <h2>Players</h2>
-
-  <div class="player">
-    <div class="avatar" id="myAvatar">P</div>
-    <div class="player-info">
-      <span class="label" id="myColorLabel">White</span>
-      <strong id="myName">Player</strong>
-    </div>
-    <span class="turn" id="whiteTurn"></span>
-  </div>
-
-  <div class="player">
     <div
-      class="avatar"
-      id="opponentAvatar"
-      style="background:#26384b"
-    >♟</div>
+      class="theme-grid"
+      id="themeGrid"
+    ></div>
 
-    <div class="player-info">
-      <span class="label" id="opponentColorLabel">Black</span>
-      <strong id="opponentName">Waiting...</strong>
+
+    <div
+      class="tip"
+      style="margin-top:12px"
+    >
+      Choose your favorite board style.
     </div>
-    <span class="turn" id="blackTurn"></span>
+
+
+    <footer>
+
+      <button
+        class="btn"
+        id="cancelSettingsBtn"
+      >
+        Cancel
+      </button>
+
+      <button
+        class="btn primary"
+        id="saveSettings"
+      >
+        Save changes
+      </button>
+
+    </footer>
+
   </div>
 
-  <div class="input-row">
-    <button class="btn" id="flipBtn">
-      Flip board
-    </button>
-
-    <button class="btn" id="newGameBtn">
-      New game
-    </button>
-  </div>
-
-  <h2>Move history</h2>
-  <div class="moves" id="moves"></div>
-</aside>
-
-</main>
-
 </div>
 
-<!-- SETTINGS MODAL -->
-<div class="modal-bg" id="settingsMenu" hidden>
-<div class="modal">
-
-<header>
-  <h2>Settings</h2>
-  <button class="btn" id="closeSettingsBtn">✕</button>
-</header>
-
-<label>Player name</label>
-<input
-  id="nameInput"
-  maxlength="24"
-  placeholder="Enter your name"
-  autocomplete="off"
->
-
-<label>Board style</label>
-<div class="theme-grid" id="themeGrid"></div>
-
-<div class="tip" style="margin-top:12px">
-  Choose one of the board styles using the radio buttons above.
-</div>
-
-<footer>
-  <button class="btn" id="cancelSettingsBtn">Cancel</button>
-  <button class="btn primary" id="saveSettings">Save changes</button>
-</footer>
-
-</div>
-</div>
 
 <script src="script.js"></script>
+
 </body>
 </html>
