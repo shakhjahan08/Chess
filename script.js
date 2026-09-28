@@ -1,11 +1,67 @@
 (() => {
   'use strict';
 
-  const $ = id => document.getElementById(id);
+  /*
+   * =========================================================
+   * SAFE DOM HELPERS
+   * =========================================================
+   */
+
+  const $ = (id) => {
+    const element = document.getElementById(id);
+
+    if (!element) {
+      console.error(`Missing HTML element: #${id}`);
+    }
+
+    return element;
+  };
+
+
+  function onClick(id, handler) {
+    const element = $(id);
+
+    if (!element) {
+      return;
+    }
+
+    element.addEventListener('click', handler);
+  }
+
+
+  /*
+   * =========================================================
+   * DEPENDENCY CHECK
+   * =========================================================
+   */
+
+  if (typeof Chess === 'undefined') {
+    console.error(
+      'Chess.js failed to load. Check the Chess.js CDN script.'
+    );
+
+    return;
+  }
+
+
+  if (typeof Peer === 'undefined') {
+    console.error(
+      'PeerJS failed to load. Check the PeerJS CDN script.'
+    );
+  }
+
+
+  /*
+   * =========================================================
+   * CONSTANTS
+   * =========================================================
+   */
 
   const files = 'abcdefgh';
 
+
   const symbols = {
+
     w: {
       p: '♙',
       r: '♖',
@@ -23,25 +79,30 @@
       q: '♛',
       k: '♚'
     }
+
   };
 
 
-  /* =========================
-     BOARD THEMES
-  ========================= */
-
   const themes = [
+
     ['royal', '#ead6b0', '#718e6b'],
+
     ['classic', '#f0d9b5', '#b58863'],
+
     ['ocean', '#d7eef2', '#39738a'],
+
     ['forest', '#e8e0b8', '#557b45'],
+
     ['neon', '#d8f8ff', '#3656a3']
+
   ];
 
 
-  /* =========================
-     GAME STATE
-  ========================= */
+  /*
+   * =========================================================
+   * GAME STATE
+   * =========================================================
+   */
 
   const state = {
 
@@ -53,42 +114,56 @@
       localStorage.getItem('chessTheme') ||
       'royal',
 
-    chess: new Chess(),
+    chess:
+      new Chess(),
 
-    selected: null,
+    selected:
+      null,
 
-    lastMove: null,
+    lastMove:
+      null,
 
-    flipped: false,
+    flipped:
+      false,
 
-    peer: null,
+    peer:
+      null,
 
-    connection: null,
+    connection:
+      null,
 
-    host: false,
+    host:
+      false,
 
-    room: null,
+    room:
+      null,
 
-    color: null,
+    color:
+      null,
 
-    opponentColor: null,
+    opponentColor:
+      null,
 
-    opponentName: 'Waiting...',
+    opponentName:
+      'Waiting...',
 
-    /*
-     * New game request state
-     */
-    pendingNewGame: false,
+    pendingNewGame:
+      false,
 
-    newGameRequester: null
+    newGameRequester:
+      null
+
   };
 
 
-  /* =========================
-     AUDIO
-  ========================= */
+  /*
+   * =========================================================
+   * AUDIO
+   * =========================================================
+   */
 
   let audioCtx = null;
+
 
   function initAudio() {
 
@@ -104,13 +179,13 @@
 
       }
 
-      if (
-        audioCtx.state === 'suspended'
-      ) {
+      if (audioCtx.state === 'suspended') {
         audioCtx.resume();
       }
 
-    } catch (e) {}
+    } catch (error) {
+      // Audio is optional.
+    }
   }
 
 
@@ -159,6 +234,8 @@
         osc.stop(
           audioCtx.currentTime + 0.08
         );
+
+        return;
       }
 
 
@@ -184,6 +261,8 @@
         osc.stop(
           audioCtx.currentTime + 0.12
         );
+
+        return;
       }
 
 
@@ -211,22 +290,28 @@
         );
       }
 
-    } catch (e) {}
+    } catch (error) {
+      // Audio is optional.
+    }
   }
 
 
-  /* =========================
-     ROOM
-  ========================= */
+  /*
+   * =========================================================
+   * ROOM HELPERS
+   * =========================================================
+   */
 
   function randomRoom() {
 
     let result = '';
 
     for (let i = 0; i < 6; i++) {
+
       result += Math.floor(
         Math.random() * 10
       );
+
     }
 
     return result;
@@ -238,7 +323,14 @@
     online = false
   ) {
 
-    $('roomStatus').innerHTML =
+    const element =
+      $('roomStatus');
+
+    if (!element) {
+      return;
+    }
+
+    element.innerHTML =
       `<span class="connection-dot ${
         online ? 'online' : ''
       }"></span>${text}`;
@@ -250,26 +342,45 @@
     cls = ''
   ) {
 
-    $('status').className =
-      'status ' + cls;
+    const element =
+      $('status');
 
-    $('status').innerHTML =
+    if (!element) {
+      return;
+    }
+
+    element.className =
+      `status ${cls}`;
+
+    element.innerHTML =
       `<span class="label">Game</span>
        <span>${text}</span>`;
   }
 
 
-  /* =========================
-     PROFILE
-  ========================= */
+  /*
+   * =========================================================
+   * PROFILE
+   * =========================================================
+   */
 
   function profile() {
 
-    $('playerName').textContent =
-      state.name;
+    const playerName =
+      $('playerName');
 
-    $('nameInput').value =
-      state.name;
+    const nameInput =
+      $('nameInput');
+
+    if (playerName) {
+      playerName.textContent =
+        state.name;
+    }
+
+    if (nameInput) {
+      nameInput.value =
+        state.name;
+    }
 
     applyTheme();
 
@@ -277,16 +388,19 @@
   }
 
 
-  /* =========================
-     THEMES
-  ========================= */
+  /*
+   * =========================================================
+   * THEMES
+   * =========================================================
+   */
 
   function applyTheme() {
 
     const theme =
       themes.find(
-        t => t[0] === state.theme
+        item => item[0] === state.theme
       ) || themes[0];
+
 
     document.documentElement
       .style
@@ -294,6 +408,7 @@
         '--light',
         theme[1]
       );
+
 
     document.documentElement
       .style
@@ -305,10 +420,10 @@
 
     document
       .querySelectorAll('.theme')
-      .forEach(el => {
+      .forEach(element => {
 
         const radio =
-          el.querySelector(
+          element.querySelector(
             'input[type="radio"]'
           );
 
@@ -317,7 +432,7 @@
             ? radio.checked
             : false;
 
-        el.classList.toggle(
+        element.classList.toggle(
           'active',
           active
         );
@@ -331,15 +446,18 @@
     const grid =
       $('themeGrid');
 
+    if (!grid) {
+      return;
+    }
+
     grid.innerHTML = '';
+
 
     themes.forEach(
       ([key, light, dark]) => {
 
         const label =
-          document.createElement(
-            'label'
-          );
+          document.createElement('label');
 
         label.className =
           `theme ${
@@ -347,6 +465,7 @@
               ? 'active'
               : ''
           }`;
+
 
         label.style.display =
           'flex';
@@ -375,6 +494,7 @@
           >
 
           <div style="flex:1;">
+
             <div
               class="preview"
               style="
@@ -385,32 +505,36 @@
 
             <b>
               ${
-                key.charAt(0)
-                  .toUpperCase() +
+                key.charAt(0).toUpperCase() +
                 key.slice(1)
               }
             </b>
+
           </div>
         `;
 
 
         const radio =
           label.querySelector(
-            'input'
+            'input[type="radio"]'
           );
 
 
-        radio.addEventListener(
-          'change',
-          () => {
+        if (radio) {
 
-            state.theme =
-              key;
+          radio.addEventListener(
+            'change',
+            () => {
 
-            applyTheme();
+              state.theme =
+                key;
 
-          }
-        );
+              applyTheme();
+
+            }
+          );
+
+        }
 
 
         grid.appendChild(label);
@@ -420,9 +544,11 @@
   }
 
 
-  /* =========================
-     PLAYER UI
-  ========================= */
+  /*
+   * =========================================================
+   * PLAYER UI
+   * =========================================================
+   */
 
   function updateRoomUI() {
 
@@ -430,40 +556,69 @@
       state.room ||
       'Not connected';
 
-    $('roomDisplay').textContent =
-      room;
 
-    $('headerRoom').textContent =
-      room;
+    const roomDisplay =
+      $('roomDisplay');
+
+    const headerRoom =
+      $('headerRoom');
+
+
+    if (roomDisplay) {
+      roomDisplay.textContent =
+        room;
+    }
+
+    if (headerRoom) {
+      headerRoom.textContent =
+        room;
+    }
+
+
+    const whiteName =
+      $('whitePlayerName');
+
+    const blackName =
+      $('blackPlayerName');
+
+    const whiteAvatar =
+      $('whiteAvatar');
+
+    const blackAvatar =
+      $('blackAvatar');
 
 
     /*
-     * No opponent yet.
+     * No color yet.
      */
     if (!state.color) {
 
-      $('whitePlayerName')
-        .textContent =
-        state.host
-          ? state.name
-          : 'Waiting...';
+      if (whiteName) {
+        whiteName.textContent =
+          state.host
+            ? state.name
+            : 'Waiting...';
+      }
 
-      $('blackPlayerName')
-        .textContent =
-        'Waiting...';
+      if (blackName) {
+        blackName.textContent =
+          'Waiting...';
+      }
 
-      $('whiteAvatar')
-        .textContent =
-        state.host
-          ? (
-              state.name[0] ||
-              'W'
-            ).toUpperCase()
-          : '♔';
+      if (whiteAvatar) {
+        whiteAvatar.textContent =
+          state.host
+            ? (
+                state.name[0] ||
+                'W'
+              ).toUpperCase()
+            : '♔';
+      }
 
-      $('blackAvatar')
-        .textContent =
-        '♚';
+      if (blackAvatar) {
+        blackAvatar.textContent =
+          '♚';
+      }
 
     }
 
@@ -475,36 +630,39 @@
       state.color === 'w'
     ) {
 
-      $('whitePlayerName')
-        .textContent =
-        state.name;
+      if (whiteName) {
+        whiteName.textContent =
+          state.name;
+      }
 
-      $('blackPlayerName')
-        .textContent =
-        state.opponentName ||
-        'Waiting...';
+      if (blackName) {
+        blackName.textContent =
+          state.opponentName ||
+          'Waiting...';
+      }
 
+      if (whiteAvatar) {
+        whiteAvatar.textContent =
+          (
+            state.name[0] ||
+            'W'
+          ).toUpperCase();
+      }
 
-      $('whiteAvatar')
-        .textContent =
-        (
-          state.name[0] ||
-          'W'
-        ).toUpperCase();
+      if (blackAvatar) {
 
-
-      $('blackAvatar')
-        .textContent =
-        state.opponentName &&
-        state.opponentName !==
-          'Waiting...' &&
-        state.opponentName !==
-          'Disconnected'
-          ? (
-              state.opponentName[0] ||
-              'B'
-            ).toUpperCase()
-          : '♚';
+        blackAvatar.textContent =
+          state.opponentName &&
+          state.opponentName !==
+            'Waiting...' &&
+          state.opponentName !==
+            'Disconnected'
+            ? (
+                state.opponentName[0] ||
+                'B'
+              ).toUpperCase()
+            : '♚';
+      }
 
     }
 
@@ -514,116 +672,139 @@
      */
     else {
 
-      $('blackPlayerName')
-        .textContent =
-        state.name;
+      if (blackName) {
+        blackName.textContent =
+          state.name;
+      }
 
-      $('whitePlayerName')
-        .textContent =
-        state.opponentName ||
-        'Waiting...';
+      if (whiteName) {
+        whiteName.textContent =
+          state.opponentName ||
+          'Waiting...';
+      }
 
+      if (blackAvatar) {
+        blackAvatar.textContent =
+          (
+            state.name[0] ||
+            'B'
+          ).toUpperCase();
+      }
 
-      $('blackAvatar')
-        .textContent =
-        (
-          state.name[0] ||
-          'B'
-        ).toUpperCase();
+      if (whiteAvatar) {
 
+        whiteAvatar.textContent =
+          state.opponentName &&
+          state.opponentName !==
+            'Waiting...' &&
+          state.opponentName !==
+            'Disconnected'
+            ? (
+                state.opponentName[0] ||
+                'W'
+              ).toUpperCase()
+            : '♔';
+      }
 
-      $('whiteAvatar')
-        .textContent =
-        state.opponentName &&
-        state.opponentName !==
-          'Waiting...' &&
-        state.opponentName !==
-          'Disconnected'
-          ? (
-              state.opponentName[0] ||
-              'W'
-            ).toUpperCase()
-          : '♔';
     }
 
 
     /*
-     * Turn.
+     * Turn indicators.
      */
     const isMyTurn =
-      state.color &&
+      !!state.color &&
       state.chess.turn() ===
         state.color;
 
 
-    $('whiteTurn')
-      .textContent =
-      (
-        state.color === 'w' &&
-        isMyTurn
-      ) ||
-      (
-        state.color === 'b' &&
-        !isMyTurn
-      )
-        ? 'YOUR TURN'
-        : '';
+    const whiteTurn =
+      $('whiteTurn');
+
+    const blackTurn =
+      $('blackTurn');
 
 
-    $('blackTurn')
-      .textContent =
-      (
-        state.color === 'b' &&
-        isMyTurn
-      ) ||
-      (
-        state.color === 'w' &&
-        !isMyTurn
-      )
-        ? 'YOUR TURN'
-        : '';
+    if (whiteTurn) {
+
+      whiteTurn.textContent =
+        (
+          state.color === 'w' &&
+          isMyTurn
+        ) ||
+        (
+          state.color === 'b' &&
+          !isMyTurn
+        )
+          ? 'YOUR TURN'
+          : '';
+    }
 
 
-    /*
-     * Highlight the player whose turn it is.
-     */
-    $('whitePlayer')
-      .classList.toggle(
+    if (blackTurn) {
+
+      blackTurn.textContent =
+        (
+          state.color === 'b' &&
+          isMyTurn
+        ) ||
+        (
+          state.color === 'w' &&
+          !isMyTurn
+        )
+          ? 'YOUR TURN'
+          : '';
+    }
+
+
+    const whitePlayer =
+      $('whitePlayer');
+
+    const blackPlayer =
+      $('blackPlayer');
+
+
+    if (whitePlayer) {
+
+      whitePlayer.classList.toggle(
         'active-player',
         state.chess.turn() === 'w'
       );
 
-    $('blackPlayer')
-      .classList.toggle(
+    }
+
+
+    if (blackPlayer) {
+
+      blackPlayer.classList.toggle(
         'active-player',
         state.chess.turn() === 'b'
       );
+
+    }
+
   }
 
 
-  /* =========================
-     KING
-  ========================= */
+  /*
+   * =========================================================
+   * KING
+   * =========================================================
+   */
 
   function getKingSquare(color) {
 
     const board =
       state.chess.board();
 
-    for (
-      let r = 0;
-      r < 8;
-      r++
-    ) {
 
-      for (
-        let c = 0;
-        c < 8;
-        c++
-      ) {
+    for (let r = 0; r < 8; r++) {
+
+      for (let c = 0; c < 8; c++) {
 
         const piece =
           board[r][c];
+
 
         if (
           piece &&
@@ -635,27 +816,39 @@
             files[c] +
             (8 - r)
           );
+
         }
+
       }
+
     }
+
 
     return null;
   }
 
 
-  /* =========================
-     MOVE HISTORY
-  ========================= */
+  /*
+   * =========================================================
+   * MOVE HISTORY
+   * =========================================================
+   */
 
   function updateMovesHistory() {
+
+    const container =
+      $('moves');
+
+    if (!container) {
+      return;
+    }
+
 
     const history =
       state.chess.history({
         verbose: true
       });
 
-    const container =
-      $('moves');
 
     container.innerHTML = '';
 
@@ -667,9 +860,7 @@
     ) {
 
       const div =
-        document.createElement(
-          'div'
-        );
+        document.createElement('div');
 
       div.className =
         'move';
@@ -678,10 +869,12 @@
       const moveNum =
         Math.floor(i / 2) + 1;
 
+
       const whiteMove =
         history[i]
           ? history[i].san
           : '';
+
 
       const blackMove =
         history[i + 1]
@@ -696,6 +889,7 @@
 
 
       container.appendChild(div);
+
     }
 
 
@@ -704,20 +898,21 @@
   }
 
 
-  /* =========================
-     GAME STATUS
-  ========================= */
+  /*
+   * =========================================================
+   * GAME STATUS
+   * =========================================================
+   */
 
   function updateStatus() {
 
-    if (
-      state.chess.in_checkmate()
-    ) {
+    if (state.chess.in_checkmate()) {
 
       const winner =
         state.chess.turn() === 'w'
           ? 'Black'
           : 'White';
+
 
       setStatus(
         `Checkmate — ${winner} wins`,
@@ -728,9 +923,7 @@
     }
 
 
-    if (
-      state.chess.in_check()
-    ) {
+    if (state.chess.in_check()) {
 
       setStatus(
         `Check — ${
@@ -745,9 +938,7 @@
     }
 
 
-    if (
-      state.chess.in_draw()
-    ) {
+    if (state.chess.in_draw()) {
 
       setStatus('Draw');
 
@@ -778,9 +969,7 @@
     }
 
 
-    if (
-      state.pendingNewGame
-    ) {
+    if (state.pendingNewGame) {
 
       setStatus(
         'Waiting for opponent to respond...'
@@ -808,18 +997,26 @@
             : 'Black'
         } to move`
       );
+
     }
   }
 
 
-  /* =========================
-     MOVE EXECUTION
-  ========================= */
+  /*
+   * =========================================================
+   * MOVE EXECUTION
+   * =========================================================
+   */
 
   function executeMove(
     moveObj,
     sendNetwork = false
   ) {
+
+    if (!moveObj) {
+      return false;
+    }
+
 
     const capturedPiece =
       state.chess.get(
@@ -839,8 +1036,13 @@
 
 
     state.lastMove = {
-      from: move.from,
-      to: move.to
+
+      from:
+        move.from,
+
+      to:
+        move.to
+
     };
 
 
@@ -858,23 +1060,32 @@
     ) {
 
       state.connection.send({
+
         type: 'move',
+
         move: moveObj
+
       });
+
     }
 
 
-    state.selected = null;
+    state.selected =
+      null;
+
 
     render();
+
 
     return true;
   }
 
 
-  /* =========================
-     SQUARE CLICK
-  ========================= */
+  /*
+   * =========================================================
+   * SQUARE CLICK
+   * =========================================================
+   */
 
   function onSquareClick(sq) {
 
@@ -920,29 +1131,38 @@
 
       const legalMoves =
         state.chess.moves({
-          square: state.selected,
+
+          square:
+            state.selected,
+
           verbose: true
+
         });
 
 
       const targetMove =
         legalMoves.find(
-          m => m.to === sq
+          move => move.to === sq
         );
 
 
       if (targetMove) {
 
         executeMove(
+
           {
             from:
               state.selected,
 
-            to: sq,
+            to:
+              sq,
 
-            promotion: 'q'
+            promotion:
+              'q'
           },
+
           true
+
         );
 
         return;
@@ -962,7 +1182,9 @@
         state.color
     ) {
 
-      state.selected = sq;
+      state.selected =
+        sq;
+
     }
 
 
@@ -970,16 +1192,24 @@
   }
 
 
-  /* =========================
-     BOARD RENDER
-  ========================= */
+  /*
+   * =========================================================
+   * BOARD RENDER
+   * =========================================================
+   */
 
   function render() {
 
     const board =
       $('board');
 
+    if (!board) {
+      return;
+    }
+
+
     board.innerHTML = '';
+
 
     board.classList.remove(
       'checkmate-shake'
@@ -1001,8 +1231,10 @@
     const inCheck =
       state.chess.in_check();
 
+
     const inMate =
       state.chess.in_checkmate();
+
 
     const activeTurn =
       state.chess.turn();
@@ -1031,36 +1263,36 @@
       legalTargets =
         state.chess
           .moves({
+
             square:
               state.selected,
 
-            verbose:true
+            verbose:
+              true
+
           })
           .map(
-            m => m.to
+            move => move.to
           );
+
     }
 
 
     const rows =
       state.flipped
-        ? [0,1,2,3,4,5,6,7]
-        : [7,6,5,4,3,2,1,0];
+        ? [0, 1, 2, 3, 4, 5, 6, 7]
+        : [7, 6, 5, 4, 3, 2, 1, 0];
 
 
     const cols =
       state.flipped
-        ? [7,6,5,4,3,2,1,0]
-        : [0,1,2,3,4,5,6,7];
+        ? [7, 6, 5, 4, 3, 2, 1, 0]
+        : [0, 1, 2, 3, 4, 5, 6, 7];
 
 
-    for (
-      const r of rows
-    ) {
+    for (const r of rows) {
 
-      for (
-        const c of cols
-      ) {
+      for (const c of cols) {
 
         const sq =
           files[c] +
@@ -1081,6 +1313,10 @@
           );
 
 
+        button.type =
+          'button';
+
+
         button.className =
           `square ${
             isLight
@@ -1089,21 +1325,31 @@
           }`;
 
 
+        button.setAttribute(
+          'aria-label',
+          sq
+        );
+
+
         if (
           state.selected === sq
         ) {
+
           button.classList.add(
             'selected'
           );
+
         }
 
 
         if (
           legalTargets.includes(sq)
         ) {
+
           button.classList.add(
             'legal'
           );
+
         }
 
 
@@ -1118,16 +1364,20 @@
           button.classList.add(
             'last'
           );
+
         }
 
 
         if (sq === kingSq) {
 
           button.classList.add(
+
             inMate
               ? 'king-mate'
               : 'king-check'
+
           );
+
         }
 
 
@@ -1137,6 +1387,7 @@
             document.createElement(
               'span'
             );
+
 
           span.className =
             'piece';
@@ -1150,10 +1401,6 @@
             ];
 
 
-          /*
-           * Animate the destination
-           * of the latest move.
-           */
           if (
             state.lastMove &&
             state.lastMove.to === sq
@@ -1162,12 +1409,14 @@
             span.classList.add(
               'moving'
             );
+
           }
 
 
           button.appendChild(
             span
           );
+
         }
 
 
@@ -1180,7 +1429,9 @@
         board.appendChild(
           button
         );
+
       }
+
     }
 
 
@@ -1189,12 +1440,15 @@
     updateMovesHistory();
 
     updateStatus();
+
   }
 
 
-  /* =========================
-     PEERJS
-  ========================= */
+  /*
+   * =========================================================
+   * PEERJS
+   * =========================================================
+   */
 
   const peerConfig = {
 
@@ -1219,11 +1473,19 @@
   };
 
 
+  /*
+   * =========================================================
+   * DESTROY PEER
+   * =========================================================
+   */
+
   function destroyPeer() {
 
     if (state.connection) {
 
-      state.connection.close();
+      try {
+        state.connection.close();
+      } catch (error) {}
 
       state.connection =
         null;
@@ -1232,16 +1494,20 @@
 
     if (state.peer) {
 
-      state.peer.destroy();
+      try {
+        state.peer.destroy();
+      } catch (error) {}
 
       state.peer =
         null;
     }
 
 
-    state.room = null;
+    state.room =
+      null;
 
-    state.color = null;
+    state.color =
+      null;
 
     state.opponentColor =
       null;
@@ -1249,7 +1515,8 @@
     state.opponentName =
       'Waiting...';
 
-    state.host = false;
+    state.host =
+      false;
 
     state.selected =
       null;
@@ -1266,6 +1533,7 @@
     state.flipped =
       false;
 
+
     state.chess.reset();
 
 
@@ -1278,14 +1546,26 @@
   }
 
 
-  /* =========================
-     INITIALIZE PEER
-  ========================= */
+  /*
+   * =========================================================
+   * INITIALIZE PEER
+   * =========================================================
+   */
 
   function initPeer(
     id,
     isHost
   ) {
+
+    if (typeof Peer === 'undefined') {
+
+      setRoomStatus(
+        'PeerJS failed to load. Check your internet connection.'
+      );
+
+      return;
+    }
+
 
     destroyPeer();
 
@@ -1303,11 +1583,27 @@
         : undefined;
 
 
-    state.peer =
-      new Peer(
-        peerId,
-        peerConfig
+    try {
+
+      state.peer =
+        new Peer(
+          peerId,
+          peerConfig
+        );
+
+    } catch (error) {
+
+      console.error(
+        'PeerJS initialization error:',
+        error
       );
+
+      setRoomStatus(
+        'Could not initialize online connection.'
+      );
+
+      return;
+    }
 
 
     state.peer.on(
@@ -1321,12 +1617,8 @@
           );
 
 
-          /*
-           * Host does not get a color yet.
-           * Color is assigned when the second
-           * player joins.
-           */
-          state.color = null;
+          state.color =
+            null;
 
           state.opponentColor =
             null;
@@ -1337,7 +1629,9 @@
         } else {
 
           connectToHost(id);
+
         }
+
       }
     );
 
@@ -1351,9 +1645,6 @@
         }
 
 
-        /*
-         * Only allow two players.
-         */
         if (
           state.connection &&
           state.connection.open
@@ -1370,6 +1661,7 @@
 
 
         setupConnection();
+
       }
     );
 
@@ -1377,6 +1669,12 @@
     state.peer.on(
       'error',
       err => {
+
+        console.error(
+          'PeerJS error:',
+          err
+        );
+
 
         if (
           err.type ===
@@ -1399,15 +1697,47 @@
         } else {
 
           setRoomStatus(
-            `Network Error: ${err.type}`
+            `Network Error: ${err.type || 'unknown'}`
           );
+
         }
+
+      }
+    );
+
+
+    state.peer.on(
+      'disconnected',
+      () => {
+
+        setRoomStatus(
+          'Connection to PeerJS server lost.'
+        );
+
       }
     );
   }
 
 
+  /*
+   * =========================================================
+   * CONNECT TO HOST
+   * =========================================================
+   */
+
   function connectToHost(id) {
+
+    if (
+      !state.peer
+    ) {
+
+      setRoomStatus(
+        'Peer is not ready.'
+      );
+
+      return;
+    }
+
 
     setRoomStatus(
       'Connecting to opponent...'
@@ -1418,7 +1748,7 @@
       state.peer.connect(
         `royal-chess-room-${id}`,
         {
-          reliable:true
+          reliable: true
         }
       );
 
@@ -1431,14 +1761,21 @@
   }
 
 
-  /* =========================
-     CONNECTION
-  ========================= */
+  /*
+   * =========================================================
+   * CONNECTION
+   * =========================================================
+   */
 
   function setupConnection() {
 
     const conn =
       state.connection;
+
+
+    if (!conn) {
+      return;
+    }
 
 
     conn.on(
@@ -1453,9 +1790,6 @@
 
         /*
          * HOST
-         *
-         * Wait for guest name.
-         * Guest will send "join".
          */
         if (state.host) {
 
@@ -1463,6 +1797,7 @@
             'Opponent connected. Waiting for player information...',
             true
           );
+
 
           render();
 
@@ -1472,12 +1807,10 @@
 
         /*
          * GUEST
-         *
-         * Tell host our name.
          */
         conn.send({
 
-          type:'join',
+          type: 'join',
 
           name:
             state.name
@@ -1492,6 +1825,7 @@
 
 
         render();
+
       }
     );
 
@@ -1500,10 +1834,16 @@
       'data',
       data => {
 
+        if (!data || typeof data !== 'object') {
+          return;
+        }
 
-        /* =====================
-           PLAYER JOINED
-        ===================== */
+
+        /*
+         * ===================================================
+         * PLAYER JOINED
+         * ===================================================
+         */
 
         if (
           data.type === 'join'
@@ -1519,10 +1859,6 @@
             'Opponent';
 
 
-          /*
-           * First game:
-           * randomly choose White.
-           */
           const hostIsWhite =
             Math.random() < 0.5;
 
@@ -1543,9 +1879,6 @@
             state.color === 'b';
 
 
-          /*
-           * Tell guest their color.
-           */
           conn.send({
 
             type:
@@ -1582,9 +1915,11 @@
         }
 
 
-        /* =====================
-           COLOR ASSIGNMENT
-        ===================== */
+        /*
+         * ===================================================
+         * COLOR ASSIGNMENT
+         * ===================================================
+         */
 
         if (
           data.type ===
@@ -1615,9 +1950,21 @@
 
           if (data.fen) {
 
-            state.chess.load(
-              data.fen
-            );
+            try {
+
+              state.chess.load(
+                data.fen
+              );
+
+            } catch (error) {
+
+              console.error(
+                'Invalid FEN:',
+                error
+              );
+
+            }
+
           }
 
 
@@ -1637,9 +1984,11 @@
         }
 
 
-        /* =====================
-           MOVE
-        ===================== */
+        /*
+         * ===================================================
+         * MOVE
+         * ===================================================
+         */
 
         if (
           data.type === 'move'
@@ -1654,9 +2003,11 @@
         }
 
 
-        /* =====================
-           NAME UPDATE
-        ===================== */
+        /*
+         * ===================================================
+         * NAME UPDATE
+         * ===================================================
+         */
 
         if (
           data.type ===
@@ -1674,14 +2025,25 @@
         }
 
 
-        /* =====================
-           NEW GAME REQUEST
-        ===================== */
+        /*
+         * ===================================================
+         * NEW GAME REQUEST
+         * ===================================================
+         */
 
         if (
           data.type ===
           'newgame-request'
         ) {
+
+          /*
+           * Do not allow multiple requests
+           * at the same time.
+           */
+          if (state.pendingNewGame) {
+            return;
+          }
+
 
           state.newGameRequester =
             data.name ||
@@ -1692,15 +2054,14 @@
             true;
 
 
-          playSound('notify');
+          playSound(
+            'notify'
+          );
 
 
           render();
 
 
-          /*
-           * Ask the other player.
-           */
           const accepted =
             window.confirm(
               `${state.newGameRequester} wants to start a new game.\n\n` +
@@ -1710,25 +2071,35 @@
 
           if (accepted) {
 
+            /*
+             * Important:
+             *
+             * The guest only sends the response.
+             * The HOST starts the new game after
+             * receiving the response.
+             *
+             * This prevents the game from starting
+             * twice.
+             */
             conn.send({
 
               type:
                 'newgame-response',
 
-              accepted:true
+              accepted:
+                true
 
             });
 
 
-            /*
-             * Host is responsible for
-             * random color assignment.
-             */
-            if (state.host) {
+            if (!state.host) {
 
-              startNewGameRandomColors();
+              setRoomStatus(
+                'New game accepted. Waiting for host...',
+                true
+              );
+
             }
-
 
           } else {
 
@@ -1737,7 +2108,8 @@
               type:
                 'newgame-response',
 
-              accepted:false
+              accepted:
+                false
 
             });
 
@@ -1755,6 +2127,7 @@
 
 
             render();
+
           }
 
 
@@ -1762,14 +2135,21 @@
         }
 
 
-        /* =====================
-           NEW GAME RESPONSE
-        ===================== */
+        /*
+         * ===================================================
+         * NEW GAME RESPONSE
+         * ===================================================
+         */
 
         if (
           data.type ===
           'newgame-response'
         ) {
+
+          if (!state.host) {
+            return;
+          }
+
 
           state.pendingNewGame =
             false;
@@ -1793,29 +2173,20 @@
 
 
           /*
-           * Host now randomly chooses
-           * the colors.
+           * Host controls random assignment.
            */
-          if (state.host) {
-
-            startNewGameRandomColors();
-
-          } else {
-
-            setRoomStatus(
-              'New game accepted. Waiting for color assignment...',
-              true
-            );
-          }
+          startNewGameRandomColors();
 
 
           return;
         }
 
 
-        /* =====================
-           NEW GAME START
-        ===================== */
+        /*
+         * ===================================================
+         * NEW GAME START
+         * ===================================================
+         */
 
         if (
           data.type ===
@@ -1823,7 +2194,7 @@
         ) {
 
           /*
-           * Only guest processes this.
+           * Only guest processes this message.
            */
           if (state.host) {
             return;
@@ -1843,6 +2214,7 @@
 
 
           state.chess.reset();
+
 
           state.selected =
             null;
@@ -1867,14 +2239,15 @@
           );
 
 
-          playSound('notify');
+          playSound(
+            'notify'
+          );
 
 
           render();
 
           return;
         }
-
 
       }
     );
@@ -1883,11 +2256,6 @@
     conn.on(
       'close',
       () => {
-
-        setRoomStatus(
-          'Opponent disconnected'
-        );
-
 
         state.opponentName =
           'Disconnected';
@@ -1905,15 +2273,41 @@
           null;
 
 
+        setRoomStatus(
+          'Opponent disconnected'
+        );
+
+
         render();
+
+      }
+    );
+
+
+    conn.on(
+      'error',
+      error => {
+
+        console.error(
+          'Connection error:',
+          error
+        );
+
+
+        setRoomStatus(
+          'Connection error.'
+        );
+
       }
     );
   }
 
 
-  /* =========================
-     RANDOM NEW GAME
-  ========================= */
+  /*
+   * =========================================================
+   * RANDOM NEW GAME
+   * =========================================================
+   */
 
   function startNewGameRandomColors() {
 
@@ -1921,14 +2315,17 @@
       !state.connection ||
       !state.connection.open
     ) {
+
       return;
     }
 
 
-    /*
-     * Host randomly gets White
-     * or Black.
-     */
+    if (!state.host) {
+
+      return;
+    }
+
+
     const hostIsWhite =
       Math.random() < 0.5;
 
@@ -1945,31 +2342,20 @@
         : 'w';
 
 
-    /*
-     * Host receives hostColor.
-     */
-    if (state.host) {
-
-      state.color =
-        hostColor;
-
-      state.opponentColor =
-        guestColor;
-    }
+    state.color =
+      hostColor;
 
 
-    /*
-     * Black sees the board
-     * from Black's side.
-     */
+    state.opponentColor =
+      guestColor;
+
+
     state.flipped =
       state.color === 'b';
 
 
-    /*
-     * Reset the game.
-     */
     state.chess.reset();
+
 
     state.selected =
       null;
@@ -1985,9 +2371,6 @@
       null;
 
 
-    /*
-     * Send assignment to guest.
-     */
     state.connection.send({
 
       type:
@@ -2012,16 +2395,20 @@
     );
 
 
-    playSound('notify');
+    playSound(
+      'notify'
+    );
 
 
     render();
   }
 
 
-  /* =========================
-     REQUEST NEW GAME
-  ========================= */
+  /*
+   * =========================================================
+   * REQUEST NEW GAME
+   * =========================================================
+   */
 
   function requestNewGame() {
 
@@ -2051,6 +2438,7 @@
     if (
       state.pendingNewGame
     ) {
+
       return;
     }
 
@@ -2080,212 +2468,330 @@
   }
 
 
-  /* =========================
-     CREATE ROOM
-  ========================= */
+  /*
+   * =========================================================
+   * CREATE ROOM
+   * =========================================================
+   */
 
-  $('createBtn')
-    .addEventListener(
-      'click',
-      () => {
+  onClick(
+    'createBtn',
+    () => {
 
-        const id =
-          randomRoom();
-
-
-        $('roomInput')
-          .value = id;
+      const id =
+        randomRoom();
 
 
-        initPeer(
-          id,
-          true
+      const input =
+        $('roomInput');
+
+
+      if (input) {
+
+        input.value =
+          id;
+
+      }
+
+
+      initPeer(
+        id,
+        true
+      );
+
+    }
+  );
+
+
+  /*
+   * =========================================================
+   * JOIN ROOM
+   * =========================================================
+   */
+
+  onClick(
+    'joinBtn',
+    () => {
+
+      const input =
+        $('roomInput');
+
+
+      if (!input) {
+        return;
+      }
+
+
+      const id =
+        input.value.trim();
+
+
+      if (
+        !/^\d{4,6}$/.test(id)
+      ) {
+
+        alert(
+          'Please enter a valid Room ID'
         );
+
+        return;
       }
-    );
 
 
-  /* =========================
-     JOIN ROOM
-  ========================= */
+      initPeer(
+        id,
+        false
+      );
 
-  $('joinBtn')
-    .addEventListener(
-      'click',
-      () => {
-
-        const id =
-          $('roomInput')
-            .value
-            .trim();
+    }
+  );
 
 
-        if (
-          !/^\d{4,6}$/.test(id)
-        ) {
+  /*
+   * =========================================================
+   * LEAVE ROOM
+   * =========================================================
+   */
 
-          alert(
-            'Please enter a valid Room ID'
-          );
+  onClick(
+    'leaveBtn',
+    () => {
 
-          return;
-        }
+      destroyPeer();
 
 
-        initPeer(
-          id,
-          false
-        );
+      const input =
+        $('roomInput');
+
+
+      if (input) {
+
+        input.value =
+          '';
+
       }
-    );
+
+    }
+  );
 
 
-  /* =========================
-     LEAVE ROOM
-  ========================= */
+  /*
+   * =========================================================
+   * NEW GAME BUTTON
+   * =========================================================
+   */
 
-  $('leaveBtn')
-    .addEventListener(
-      'click',
-      () => {
+  onClick(
+    'newGameBtn',
+    () => {
 
-        destroyPeer();
+      requestNewGame();
 
-        $('roomInput')
-          .value = '';
-      }
-    );
-
-
-  /* =========================
-     NEW GAME
-  ========================= */
-
-  $('newGameBtn')
-    .addEventListener(
-      'click',
-      () => {
-
-        requestNewGame();
-      }
-    );
+    }
+  );
 
 
-  /* =========================
-     SETTINGS
-  ========================= */
+  /*
+   * =========================================================
+   * SETTINGS
+   * =========================================================
+   */
 
   const modal =
     $('settingsMenu');
 
 
-  $('settingsBtn')
-    .addEventListener(
-      'click',
-      () => {
+  onClick(
+    'settingsBtn',
+    () => {
 
-        $('nameInput')
-          .value =
+      const nameInput =
+        $('nameInput');
+
+
+      if (nameInput) {
+
+        nameInput.value =
           state.name;
 
+      }
+
+
+      if (modal) {
 
         modal.removeAttribute(
           'hidden'
         );
+
       }
+
+    }
+  );
+
+
+  function closeModal() {
+
+    if (!modal) {
+      return;
+    }
+
+
+    modal.setAttribute(
+      'hidden',
+      ''
     );
 
+  }
 
-  const closeModal =
+
+  onClick(
+    'closeSettingsBtn',
+    closeModal
+  );
+
+
+  onClick(
+    'cancelSettingsBtn',
+    closeModal
+  );
+
+
+  onClick(
+    'saveSettings',
     () => {
 
-      modal.setAttribute(
-        'hidden',
-        ''
+      const nameInput =
+        $('nameInput');
+
+
+      const newName =
+        nameInput
+          ? (
+              nameInput.value.trim() ||
+              'Player'
+            )
+          : 'Player';
+
+
+      state.name =
+        newName;
+
+
+      localStorage.setItem(
+        'chessName',
+        state.name
       );
-    };
 
 
-  $('closeSettingsBtn')
-    .addEventListener(
-      'click',
-      closeModal
-    );
+      localStorage.setItem(
+        'chessTheme',
+        state.theme
+      );
 
 
-  $('cancelSettingsBtn')
-    .addEventListener(
-      'click',
-      closeModal
-    );
+      profile();
 
 
-  $('saveSettings')
-    .addEventListener(
-      'click',
-      () => {
+      /*
+       * Tell opponent about name change.
+       */
+      if (
+        state.connection &&
+        state.connection.open
+      ) {
 
-        const newName =
-          $('nameInput')
-            .value
-            .trim() ||
-          'Player';
+        state.connection.send({
 
+          type:
+            'name-update',
 
-        state.name =
-          newName;
+          name:
+            state.name
 
+        });
 
-        localStorage.setItem(
-          'chessName',
-          state.name
-        );
-
-
-        localStorage.setItem(
-          'chessTheme',
-          state.theme
-        );
+      }
 
 
-        profile();
+      render();
+
+      closeModal();
+
+    }
+  );
 
 
-        /*
-         * Tell opponent immediately.
-         */
+  /*
+   * =========================================================
+   * ENTER KEY FOR ROOM INPUT
+   * =========================================================
+   */
+
+  const roomInput =
+    $('roomInput');
+
+
+  if (roomInput) {
+
+    roomInput.addEventListener(
+      'keydown',
+      event => {
+
         if (
-          state.connection &&
-          state.connection.open
+          event.key === 'Enter'
         ) {
 
-          state.connection.send({
+          const joinButton =
+            $('joinBtn');
 
-            type:
-              'name-update',
 
-            name:
-              state.name
+          if (joinButton) {
+            joinButton.click();
+          }
 
-          });
         }
 
-
-        render();
-
-        closeModal();
       }
     );
 
+  }
 
-  /* =========================
-     INITIALIZE
-  ========================= */
+
+  /*
+   * =========================================================
+   * CLOSE MODAL WITH ESC
+   * =========================================================
+   */
+
+  document.addEventListener(
+    'keydown',
+    event => {
+
+      if (
+        event.key === 'Escape' &&
+        modal &&
+        !modal.hasAttribute('hidden')
+      ) {
+
+        closeModal();
+
+      }
+
+    }
+  );
+
+
+  /*
+   * =========================================================
+   * INITIALIZE APPLICATION
+   * =========================================================
+   */
 
   buildThemes();
 
   profile();
 
   render();
+
 
 })();
